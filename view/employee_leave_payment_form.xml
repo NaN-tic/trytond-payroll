@@ -1,0 +1,6 @@
+<data>
+    <xpath expr="/form/field[@name='type']" position="after">
+        <label name="payslip"/>
+        <field name="payslip"/>
+    </xpath>
+</data>

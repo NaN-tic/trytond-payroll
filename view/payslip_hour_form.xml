@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<form string="Payslip Hour">
+    <label name="type"/>
+    <field name="type"/>
+    <label name="payslip"/>
+    <field name="payslip"/>
+    <label name="hours"/>
+    <field name="hours"/>
+    <label name="price"/>
+    <field name="price"/>
+    <label name="amount"/>
+    <field name="amount"/>
+</form>

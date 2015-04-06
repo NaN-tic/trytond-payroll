@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tree string="Payslip">
+    <field name="contract"/>
+    <field name="employee"/>
+    <field name="start"/>
+    <field name="end"/>
+    <field name="working_hours"/>
+    <field name="remaining_hours"/>
+    <field name="total_hours"/>
+    <field name="amount"/>
+</tree>

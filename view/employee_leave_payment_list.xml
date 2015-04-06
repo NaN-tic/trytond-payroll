@@ -1,0 +1,5 @@
+<data>
+    <xpath expr="/tree/field[@name='type']" position="after">
+        <field name="payslip"/>
+    </xpath>
+</data>
