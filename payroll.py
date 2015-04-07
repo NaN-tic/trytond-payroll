@@ -82,8 +82,6 @@ class Payslip(ModelSQL, ModelView):
         'get_entitled_hours')
     total_hours = fields.Function(fields.Numeric('Total Hours'),
         'get_total_hours')
-    #expected_hours = fields.Function(fields.Numeric('Expected Hours'),
-        #'get_expected_hours')
     remaining_hours = fields.Function(fields.Numeric('Remaining Hours'),
         'get_remaining_hours')
 
