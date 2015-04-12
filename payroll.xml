@@ -65,78 +65,78 @@
             <field name="perm_create" eval="True"/>
             <field name="perm_delete" eval="True"/>
         </record>
-        <record model="ir.ui.view" id="contract_hour_rule_view_form">
-            <field name="model">payroll.contract.hour.rule</field>
+        <record model="ir.ui.view" id="contract_rule_view_form">
+            <field name="model">payroll.contract.rule</field>
             <field name="type">form</field>
-            <field name="name">contract_hour_rule_form</field>
+            <field name="name">contract_rule_form</field>
         </record>
-        <record model="ir.ui.view" id="contract_hour_rule_view_list">
-            <field name="model">payroll.contract.hour.rule</field>
+        <record model="ir.ui.view" id="contract_rule_view_list">
+            <field name="model">payroll.contract.rule</field>
             <field name="type">tree</field>
-            <field name="name">contract_hour_rule_list</field>
+            <field name="name">contract_rule_list</field>
         </record>
-        <record model="ir.action.act_window" id="act_contract_hour_rule">
+        <record model="ir.action.act_window" id="act_contract_rule">
             <field name="name">Employee Contract Rule</field>
-            <field name="res_model">payroll.contract.hour.rule</field>
+            <field name="res_model">payroll.contract.rule</field>
         </record>
-        <record model="ir.action.act_window.view" id="act_contract_hour_rule_view1">
+        <record model="ir.action.act_window.view" id="act_contract_rule_view1">
             <field name="sequence" eval="10"/>
-            <field name="view" ref="contract_hour_rule_view_list"/>
-            <field name="act_window" ref="act_contract_hour_rule"/>
+            <field name="view" ref="contract_rule_view_list"/>
+            <field name="act_window" ref="act_contract_rule"/>
         </record>
-        <record model="ir.action.act_window.view" id="act_contract_hour_rule_view2">
+        <record model="ir.action.act_window.view" id="act_contract_rule_view2">
             <field name="sequence" eval="20"/>
-            <field name="view" ref="contract_hour_rule_view_form"/>
-            <field name="act_window" ref="act_contract_hour_rule"/>
+            <field name="view" ref="contract_rule_view_form"/>
+            <field name="act_window" ref="act_contract_rule"/>
         </record>
-        <record model="ir.model.access" id="access_contract_hour_rule">
-            <field name="model" search="[('model', '=', 'payroll.contract.hour.rule')]"/>
+        <record model="ir.model.access" id="access_contract_rule">
+            <field name="model" search="[('model', '=', 'payroll.contract.rule')]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
             <field name="perm_delete" eval="False"/>
         </record>
-        <record model="ir.model.access" id="access_contract_hour_rule_admin">
-            <field name="model" search="[('model', '=', 'payroll.contract.hour.rule')]"/>
+        <record model="ir.model.access" id="access_contract_rule_admin">
+            <field name="model" search="[('model', '=', 'payroll.contract.rule')]"/>
             <field name="group" ref="group_payroll_admin"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
             <field name="perm_delete" eval="True"/>
         </record>
-        <record model="ir.ui.view" id="hour_type_view_form">
-            <field name="model">payroll.hour.type</field>
+        <record model="ir.ui.view" id="payslip_line_type_view_form">
+            <field name="model">payroll.payslip.line.type</field>
             <field name="type">form</field>
-            <field name="name">hour_type_form</field>
+            <field name="name">payslip_line_type_form</field>
         </record>
-        <record model="ir.ui.view" id="hour_type_view_list">
-            <field name="model">payroll.hour.type</field>
+        <record model="ir.ui.view" id="payslip_line_type_view_list">
+            <field name="model">payroll.payslip.line.type</field>
             <field name="type">tree</field>
-            <field name="name">hour_type_list</field>
+            <field name="name">payslip_line_type_list</field>
         </record>
-        <record model="ir.action.act_window" id="act_hour_type">
-            <field name="name">Payslip Hour Type</field>
-            <field name="res_model">payroll.hour.type</field>
+        <record model="ir.action.act_window" id="act_payslip_line_type">
+            <field name="name">Payslip Line Type</field>
+            <field name="res_model">payroll.payslip.line.type</field>
         </record>
-        <record model="ir.action.act_window.view" id="act_hour_type_view1">
+        <record model="ir.action.act_window.view" id="act_payslip_line_type_view1">
             <field name="sequence" eval="10"/>
-            <field name="view" ref="hour_type_view_list"/>
-            <field name="act_window" ref="act_hour_type"/>
+            <field name="view" ref="payslip_line_type_view_list"/>
+            <field name="act_window" ref="act_payslip_line_type"/>
         </record>
-        <record model="ir.action.act_window.view" id="act_hour_type_view2">
+        <record model="ir.action.act_window.view" id="act_payslip_line_type_view2">
             <field name="sequence" eval="20"/>
-            <field name="view" ref="hour_type_view_form"/>
-            <field name="act_window" ref="act_hour_type"/>
+            <field name="view" ref="payslip_line_type_view_form"/>
+            <field name="act_window" ref="act_payslip_line_type"/>
         </record>
-        <record model="ir.model.access" id="access_hour_type">
-            <field name="model" search="[('model', '=', 'payroll.hour.type')]"/>
+        <record model="ir.model.access" id="access_payslip_line_type">
+            <field name="model" search="[('model', '=', 'payroll.payslip.line.type')]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
             <field name="perm_delete" eval="False"/>
         </record>
-        <record model="ir.model.access" id="access_hour_type_admin">
-            <field name="model" search="[('model', '=', 'payroll.hour.type')]"/>
+        <record model="ir.model.access" id="access_payslip_line_type_admin">
+            <field name="model" search="[('model', '=', 'payroll.payslip.line.type')]"/>
             <field name="group" ref="group_payroll_admin"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -182,39 +182,39 @@
             <field name="perm_create" eval="True"/>
             <field name="perm_delete" eval="True"/>
         </record>
-        <record model="ir.ui.view" id="payslip_hour_view_form">
-            <field name="model">payroll.payslip.hour</field>
+        <record model="ir.ui.view" id="payslip_line_view_form">
+            <field name="model">payroll.payslip.line</field>
             <field name="type">form</field>
-            <field name="name">payslip_hour_form</field>
+            <field name="name">payslip_line_form</field>
         </record>
-        <record model="ir.ui.view" id="payslip_hour_view_list">
-            <field name="model">payroll.payslip.hour</field>
+        <record model="ir.ui.view" id="payslip_line_view_list">
+            <field name="model">payroll.payslip.line</field>
             <field name="type">tree</field>
-            <field name="name">payslip_hour_list</field>
+            <field name="name">payslip_line_list</field>
         </record>
-        <record model="ir.action.act_window" id="act_payslip_hour">
-            <field name="name">Payslip Hour</field>
-            <field name="res_model">payroll.payslip.hour</field>
+        <record model="ir.action.act_window" id="act_payslip_line">
+            <field name="name">Payslip Line</field>
+            <field name="res_model">payroll.payslip.line</field>
         </record>
-        <record model="ir.action.act_window.view" id="act_payslip_hour_view1">
+        <record model="ir.action.act_window.view" id="act_payslip_line_view1">
             <field name="sequence" eval="10"/>
-            <field name="view" ref="payslip_hour_view_list"/>
-            <field name="act_window" ref="act_payslip_hour"/>
+            <field name="view" ref="payslip_line_view_list"/>
+            <field name="act_window" ref="act_payslip_line"/>
         </record>
-        <record model="ir.action.act_window.view" id="act_payslip_hour_view2">
+        <record model="ir.action.act_window.view" id="act_payslip_line_view2">
             <field name="sequence" eval="20"/>
-            <field name="view" ref="payslip_hour_view_form"/>
-            <field name="act_window" ref="act_payslip_hour"/>
+            <field name="view" ref="payslip_line_view_form"/>
+            <field name="act_window" ref="act_payslip_line"/>
         </record>
-        <record model="ir.model.access" id="access_payslip_hour">
-            <field name="model" search="[('model', '=', 'payroll.payslip.hour')]"/>
+        <record model="ir.model.access" id="access_payslip_line">
+            <field name="model" search="[('model', '=', 'payroll.payslip.line')]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
             <field name="perm_delete" eval="False"/>
         </record>
-        <record model="ir.model.access" id="access_payslip_hour_admin">
-            <field name="model" search="[('model', '=', 'payroll.payslip.hour')]"/>
+        <record model="ir.model.access" id="access_payslip_line_admin">
+            <field name="model" search="[('model', '=', 'payroll.payslip.line')]"/>
             <field name="group" ref="group_payroll_admin"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -299,10 +299,10 @@
           </record>
 
         <menuitem action="act_contract" id="menu_contract" parent="menu_payroll" sequence="1" name="Employee Contract"/>
-        <menuitem action="act_contract_hour_rule" id="menu_contract_hour_rule" parent="menu_payroll" sequence="1" name="Employee Contract Rule"/>
-        <menuitem action="act_hour_type" id="menu_hour_type" parent="menu_payroll" sequence="1" name="Payslip Hour Type"/>
+        <menuitem action="act_contract_rule" id="menu_contract_rule" parent="menu_payroll" sequence="1" name="Employee Contract Rule"/>
+        <menuitem action="act_payslip_line_type" id="menu_payslip_line_type" parent="menu_payroll" sequence="1" name="Payslip Line Type"/>
         <menuitem action="act_payslip" id="menu_payslip" parent="menu_payroll" sequence="1" name="Payslip"/>
-        <menuitem action="act_payslip_hour" id="menu_payslip_hour" parent="menu_payroll" sequence="1" name="Payslip Hour"/>
+        <menuitem action="act_payslip_line" id="menu_payslip_line" parent="menu_payroll" sequence="1" name="Payslip Line"/>
         <menuitem action="act_working_shift" id="menu_working_shift" parent="menu_payroll" sequence="1" name="Working Shift"/>
     </data>
 </tryton>

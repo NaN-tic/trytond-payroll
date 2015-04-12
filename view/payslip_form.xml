@@ -10,26 +10,24 @@
     <field name="start"/>
     <label name="end"/>
     <field name="end"/>
-    <label name="working_hours"/>
-    <field name="working_hours"/>
     <label name="amount"/>
     <field name="amount"/>
-    <field name="working_shifts" colspan="2" widget="many2many"/>
-    <field name="entitlements" colspan="2"/>
-    <label name="worked_hours"/>
-    <field name="worked_hours"/>
-    <label name="entitled_hours"/>
-    <field name="entitled_hours"/>
-    <!--
-    <label name="expected_hours"/>
-    <field name="expected_hours"/>
-    -->
-    <label name="leave_hours"/>
-    <field name="leave_hours"/>
-    <newline/>
-    <label name="remaining_hours"/>
-    <field name="remaining_hours"/>
-    <label name="total_hours"/>
-    <field name="total_hours"/>
-    <field name="hours" colspan="4"/>
+    <notebook>
+        <page string="Lines" id="lines">
+            <field name="lines" colspan="4"/>
+        </page>
+        <page string="Summary" id="summary">
+            <field name="working_shifts" colspan="2" widget="many2many"/>
+            <field name="entitlements" colspan="2"/>
+            <label name="worked_hours"/>
+            <field name="worked_hours"/>
+            <label name="entitled_hours"/>
+            <field name="entitled_hours"/>
+            <label name="leave_hours"/>
+            <field name="leave_hours"/>
+            <newline/>
+            <label name="total_hours"/>
+            <field name="total_hours"/>
+        </page>
+    </notebook>
 </form>

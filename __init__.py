@@ -6,10 +6,10 @@ from .payroll import *
 def register():
     Pool.register(
         EmployeeContract,
-        PayslipHourType,
+        PayslipLineType,
         EmployeeContractRule,
         Payslip,
-        PayslipHour,
+        PayslipLine,
         Entitlement,
         LeavePayment,
         WorkingShift,

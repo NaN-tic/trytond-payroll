@@ -3,8 +3,8 @@ from trytond.pyson import Eval
 from trytond.pool import Pool, PoolMeta
 from decimal import Decimal
 
-__all__ = ['EmployeeContract', 'PayslipHourType', 'EmployeeContractRule',
-    'Payslip', 'PayslipHour', 'Entitlement', 'LeavePayment', 'WorkingShift']
+__all__ = ['EmployeeContract', 'PayslipLineType', 'EmployeeContractRule',
+    'Payslip', 'PayslipLine', 'Entitlement', 'LeavePayment', 'WorkingShift']
 __metaclass__ = PoolMeta
 
 
@@ -14,8 +14,13 @@ class EmployeeContract(ModelSQL, ModelView):
     employee = fields.Many2One('company.employee', 'Employee', required=True)
     start = fields.Date('Start', required=True)
     end = fields.Date('End')
-    rules = fields.One2Many('payroll.contract.hour.rule', 'contract',
-        'Hour Rules')
+    yearly_hours = fields.Numeric('Yearly Hours')
+# TODO: We should add a functional one2many field that returned the number
+# of hours worked by the employee and the total number of hours remaining to
+# be worked for each year (LeavePeriod)
+# We should think how leaves and leave payments affect these numbers
+    rules = fields.One2Many('payroll.contract.rule', 'contract',
+        'Payslip Rules')
 
     @classmethod
     def __setup__(cls):
@@ -35,21 +40,22 @@ class EmployeeContract(ModelSQL, ModelView):
             self.raise_user_error('invalid_dates', self.rec_name)
 
 
-class PayslipHourType(ModelSQL, ModelView):
-    'Payslip Hour Type'
-    __name__ = 'payroll.hour.type'
+class PayslipLineType(ModelSQL, ModelView):
+    'Payslip Line Type'
+    __name__ = 'payroll.payslip.line.type'
     name = fields.Char('Name', required=True, translate=True)
 
 
 class EmployeeContractRule(ModelSQL, ModelView, MatchMixin):
     'Employee Contract Rule'
-    __name__ = 'payroll.contract.hour.rule'
+    __name__ = 'payroll.contract.rule'
     contract = fields.Many2One('payroll.contract', 'Contract',
         required=True)
     # Matching
     hours = fields.Numeric('Hours')
+
     # Result
-    hour_type = fields.Many2One('payroll.hour.type', 'Hour Type',
+    hour_type = fields.Many2One('payroll.payslip.line.type', 'Hour Type',
         required=True)
     formula = fields.Char('Formula', required=True)
 
@@ -61,19 +67,13 @@ class Payslip(ModelSQL, ModelView):
     contract = fields.Many2One('payroll.contract', 'Contract', required=True)
     start = fields.Date('Start', required=True)
     end = fields.Date('End', required=True)
-    working_hours = fields.Numeric('Working Hours', required=True,
-        help='Number of working hours in the current month. Usually 8 * 20.')
     # TODO: Consider calculating it from dates
-    working_shifts = fields.One2Many('payroll.working_shift', 'payslip',
-        'Working Shifts', add_remove=[
-            ('payslip', '=', None),
-            ])
-    entitlements = fields.One2Many('employee.leave.entitlement', 'payslip',
-        'Entitlements', add_remove=[
-            ('payslip', '=', None),
-            ])
-    leave_payments = fields.One2Many('employee.leave.payment', 'payslip',
-        'Leave Payments')
+    working_shifts = fields.Function(fields.One2Many('payroll.working_shift',
+            'payslip', 'Working Shifts'), 'get_working_shifts')
+    entitlements = fields.Function(fields.One2Many('employee.leave.entitlement',
+            'payslip', 'Entitlements'), 'get_entitlements')
+    leave_payments = fields.Function(fields.One2Many('employee.leave.payment',
+            'payslip', 'Leave Payments'), 'get_leave_payments')
     worked_hours = fields.Function(fields.Numeric('Worked Hours'),
         'get_worked_hours')
     leave_hours = fields.Function(fields.Numeric('Leave Hours'),
@@ -85,17 +85,26 @@ class Payslip(ModelSQL, ModelView):
     remaining_hours = fields.Function(fields.Numeric('Remaining Hours'),
         'get_remaining_hours')
 
-    hours = fields.One2Many('payroll.payslip.hour', 'payslip', 'Hours')
+    lines = fields.One2Many('payroll.payslip.line', 'payslip', 'Lines')
     amount = fields.Function(fields.Numeric('Amount'), 'get_amount')
 
-    @fields.depends('start', 'end')
-    def on_change_with_working_hours(self, name=None):
-        # TODO: Calculate working days taking into account the weekends.
-        # An extension could take into account national holidays, for example.
-        return Decimal(20 * 8)
+    def get_working_shifts(self, name):
+        res = []
+        for line in self.lines:
+            res += [x.id for x in line.working_shifts]
+        return res
+
+    def get_entitlements(self, name):
+        res = []
+        for line in self.lines:
+            res += [x.id for x in line.entitlements]
+        return res
 
     def get_worked_hours(self, name):
-        return sum([x.hours for x in self.working_shifts])
+        res = Decimal('0.0')
+        for line in self.lines:
+            res += sum([x.hours for x in self.working_shifts])
+        return res
 
     def get_leave_hours(self, name):
         # Search on 'employee.leave' and find the number of hours that fit
@@ -110,11 +119,8 @@ class Payslip(ModelSQL, ModelView):
     def get_total_hours(self, name):
         return self.worked_hours - self.entitled_hours + self.leave_hours
 
-    def get_remaining_hours(self, name):
-        return self.working_hours - self.total_hours
-
     def get_amount(self, name):
-        return sum([x.amount for x in self.hours])
+        return sum([x.amount for x in self.lines])
 
     @classmethod
     def copy(cls, payslips, default=None):
@@ -125,27 +131,95 @@ class Payslip(ModelSQL, ModelView):
         return super(Payslip, cls).copy(payslips, default)
 
 
-class PayslipHour(ModelSQL, ModelView):
-    'Payslip Hour'
-    __name__ = 'payroll.payslip.hour'
-    payslip = fields.Many2One('payroll.payslip', 'Payslip', required=True)
-    type = fields.Many2One('payroll.hour.type', 'Type', required=True)
-    hours = fields.Numeric('Hours', required=True)
-    price = fields.Numeric('Price', required=True)
-    amount = fields.Function(fields.Numeric('Amount'), 'get_amount')
 
-    def get_amount(self, name):
-        return self.price * Decimal(str(self.hours))
+class PayslipLine(ModelSQL, ModelView):
+    'Payslip Line'
+    __name__ = 'payroll.payslip.line'
+    payslip = fields.Many2One('payroll.payslip', 'Payslip', required=True)
+    type = fields.Many2One('payroll.payslip.line.type', 'Type', required=True)
+    working_hours = fields.Numeric('Working Hours',
+        help='Number of working hours in the current month. Usually 8 * 20.')
+    working_shifts = fields.One2Many('payroll.working_shift', 'payslip_line',
+        'Working Shifts')
+    entitlements = fields.One2Many('employee.leave.entitlement', 'payslip_line',
+        'Entitlements', add_remove=[
+            ('payslip_line', '=', None),
+            ])
+    leave_payments = fields.One2Many('employee.leave.payment', 'payslip_line',
+        'Leave Payments')
+    amount = fields.Numeric('Amount', required=True)
+    worked_hours = fields.Function(fields.Numeric('Worked Hours'),
+        'get_worked_hours')
+    leave_hours = fields.Function(fields.Numeric('Leave Hours', states={
+                'invisible': ~Eval('working_hours', 0),
+                }, depends=['working_hours']),
+        'get_leave_hours')
+    entitled_hours = fields.Function(fields.Numeric('Entitled Hours', states={
+                'invisible': ~Eval('working_hours', 0),
+                }, depends=['working_hours']),
+        'get_entitled_hours')
+    total_hours = fields.Function(fields.Numeric('Total Hours', states={
+                'invisible': ~Eval('working_hours', 0),
+                }, depends=['working_hours']),
+        'get_total_hours')
+    remaining_hours = fields.Function(fields.Numeric('Remaining Hours', states={
+                'invisible': ~Eval('working_hours', 0),
+                }, depends=['working_hours']),
+        'get_remaining_hours')
+
+    # TODO: Add constriant that ensures that there's only one payslip line
+    # with working_hours set.
+
+    # Only payslip lines with working_hours set will take into account
+    # leave_hours as most of the time they will be holidays and it doesn't
+    # make much sense that two different kinds of payslip line type can
+    # "allocate" holidays. Also it makes things much more complex as the user
+    # should have to decide how many of the total number of holidays the
+    # employee has consumed should go to each line type. As it is not
+    # a requirement in this case, we just don't implement that
+
+    def get_worked_hours(self, name):
+        return sum([x.hours for x in self.working_shifts])
+
+    def get_leave_hours(self, name):
+        # Search on 'employee.leave' and find the number of hours that fit
+        # inside this payslip
+        Leave = Pool().get('employee.leave')
+        if not self.working_hours:
+            return Decimal('0.0')
+        return Leave.get_leave_hours(self.payslip.employee, None,
+            self.payslip.start, self.payslip.end)
+
+    def get_entitled_hours(self, name):
+        return sum([x.hours for x in self.entitlements])
+
+    def get_total_hours(self, name):
+        return self.worked_hours - self.entitled_hours + self.leave_hours
+
+    def get_remaining_hours(self, name):
+        return self.working_hours - self.total_hours
 
 
 class Entitlement:
     __name__ = 'employee.leave.entitlement'
-    payslip = fields.Many2One('payroll.payslip', 'Payslip')
+    payslip_line = fields.Many2One('payroll.payslip.line', 'Payslip Line',
+        readonly=True)
+    payslip = fields.Function(fields.Many2One('payroll.payslip', 'Payslip'),
+        'get_payslip')
+
+    def get_payslip(self, name):
+        return self.payslip_line.payslip.id if self.payslip_line else None
 
 
 class LeavePayment:
     __name__ = 'employee.leave.payment'
-    payslip = fields.Many2One('payroll.payslip', 'Payslip')
+    payslip_line = fields.Many2One('payroll.payslip.line', 'Payslip Line',
+        readonly=True)
+    payslip = fields.Function(fields.Many2One('payroll.payslip', 'Payslip'),
+        'get_payslip')
+
+    def get_payslip(self, name):
+        return self.payslip_line.payslip.id if self.payslip_line else None
 
 
 class WorkingShift(ModelSQL, ModelView):
@@ -156,10 +230,16 @@ class WorkingShift(ModelSQL, ModelView):
     start_date = fields.DateTime('Start Date', required=True)
     end_date = fields.DateTime('End Date')
     hours = fields.Function(fields.Numeric('Hours'), 'get_hours')
-    payslip = fields.Many2One('payroll.payslip', 'Payslip', readonly=True)
+    payslip_line = fields.Many2One('payroll.payslip.line', 'Payslip Line',
+        readonly=True)
+    payslip = fields.Function(fields.Many2One('payroll.payslip', 'Payslip'),
+        'get_payslip')
 
     def get_hours(self, name):
         if not self.end_date:
             return
         hours = (self.end_date - self.start_date).total_seconds() / 3600.0
         return Decimal('{:.2}'.format(hours))
+
+    def get_payslip(self, name):
+        return self.payslip_line.payslip.id if self.payslip_line else None
