@@ -4,10 +4,12 @@
 <form string="Employee Contract Rule">
     <label name="contract"/>
     <field name="contract"/>
-    <label name="hour_type"/>
-    <field name="hour_type"/>
+    <newline/>
     <label name="hours"/>
     <field name="hours"/>
+    <newline/>
+    <label name="hour_type"/>
+    <field name="hour_type"/>
     <label name="formula"/>
     <field name="formula"/>
 </form>
