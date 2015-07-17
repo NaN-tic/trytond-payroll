@@ -9,5 +9,14 @@
     <field name="start"/>
     <label name="end"/>
     <field name="end"/>
-    <field name="rules" colspan="4"/>
+    <label name="yearly_hours"/>
+    <field name="yearly_hours"/>
+    <notebook colspan="4">
+        <page name="hours_summary">
+            <field name="hours_summary" colspan="4"/>
+        </page>
+        <page name="rules">
+            <field name="rules" colspan="4"/>
+        </page>
+    </notebook>
 </form>

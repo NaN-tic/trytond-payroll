@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<form string="Payslip Line">
+<form string="Payslip Line" col="6">
     <label name="payslip"/>
     <field name="payslip"/>
     <newline/>
@@ -9,19 +9,25 @@
     <field name="type"/>
     <label name="working_hours"/>
     <field name="working_hours"/>
-    <field name="working_shifts" widget="many2many" colspan="4"/>
-    <field name="entitlements" colspan="2"/>
-    <field name="leave_payments" colspan="2"/>
-    <label name="amount"/>
-    <field name="amount"/>
-    <label name="worked_hours"/>
-    <field name="worked_hours"/>
-    <label name="leave_hours"/>
-    <field name="leave_hours"/>
-    <label name="entitled_hours"/>
-    <field name="entitled_hours"/>
-    <label name="total_hours"/>
-    <field name="total_hours"/>
-    <label name="remaining_hours"/>
-    <field name="remaining_hours"/>
+    <newline/>
+    <field name="working_shifts" widget="many2many" colspan="6"/>
+    <field name="generated_entitlements" colspan="3"/>
+    <field name="leave_payments" colspan="3"/>
+    <group id="hours" colspan="6" col="8">
+        <label name="worked_hours"/>
+        <field name="worked_hours"/>
+        <label name="leave_hours"/>
+        <field name="leave_hours"/>
+        <label name="generated_entitled_hours"/>
+        <field name="generated_entitled_hours"/>
+        <separator id="totals" colspan="6"/>
+        <label name="total_hours"/>
+        <field name="total_hours"/>
+        <label name="remaining_hours"/>
+        <field name="remaining_hours"/>
+        <label name="leave_payment_hours"/>
+        <field name="leave_payment_hours"/>
+        <label name="amount"/>
+        <field name="amount"/>
+    </group>
 </form>

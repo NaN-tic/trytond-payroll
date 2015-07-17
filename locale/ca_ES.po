@@ -1,0 +1,532 @@
+# 
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "error:payroll.contract:"
+msgid ""
+"The Payroll Contract \"%(current_contract)s\" overlaps with existing "
+"contract \"%(overlaped_contract)s\"."
+msgstr ""
+"El contracte \"%(current_contract)s\" se solapa amb el contracte existent "
+"\"%(overlaped_contract)s\"."
+
+msgctxt "error:payroll.payslip.line:"
+msgid ""
+"You can't set Working Hours to Payslip Line \"%(current_line)s\" because "
+"already exists line \"%(existing_line)s\" with hours in the same Payslip."
+msgstr ""
+"No pot establir hores de treball a la línia de nòmina \"%(current_line)s\" "
+"perquè ja existeix la línia \"%(existing_line)s\" amb hores a la mateixa "
+"nòmina."
+
+msgctxt "field:company.employee,payroll_contracts:"
+msgid "Contracts"
+msgstr "Contractes"
+
+msgctxt "field:employee.leave.entitlement,payslip:"
+msgid "Payslip"
+msgstr "Nòmina"
+
+msgctxt "field:employee.leave.entitlement,payslip_line:"
+msgid "Payslip Line"
+msgstr "Línia nòmina"
+
+msgctxt "field:employee.leave.payment,payslip:"
+msgid "Payslip"
+msgstr "Nòmina"
+
+msgctxt "field:employee.leave.payment,payslip_line:"
+msgid "Payslip Line"
+msgstr "Línia nòmina"
+
+msgctxt "field:payroll.contract,create_date:"
+msgid "Create Date"
+msgstr "Data creació"
+
+msgctxt "field:payroll.contract,create_uid:"
+msgid "Create User"
+msgstr "Usuari creació"
+
+msgctxt "field:payroll.contract,employee:"
+msgid "Employee"
+msgstr "Empleat"
+
+msgctxt "field:payroll.contract,end:"
+msgid "End"
+msgstr "Finalització"
+
+msgctxt "field:payroll.contract,hours_summary:"
+msgid "Hours Summary"
+msgstr "Resum hores"
+
+msgctxt "field:payroll.contract,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:payroll.contract,rec_name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:payroll.contract,rules:"
+msgid "Payslip Rules"
+msgstr "Regles nòmina"
+
+msgctxt "field:payroll.contract,start:"
+msgid "Start"
+msgstr "Inici"
+
+msgctxt "field:payroll.contract,write_date:"
+msgid "Write Date"
+msgstr "Data modificació"
+
+msgctxt "field:payroll.contract,write_uid:"
+msgid "Write User"
+msgstr "Usuari modificació"
+
+msgctxt "field:payroll.contract,yearly_hours:"
+msgid "Yearly Hours"
+msgstr "Hores anuals"
+
+msgctxt "field:payroll.contract.hours_summary,contract:"
+msgid "Payroll"
+msgstr "Nòmina"
+
+msgctxt "field:payroll.contract.hours_summary,create_date:"
+msgid "Create Date"
+msgstr "Data creació"
+
+msgctxt "field:payroll.contract.hours_summary,create_uid:"
+msgid "Create User"
+msgstr "Usuari creació"
+
+msgctxt "field:payroll.contract.hours_summary,entitled_hours:"
+msgid "Entitled Hours"
+msgstr "Hores de dret"
+
+msgctxt "field:payroll.contract.hours_summary,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:payroll.contract.hours_summary,leave_hours:"
+msgid "Leave Hours"
+msgstr "Hores absències"
+
+msgctxt "field:payroll.contract.hours_summary,leave_payment_hours:"
+msgid "Leave Payment Hours"
+msgstr "Hores pagament absències"
+
+msgctxt "field:payroll.contract.hours_summary,leave_period:"
+msgid "Period"
+msgstr "Període"
+
+msgctxt "field:payroll.contract.hours_summary,rec_name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:payroll.contract.hours_summary,remaining_hours:"
+msgid "Remaining Hours"
+msgstr "Hores pendents"
+
+msgctxt "field:payroll.contract.hours_summary,total_hours:"
+msgid "Total Hours"
+msgstr "Hores totals"
+
+msgctxt "field:payroll.contract.hours_summary,worked_hours:"
+msgid "Worked Hours"
+msgstr "Hores treballades"
+
+msgctxt "field:payroll.contract.hours_summary,write_date:"
+msgid "Write Date"
+msgstr "Data modificació"
+
+msgctxt "field:payroll.contract.hours_summary,write_uid:"
+msgid "Write User"
+msgstr "Usuari modificació"
+
+msgctxt "field:payroll.contract.rule,contract:"
+msgid "Contract"
+msgstr "Contracte"
+
+msgctxt "field:payroll.contract.rule,create_date:"
+msgid "Create Date"
+msgstr "Data creació"
+
+msgctxt "field:payroll.contract.rule,create_uid:"
+msgid "Create User"
+msgstr "Usuari creació"
+
+msgctxt "field:payroll.contract.rule,formula:"
+msgid "Formula"
+msgstr "Fòrmula"
+
+msgctxt "field:payroll.contract.rule,hour_type:"
+msgid "Hour Type"
+msgstr "Tipus hora"
+
+msgctxt "field:payroll.contract.rule,hours:"
+msgid "Hours"
+msgstr "Hores"
+
+msgctxt "field:payroll.contract.rule,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:payroll.contract.rule,product:"
+msgid "Product"
+msgstr "Producte"
+
+msgctxt "field:payroll.contract.rule,rec_name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:payroll.contract.rule,sequence:"
+msgid "Sequence"
+msgstr "Seqüència"
+
+msgctxt "field:payroll.contract.rule,write_date:"
+msgid "Write Date"
+msgstr "Data modificació"
+
+msgctxt "field:payroll.contract.rule,write_uid:"
+msgid "Write User"
+msgstr "Usuari modificació"
+
+msgctxt "field:payroll.payslip,amount:"
+msgid "Amount"
+msgstr "Import"
+
+msgctxt "field:payroll.payslip,contract:"
+msgid "Contract"
+msgstr "Contracte"
+
+msgctxt "field:payroll.payslip,contract_end:"
+msgid "Contract Start"
+msgstr "Inici contracte"
+
+msgctxt "field:payroll.payslip,contract_start:"
+msgid "Contract Start"
+msgstr "Fi contracte"
+
+msgctxt "field:payroll.payslip,create_date:"
+msgid "Create Date"
+msgstr "Data creació"
+
+msgctxt "field:payroll.payslip,create_uid:"
+msgid "Create User"
+msgstr "Usuari creació"
+
+msgctxt "field:payroll.payslip,currency_digits:"
+msgid "Currency Digits"
+msgstr "Dígits de la moneda"
+
+msgctxt "field:payroll.payslip,employee:"
+msgid "Employee"
+msgstr "Empleat"
+
+msgctxt "field:payroll.payslip,end:"
+msgid "End"
+msgstr "Finalització"
+
+msgctxt "field:payroll.payslip,generated_entitled_hours:"
+msgid "Generated Entitled Hours"
+msgstr "Hores de dret generades"
+
+msgctxt "field:payroll.payslip,generated_entitlements:"
+msgid "Generated Entitlements"
+msgstr "Drets generats"
+
+msgctxt "field:payroll.payslip,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:payroll.payslip,leave_hours:"
+msgid "Leave Hours"
+msgstr "Hores absències"
+
+msgctxt "field:payroll.payslip,leave_payment_hours:"
+msgid "Leave Payment Hours"
+msgstr "Hores pagament absències"
+
+msgctxt "field:payroll.payslip,leave_payments:"
+msgid "Leave Payments"
+msgstr "Pagaments d'absències"
+
+msgctxt "field:payroll.payslip,lines:"
+msgid "Lines"
+msgstr "Línies"
+
+msgctxt "field:payroll.payslip,rec_name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:payroll.payslip,start:"
+msgid "Start"
+msgstr "Inici"
+
+msgctxt "field:payroll.payslip,total_hours:"
+msgid "Total Hours"
+msgstr "Hores totals"
+
+msgctxt "field:payroll.payslip,worked_hours:"
+msgid "Worked Hours"
+msgstr "Hores treballades"
+
+msgctxt "field:payroll.payslip,working_shifts:"
+msgid "Working Shifts"
+msgstr "Torns de treball"
+
+msgctxt "field:payroll.payslip,write_date:"
+msgid "Write Date"
+msgstr "Data modificació"
+
+msgctxt "field:payroll.payslip,write_uid:"
+msgid "Write User"
+msgstr "Usuari modificació"
+
+msgctxt "field:payroll.payslip.line,amount:"
+msgid "Amount"
+msgstr "Import"
+
+msgctxt "field:payroll.payslip.line,create_date:"
+msgid "Create Date"
+msgstr "Data creació"
+
+msgctxt "field:payroll.payslip.line,create_uid:"
+msgid "Create User"
+msgstr "Usuari creació"
+
+msgctxt "field:payroll.payslip.line,currency_digits:"
+msgid "Currency Digits"
+msgstr "Dígits de la moneda"
+
+msgctxt "field:payroll.payslip.line,generated_entitled_hours:"
+msgid "Generated Entitled Hours"
+msgstr "Hores de dret generades"
+
+msgctxt "field:payroll.payslip.line,generated_entitlements:"
+msgid "Generated Entitlements"
+msgstr "Drets generats"
+
+msgctxt "field:payroll.payslip.line,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:payroll.payslip.line,leave_hours:"
+msgid "Leave Hours"
+msgstr "Hores absències"
+
+msgctxt "field:payroll.payslip.line,leave_payment_hours:"
+msgid "Leave Payment Hours"
+msgstr "Hores pagament absències"
+
+msgctxt "field:payroll.payslip.line,leave_payments:"
+msgid "Leave Payments"
+msgstr "Pagaments d'absències"
+
+msgctxt "field:payroll.payslip.line,payslip:"
+msgid "Payslip"
+msgstr "Nòmina"
+
+msgctxt "field:payroll.payslip.line,payslip_employee:"
+msgid "Payslip Employee"
+msgstr "Empleat nòmina"
+
+msgctxt "field:payroll.payslip.line,payslip_end:"
+msgid "Payslip Start"
+msgstr "Inici nòmina"
+
+msgctxt "field:payroll.payslip.line,payslip_start:"
+msgid "Payslip Start"
+msgstr "Inici nòmina"
+
+msgctxt "field:payroll.payslip.line,rec_name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:payroll.payslip.line,remaining_hours:"
+msgid "Remaining Hours"
+msgstr "Hores pendents"
+
+msgctxt "field:payroll.payslip.line,total_hours:"
+msgid "Total Hours"
+msgstr "Hores totals"
+
+msgctxt "field:payroll.payslip.line,type:"
+msgid "Type"
+msgstr "Tipus"
+
+msgctxt "field:payroll.payslip.line,worked_hours:"
+msgid "Worked Hours"
+msgstr "Hores treballades"
+
+msgctxt "field:payroll.payslip.line,working_hours:"
+msgid "Working Hours"
+msgstr "Hores de treball"
+
+msgctxt "field:payroll.payslip.line,working_shifts:"
+msgid "Working Shifts"
+msgstr "Torns de treball"
+
+msgctxt "field:payroll.payslip.line,write_date:"
+msgid "Write Date"
+msgstr "Data modificació"
+
+msgctxt "field:payroll.payslip.line,write_uid:"
+msgid "Write User"
+msgstr "Usuari modificació"
+
+msgctxt "field:payroll.payslip.line.type,create_date:"
+msgid "Create Date"
+msgstr "Data creació"
+
+msgctxt "field:payroll.payslip.line.type,create_uid:"
+msgid "Create User"
+msgstr "Usuari creació"
+
+msgctxt "field:payroll.payslip.line.type,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:payroll.payslip.line.type,name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:payroll.payslip.line.type,rec_name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:payroll.payslip.line.type,write_date:"
+msgid "Write Date"
+msgstr "Data modificació"
+
+msgctxt "field:payroll.payslip.line.type,write_uid:"
+msgid "Write User"
+msgstr "Usuari modificació"
+
+msgctxt "field:working_shift,cost:"
+msgid "Amount"
+msgstr "Import"
+
+msgctxt "field:working_shift,cost_hours:"
+msgid "Cost Hours"
+msgstr "Hores de cost"
+
+msgctxt "field:working_shift,currency_digits:"
+msgid "Currency Digits"
+msgstr "Dígits de la moneda"
+
+msgctxt "field:working_shift,payslip:"
+msgid "Payslip"
+msgstr "Nòmina"
+
+msgctxt "field:working_shift,payslip_line:"
+msgid "Payslip Line"
+msgstr "Línia nòmina"
+
+msgctxt "help:payroll.contract.rule,hour_type:"
+msgid "Used to automatically fill payslip lines."
+msgstr "S'utilitza per omplir automàticament les línies de la nòmina"
+
+msgctxt "help:payroll.payslip.line,working_hours:"
+msgid "Number of working hours in the current month. Usually 8 * 20."
+msgstr "Número d'hores de treball en el mes actual. Habitualment són 8 * 20"
+
+msgctxt "model:ir.action,name:act_contract"
+msgid "Contracts"
+msgstr "Contractes"
+
+msgctxt "model:ir.action,name:act_payslip"
+msgid "Payslips"
+msgstr "Nòmines"
+
+msgctxt "model:ir.action,name:act_payslip_line_type"
+msgid "Payslip Line Types"
+msgstr "Tipus línia nòmina"
+
+msgctxt "model:ir.action.act_window.domain,name:act_contract_domain_active"
+msgid "Active"
+msgstr "Actiu"
+
+msgctxt "model:ir.action.act_window.domain,name:act_contract_domain_all"
+msgid "All"
+msgstr "Tots"
+
+msgctxt "model:ir.ui.menu,name:menu_contract"
+msgid "Contracts"
+msgstr "Contractes"
+
+msgctxt "model:ir.ui.menu,name:menu_payroll"
+msgid "Payroll"
+msgstr "Nòmina"
+
+msgctxt "model:ir.ui.menu,name:menu_payslip"
+msgid "Payslips"
+msgstr "Nòmines"
+
+msgctxt "model:ir.ui.menu,name:menu_payslip_line_type"
+msgid "Payslip Line Types"
+msgstr "Tipus línia nòmina"
+
+msgctxt "model:payroll.contract,name:"
+msgid "Payroll Contract"
+msgstr "Contracte nòmina"
+
+msgctxt "model:payroll.contract.hours_summary,name:"
+msgid "Payroll Contract Hours Summary"
+msgstr "Resum hores contracte nòmina"
+
+msgctxt "model:payroll.contract.rule,name:"
+msgid "Payroll Contract Rule"
+msgstr "Regla contracte nòmina"
+
+msgctxt "model:payroll.payslip,name:"
+msgid "Payslip"
+msgstr "Nòmina"
+
+msgctxt "model:payroll.payslip.line,name:"
+msgid "Payslip Line"
+msgstr "Línia nòmina"
+
+msgctxt "model:payroll.payslip.line.type,name:"
+msgid "Payslip Line Type"
+msgstr "Tipus línia nòmina"
+
+msgctxt "model:res.group,name:group_payroll"
+msgid "Payroll"
+msgstr "Nòmina"
+
+msgctxt "model:res.group,name:group_payroll_contract"
+msgid "Payroll Contracts"
+msgstr "Contractes nòmina"
+
+msgctxt "view:payroll.contract.hours_summary:"
+msgid "Contract Hours Summary"
+msgstr "Resum hores contracte"
+
+msgctxt "view:payroll.contract.rule:"
+msgid "Employee Contract Rule"
+msgstr "Regla contracte empleats"
+
+msgctxt "view:payroll.contract:"
+msgid "Employee Contract"
+msgstr "Empleat contracte"
+
+msgctxt "view:payroll.payslip.line.type:"
+msgid "Payslip Hour Type"
+msgstr "Tipus hora nòmina"
+
+msgctxt "view:payroll.payslip.line:"
+msgid "Payslip Line"
+msgstr "Línia nòmina"
+
+msgctxt "view:payroll.payslip:"
+msgid "Lines"
+msgstr "Línies"
+
+msgctxt "view:payroll.payslip:"
+msgid "Payslip"
+msgstr "Nòmina"
+
+msgctxt "view:payroll.payslip:"
+msgid "Summary"
+msgstr "Resum"

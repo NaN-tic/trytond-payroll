@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <!-- payroll.contract -->
+        <record model="ir.ui.view" id="contract_view_form">
+            <field name="model">payroll.contract</field>
+            <field name="type">form</field>
+            <field name="name">contract_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="contract_view_list">
+            <field name="model">payroll.contract</field>
+            <field name="type">tree</field>
+            <field name="name">contract_list</field>
+        </record>
+
+        <record model="ir.action.act_window" id="act_contract">
+            <field name="name">Contracts</field>
+            <field name="res_model">payroll.contract</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_contract_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="contract_view_list"/>
+            <field name="act_window" ref="act_contract"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_contract_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="contract_view_form"/>
+            <field name="act_window" ref="act_contract"/>
+        </record>
+        <record model="ir.action.act_window.domain" id="act_contract_domain_active">
+            <field name="act_window" ref="act_contract"/>
+            <field name="name">Active</field>
+            <field name="sequence" eval="10"/>
+            <field name="domain">[['AND', ('start', '&lt;=', Date()), ['OR', ('end', '=', None), ('end', '>=', Date())]]]</field>
+        </record>
+        <record model="ir.action.act_window.domain" id="act_contract_domain_all">
+            <field name="act_window" ref="act_contract"/>
+            <field name="name">All</field>
+            <field name="sequence" eval="9999"/>
+            <field name="domain"></field>
+        </record>
+
+        <record model="ir.model.access" id="access_contrac_payroll">
+            <field name="model" search="[('model', '=', 'payroll.contract')]"/>
+            <field name="group" ref="group_payroll"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access" id="access_contract_contract">
+            <field name="model" search="[('model', '=', 'payroll.contract')]"/>
+            <field name="group" ref="group_payroll_contract"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <!-- payroll.contract.hours_summary -->
+        <record model="ir.ui.view" id="contract_hours_summary_view_form">
+            <field name="model">payroll.contract.hours_summary</field>
+            <field name="type">form</field>
+            <field name="name">contract_hours_summary_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="contract_hours_summary_view_list">
+            <field name="model">payroll.contract.hours_summary</field>
+            <field name="type">tree</field>
+            <field name="name">contract_hours_summary_list</field>
+        </record>
+
+        <!-- payroll.contract.rule -->
+        <record model="ir.ui.view" id="contract_rule_view_form">
+            <field name="model">payroll.contract.rule</field>
+            <field name="type">form</field>
+            <field name="name">contract_rule_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="contract_rule_view_list">
+            <field name="model">payroll.contract.rule</field>
+            <field name="type">tree</field>
+            <field name="name">contract_rule_list</field>
+        </record>
+
+        <!-- Menus -->
+        <menuitem id="menu_contract" action="act_contract"
+            parent="menu_payroll" sequence="10"/>
+    </data>
+</tryton>

@@ -1,15 +1,13 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<tree string="Payslip Line">
-    <field name="payslip"/>
-    <field name="type"/>
-    <field name="working_hours"/>
+<tree string="Contract Hours Summary">
+    <field name="contract"/>
+    <field name="leave_period"/>
     <field name="worked_hours"/>
     <field name="leave_hours"/>
-    <field name="generated_entitled_hours"/>
+    <field name="entitled_hours"/>
+    <field name="leave_payment_hours"/>
     <field name="total_hours"/>
     <field name="remaining_hours"/>
-    <field name="leave_payment_hours"/>
-    <field name="amount"/>
 </tree>

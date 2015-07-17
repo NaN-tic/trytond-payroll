@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<tryton>
+    <data>
+        <record model="res.group" id="group_payroll">
+            <field name="name">Payroll</field>
+        </record>
+        <record model="res.user-res.group" id="user_admin_group_payroll">
+            <field name="user" ref="res.user_admin"/>
+            <field name="group" ref="group_payroll"/>
+        </record>
+        <record model="res.user-res.group" id="user_trigger_group_payroll">
+            <field name="user" ref="res.user_trigger"/>
+            <field name="group" ref="group_payroll"/>
+        </record>
+
+        <record model="res.group" id="group_payroll_contract">
+            <field name="name">Payroll Contracts</field>
+        </record>
+        <record model="res.user-res.group" id="user_admin_group_payroll_contract">
+            <field name="user" ref="res.user_admin"/>
+            <field name="group" ref="group_payroll_contract"/>
+        </record>
+        <record model="res.user-res.group" id="user_trigger_group_payroll_contract">
+            <field name="user" ref="res.user_trigger"/>
+            <field name="group" ref="group_payroll_contract"/>
+        </record>
+
+        <!-- payroll.payslip.line.type -->
+        <record model="ir.ui.view" id="payslip_line_type_view_form">
+            <field name="model">payroll.payslip.line.type</field>
+            <field name="type">form</field>
+            <field name="name">payslip_line_type_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="payslip_line_type_view_list">
+            <field name="model">payroll.payslip.line.type</field>
+            <field name="type">tree</field>
+            <field name="name">payslip_line_type_list</field>
+        </record>
+
+        <record model="ir.action.act_window" id="act_payslip_line_type">
+            <field name="name">Payslip Line Types</field>
+            <field name="res_model">payroll.payslip.line.type</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_payslip_line_type_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="payslip_line_type_view_list"/>
+            <field name="act_window" ref="act_payslip_line_type"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_payslip_line_type_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="payslip_line_type_view_form"/>
+            <field name="act_window" ref="act_payslip_line_type"/>
+        </record>
+
+        <record model="ir.model.access" id="access_payslip_line_type_payroll">
+            <field name="model" search="[('model', '=', 'payroll.payslip.line.type')]"/>
+            <field name="group" ref="group_payroll"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access" id="access_payslip_line_type_contract">
+            <field name="model" search="[('model', '=', 'payroll.payslip.line.type')]"/>
+            <field name="group" ref="group_payroll_contract"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <!-- payroll.payslip -->
+        <record model="ir.ui.view" id="payslip_view_form">
+            <field name="model">payroll.payslip</field>
+            <field name="type">form</field>
+            <field name="name">payslip_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="payslip_view_list">
+            <field name="model">payroll.payslip</field>
+            <field name="type">tree</field>
+            <field name="name">payslip_list</field>
+        </record>
+
+        <record model="ir.action.act_window" id="act_payslip">
+            <field name="name">Payslips</field>
+            <field name="res_model">payroll.payslip</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_payslip_view1">
+            <field name="act_window" ref="act_payslip"/>
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="payslip_view_list"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_payslip_view2">
+            <field name="act_window" ref="act_payslip"/>
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="payslip_view_form"/>
+        </record>
+
+        <record model="ir.model.access" id="access_payslip">
+            <field name="model" search="[('model', '=', 'payroll.payslip')]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
+
+        <record model="ir.model.access" id="access_payslip_payroll">
+            <field name="model" search="[('model', '=', 'payroll.payslip')]"/>
+            <field name="group" ref="group_payroll"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_delete" eval="True"/>
+        </record>
+
+        <!-- payroll.payslip.line -->
+        <record model="ir.ui.view" id="payslip_line_view_form">
+            <field name="model">payroll.payslip.line</field>
+            <field name="type">form</field>
+            <field name="name">payslip_line_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="payslip_line_view_list">
+            <field name="model">payroll.payslip.line</field>
+            <field name="type">tree</field>
+            <field name="name">payslip_line_list</field>
+        </record>
+
+        <!-- working_shift -->
+        <record model="ir.ui.view" id="working_shift_view_form">
+            <field name="model">working_shift</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="working_shift.working_shift_view_form"/>
+            <field name="name">working_shift_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="working_shift_view_list">
+            <field name="model">working_shift</field>
+            <field name="type">tree</field>
+            <field name="inherit" ref="working_shift.working_shift_view_list"/>
+            <field name="name">working_shift_list</field>
+        </record>
+
+        <!-- employee.leave.entitlement -->
+        <record model="ir.ui.view" id="employee_leave_entitlement_view_form">
+            <field name="model">employee.leave.entitlement</field>
+            <field name="type">form</field>
+            <field name="inherit"
+                ref="employee_leave.employee_leave_entitlement_view_form"/>
+            <field name="name">employee_leave_entitlement_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="employee_leave_entitlement_view_list">
+            <field name="model">employee.leave.entitlement</field>
+            <field name="type">tree</field>
+            <field name="inherit"
+                ref="employee_leave.employee_leave_entitlement_view_list"/>
+            <field name="name">employee_leave_entitlement_list</field>
+        </record>
+
+        <!-- employee.leave.payment -->
+        <record model="ir.ui.view" id="employee_leave_payment_view_form">
+            <field name="model">employee.leave.payment</field>
+            <field name="type">form</field>
+            <field name="inherit"
+                ref="employee_leave.employee_leave_payment_view_form"/>
+            <field name="name">employee_leave_payment_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="employee_leave_payment_view_list">
+            <field name="model">employee.leave.payment</field>
+            <field name="type">tree</field>
+            <field name="inherit"
+                ref="employee_leave.employee_leave_payment_view_list"/>
+            <field name="name">employee_leave_payment_list</field>
+        </record>
+
+        <!-- Menus -->
+        <menuitem id="menu_payroll" name="Payroll" sequence="7" />
+        <record model="ir.ui.menu-res.group" id="menu_payroll_group_payroll">
+            <field name="menu" ref="menu_payroll"/>
+            <field name="group" ref="group_payroll"/>
+        </record>
+        <record model="ir.ui.menu-res.group" id="menu_payroll_group_payroll_contract">
+            <field name="menu" ref="menu_payroll"/>
+            <field name="group" ref="group_payroll_contract"/>
+        </record>
+
+        <menuitem id="menu_payslip" action="act_payslip"
+            parent="menu_payroll" sequence="2"/>
+        <menuitem id="menu_payslip_line_type" action="act_payslip_line_type"
+            parent="menu_payslip" sequence="10"/>
+    </data>
+</tryton>
