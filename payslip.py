@@ -367,10 +367,10 @@ class WorkingShift:
         return self.hours
 
     def get_currency_digits(self, name):
-        return self.payslip.employee.company.currency.digits
+        return self.employee.company.currency.digits
 
     def get_cost(self, name):
-        currency = self.payslip.employee.company.currency
+        currency = self.employee.company.currency
         rule = self._compute_matching_rule()
         if rule:
             cost = rule.get_unit_price()
