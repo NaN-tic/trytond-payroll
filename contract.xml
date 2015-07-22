@@ -17,7 +17,7 @@
         </record>
 
         <record model="ir.action.act_window" id="act_contract">
-            <field name="name">Contracts</field>
+            <field name="name">Employee Contracts</field>
             <field name="res_model">payroll.contract</field>
         </record>
         <record model="ir.action.act_window.view" id="act_contract_view1">

@@ -432,8 +432,8 @@ msgid "Number of working hours in the current month. Usually 8 * 20."
 msgstr "Número d'hores de treball en el mes actual. Habitualment són 8 * 20"
 
 msgctxt "model:ir.action,name:act_contract"
-msgid "Contracts"
-msgstr "Contractes"
+msgid "Employee Contracts"
+msgstr "Contractes d'empleat"
 
 msgctxt "model:ir.action,name:act_payslip"
 msgid "Payslips"
@@ -452,8 +452,8 @@ msgid "All"
 msgstr "Tots"
 
 msgctxt "model:ir.ui.menu,name:menu_contract"
-msgid "Contracts"
-msgstr "Contractes"
+msgid "Employee Contracts"
+msgstr "Contractes d'empleat"
 
 msgctxt "model:ir.ui.menu,name:menu_payroll"
 msgid "Payroll"
@@ -469,15 +469,15 @@ msgstr "Tipus línia nòmina"
 
 msgctxt "model:payroll.contract,name:"
 msgid "Payroll Contract"
-msgstr "Contracte nòmina"
+msgstr "Contracte empleat"
 
 msgctxt "model:payroll.contract.hours_summary,name:"
 msgid "Payroll Contract Hours Summary"
-msgstr "Resum hores contracte nòmina"
+msgstr "Resum hores contracte empleat"
 
 msgctxt "model:payroll.contract.rule,name:"
 msgid "Payroll Contract Rule"
-msgstr "Regla contracte nòmina"
+msgstr "Regla contracte empleat"
 
 msgctxt "model:payroll.payslip,name:"
 msgid "Payslip"
@@ -497,19 +497,31 @@ msgstr "Nòmina"
 
 msgctxt "model:res.group,name:group_payroll_contract"
 msgid "Payroll Contracts"
-msgstr "Contractes nòmina"
+msgstr "Contractes empleat"
 
 msgctxt "view:payroll.contract.hours_summary:"
 msgid "Contract Hours Summary"
 msgstr "Resum hores contracte"
 
 msgctxt "view:payroll.contract.rule:"
+msgid "Conditions"
+msgstr "Condicions"
+
+msgctxt "view:payroll.contract.rule:"
 msgid "Employee Contract Rule"
 msgstr "Regla contracte empleats"
 
+msgctxt "view:payroll.contract.rule:"
+msgid "Result"
+msgstr "Resultat"
+
 msgctxt "view:payroll.contract:"
 msgid "Employee Contract"
-msgstr "Empleat contracte"
+msgstr "Contracte d'empleat"
+
+msgctxt "view:payroll.contract:"
+msgid "Employee Contracts"
+msgstr "Contractes d'empleat"
 
 msgctxt "view:payroll.payslip.line.type:"
 msgid "Payslip Hour Type"

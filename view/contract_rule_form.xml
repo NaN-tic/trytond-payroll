@@ -5,13 +5,16 @@
     <label name="contract"/>
     <field name="contract"/>
     <newline/>
-    <label name="hours"/>
-    <field name="hours"/>
-    <newline/>
-    <label name="hour_type"/>
-    <field name="hour_type"/>
-    <label name="product"/>
-    <field name="product"/>
-    <label name="formula"/>
-    <field name="formula"/>
+    <group colspan="2" col="2" id="conditions" string="Conditions" yexpand="1" yfill="1">
+        <label name="hours"/>
+        <field name="hours"/>
+    </group>
+    <group colspan="2" col="2" id="result" string="Result" yexpand="1" yfill="1">
+        <label name="hour_type"/>
+        <field name="hour_type"/>
+        <label name="product"/>
+        <field name="product"/>
+        <label name="formula"/>
+        <field name="formula"/>
+    </group>
 </form>
