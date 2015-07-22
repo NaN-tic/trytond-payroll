@@ -362,7 +362,7 @@ class WorkingShift:
         to employee's configuration.
         '''
         rule = self._compute_matching_rule()
-        if rule:
+        if rule and rule.hours:
             return rule.hours
         return self.hours
 

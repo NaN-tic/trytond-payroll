@@ -209,7 +209,10 @@ class ContractRule(ModelSQL, ModelView, MatchMixin):
     sequence = fields.Integer('Sequence')
     # Matching
     hours = fields.Numeric('Hours', domain=[
-            ('hours', '>=', Decimal(0)),
+            ['OR',
+                ('hours', '=', None),
+                ('hours', '>', Decimal(0)),
+                ],
             ])
     # Result
     hour_type = fields.Many2One('payroll.payslip.line.type', 'Hour Type',
@@ -234,7 +237,7 @@ class ContractRule(ModelSQL, ModelView, MatchMixin):
         return '%s, %s' % (self.contract.rec_name, self.sequence)
 
     def match(self, pattern):
-        if 'hours' in pattern:
+        if 'hours' in pattern and self.hours:
             pattern = pattern.copy()
             if self.hours < pattern.pop('hours'):
                 return False
