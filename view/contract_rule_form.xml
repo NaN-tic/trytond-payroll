@@ -14,7 +14,7 @@
         <field name="hour_type"/>
         <label name="product"/>
         <field name="product"/>
-        <label name="formula"/>
-        <field name="formula"/>
+        <label name="cost_price"/>
+        <field name="cost_price"/>
     </group>
 </form>

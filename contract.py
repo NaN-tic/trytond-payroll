@@ -6,12 +6,12 @@ from dateutil.relativedelta import relativedelta
 from sql import Literal
 from sql.aggregate import Max
 
+from trytond.config import config
 from trytond.model import ModelSQL, ModelView, MatchMixin, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval
-from trytond.tools import safe_eval
-from trytond.tools.decimal_ import decistmt
 from trytond.transaction import Transaction
+DIGITS = config.getint('digits', 'unit_price_digits', 4)
 
 __all__ = ['Contract', 'ContractHoursSummary', 'ContractRule', 'Employee']
 __metaclass__ = PoolMeta
@@ -218,7 +218,9 @@ class ContractRule(ModelSQL, ModelView, MatchMixin):
     hour_type = fields.Many2One('payroll.payslip.line.type', 'Hour Type',
         required=True, help="Used to automatically fill payslip lines.")
     product = fields.Many2One('product.product', 'Product', required=True)
-    formula = fields.Char('Formula', required=True)
+    cost_price = fields.Numeric('Cost Price', digits=(16, DIGITS),
+        required=True,
+        help="Price per working shift to compute the amount of payslips.")
 
     @classmethod
     def __setup__(cls):
@@ -247,10 +249,7 @@ class ContractRule(ModelSQL, ModelView, MatchMixin):
         '''
         Return unit price (as Decimal)
         '''
-        context = Transaction().context.copy()
-        context['Decimal'] = Decimal
-        res = safe_eval(decistmt(self.formula), context)
-        return Decimal(res)
+        return self.cost_price
 
 
 class Employee:

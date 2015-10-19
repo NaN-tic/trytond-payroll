@@ -146,6 +146,10 @@ msgctxt "field:payroll.contract.rule,contract:"
 msgid "Contract"
 msgstr "Contrato"
 
+msgctxt "field:payroll.contract.rule,cost_price:"
+msgid "Cost Price"
+msgstr "Precio de coste"
+
 msgctxt "field:payroll.contract.rule,create_date:"
 msgid "Create Date"
 msgstr "Fecha creación"
@@ -153,10 +157,6 @@ msgstr "Fecha creación"
 msgctxt "field:payroll.contract.rule,create_uid:"
 msgid "Create User"
 msgstr "Usuario creación"
-
-msgctxt "field:payroll.contract.rule,formula:"
-msgid "Formula"
-msgstr "Fórmula"
 
 msgctxt "field:payroll.contract.rule,hour_type:"
 msgid "Hour Type"
@@ -421,6 +421,10 @@ msgstr "Nómina"
 msgctxt "field:working_shift,payslip_line:"
 msgid "Payslip Line"
 msgstr "Línea de nómina"
+
+msgctxt "help:payroll.contract.rule,cost_price:"
+msgid "Price per working shift to compute the amount of payslips."
+msgstr "Precio por turno para calcular el importe de las nóminas."
 
 msgctxt "help:payroll.contract.rule,hour_type:"
 msgid "Used to automatically fill payslip lines."

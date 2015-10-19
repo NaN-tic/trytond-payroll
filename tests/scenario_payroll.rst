@@ -142,13 +142,13 @@ Create Contract::
     >>> rule.hours = Decimal('4.5')
     >>> rule.hour_type = normal_line_type
     >>> rule.product = short_shift
-    >>> rule.formula = '300'
+    >>> rule.cost_price = Decimal('300')
     >>> rule = contract.rules.new()
     >>> rule.sequence= 2
     >>> rule.hours = Decimal(8)
     >>> rule.hour_type = normal_line_type
     >>> rule.product = large_shift
-    >>> rule.formula = '800'
+    >>> rule.cost_price = Decimal('800')
     >>> contract.save()
 
 Create overlaped Contract::
@@ -229,7 +229,7 @@ Create working shifts::
     >>> working_shift1.start_date = datetime.datetime(today.year, 5, 6, 9, 0, 0)
     >>> working_shift1.end_date = datetime.datetime(today.year, 5, 6, 12, 0, 0)
     >>> working_shift1.hours
-    Decimal('3.0')
+    Decimal('3.00')
     >>> working_shift1.save()
     >>> working_shift1.click('confirm')
     >>> working_shift1.click('done')
@@ -239,7 +239,7 @@ Create working shifts::
     >>> working_shift2.start_date = datetime.datetime(today.year, 5, 7, 9, 0, 0)
     >>> working_shift2.end_date = datetime.datetime(today.year, 5, 7, 17, 0, 0)
     >>> working_shift2.hours
-    Decimal('8.0')
+    Decimal('8.00')
     >>> working_shift2.save()
     >>> working_shift2.click('confirm')
     >>> working_shift2.click('done')
@@ -249,7 +249,7 @@ Create working shifts::
     >>> working_shift3.start_date = datetime.datetime(today.year, 5, 8, 9, 0, 0)
     >>> working_shift3.end_date = datetime.datetime(today.year, 5, 8, 16, 30, 0)
     >>> working_shift3.hours
-    Decimal('7.5')
+    Decimal('7.50')
     >>> working_shift3.save()
     >>> working_shift3.click('confirm')
     >>> working_shift3.click('done')
@@ -259,7 +259,7 @@ Create working shifts::
     >>> working_shift4.start_date = datetime.datetime(today.year, 5, 9, 9, 0, 0)
     >>> working_shift4.end_date = datetime.datetime(today.year, 5, 9, 16, 30, 0)
     >>> working_shift4.hours
-    Decimal('7.5')
+    Decimal('7.50')
     >>> working_shift4.save()
     >>> working_shift4.click('confirm')
     >>> working_shift4.click('done')
