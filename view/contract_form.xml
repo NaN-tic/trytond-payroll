@@ -13,6 +13,8 @@
     <field name="yearly_hours"/>
     <label name="working_shift_hours"/>
     <field name="working_shift_hours"/>
+    <label name="working_shift_price"/>
+    <field name="working_shift_price"/>
     <notebook colspan="4">
         <page name="hours_summary">
             <field name="hours_summary" colspan="4"/>

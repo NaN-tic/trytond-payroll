@@ -298,10 +298,21 @@ class PayslipLine(ModelSQL, ModelView):
     def get_currency_digits(self, name):
         return self.payslip.employee.company.currency.digits
 
+    @property
+    def hour_unit_price(self):
+        if (self.payslip.contract.working_shift_price
+                and self.payslip.contract.working_shift_hours):
+            return (self.payslip.contract.working_shift_price
+                / self.payslip.contract.working_shift_hours)
+        return Decimal(0)
+
     def get_amount(self, name):
         if not self.working_shifts:
             return Decimal(0)
-        return sum([s.cost for s in self.working_shifts])
+        amount = sum([s.cost for s in self.working_shifts])
+        amount += self.leave_hours * self.hour_unit_price
+        amount -= self.generated_entitled_hours * self.hour_unit_price
+        return amount
 
     @classmethod
     def validate(cls, lines):
