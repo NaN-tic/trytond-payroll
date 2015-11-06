@@ -40,6 +40,9 @@ class Payslip(ModelSQL, ModelView):
     working_shifts = fields.Function(fields.One2Many('working_shift',
             'payslip', 'Working Shifts'),
         'get_working_shifts')
+    leaves = fields.Function(fields.One2Many('employee.leave', None,
+            'Leaves'),
+        'get_leaves')
     generated_entitlements = fields.Function(fields.One2Many(
             'employee.leave.entitlement', 'payslip', 'Generated Entitlements'),
         'get_generated_entitlements')
@@ -109,6 +112,13 @@ class Payslip(ModelSQL, ModelView):
 
     def get_working_shifts(self, name):
         return [s.id for l in self.lines for s in l.working_shifts]
+
+    def get_leaves(self, name):
+        # Search on 'employee.leave' and find the number of hours that fit
+        # inside this payslip
+        Leave = Pool().get('employee.leave')
+        return [l.id for l in Leave.get_leaves(self.employee, self.start,
+                self.end)]
 
     def get_generated_entitlements(self, name):
         return [e.id for l in self.lines for e in l.generated_entitlements]

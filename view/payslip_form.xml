@@ -20,7 +20,10 @@
         </page>
         <page string="Summary" id="summary">
             <field name="working_shifts" colspan="2" widget="many2many"/>
-            <field name="generated_entitlements" colspan="2"/>
+            <group id="leaves" colspan="2" col="1" yexpand="1" yfill="1">
+                <field name="leaves"/>
+                <field name="generated_entitlements"/>
+            </group>
             <group id="hours" colspan="4" col="6">
                 <label name="worked_hours"/>
                 <field name="worked_hours"/>
