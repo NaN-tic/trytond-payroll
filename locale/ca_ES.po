@@ -71,9 +71,17 @@ msgctxt "field:payroll.contract,rules:"
 msgid "Payslip Rules"
 msgstr "Regles nòmina"
 
+msgctxt "field:payroll.contract,ruleset:"
+msgid "Ruleset"
+msgstr "Conjunt"
+
 msgctxt "field:payroll.contract,start:"
 msgid "Start"
 msgstr "Inici"
+
+msgctxt "field:payroll.contract,working_shift_hours:"
+msgid "Working Shift Hours"
+msgstr "Hores torn de treball"
 
 msgctxt "field:payroll.contract,write_date:"
 msgid "Write Date"
@@ -102,6 +110,10 @@ msgstr "Usuari creació"
 msgctxt "field:payroll.contract.hours_summary,entitled_hours:"
 msgid "Entitled Hours"
 msgstr "Hores de dret"
+
+msgctxt "field:payroll.contract.hours_summary,extra_hours:"
+msgid "Extra Hours"
+msgstr "Hores extra"
 
 msgctxt "field:payroll.contract.hours_summary,id:"
 msgid "ID"
@@ -143,9 +155,9 @@ msgctxt "field:payroll.contract.hours_summary,write_uid:"
 msgid "Write User"
 msgstr "Usuari modificació"
 
-msgctxt "field:payroll.contract.rule,contract:"
-msgid "Contract"
-msgstr "Contracte"
+msgctxt "field:payroll.contract.rule,compute_method:"
+msgid "Compute Method"
+msgstr "Mètode de càlcul"
 
 msgctxt "field:payroll.contract.rule,cost_price:"
 msgid "Cost Price"
@@ -179,6 +191,10 @@ msgctxt "field:payroll.contract.rule,rec_name:"
 msgid "Name"
 msgstr "Nom"
 
+msgctxt "field:payroll.contract.rule,ruleset:"
+msgid "Ruleset"
+msgstr "Conjunt"
+
 msgctxt "field:payroll.contract.rule,sequence:"
 msgid "Sequence"
 msgstr "Seqüència"
@@ -188,6 +204,42 @@ msgid "Write Date"
 msgstr "Data modificació"
 
 msgctxt "field:payroll.contract.rule,write_uid:"
+msgid "Write User"
+msgstr "Usuari modificació"
+
+msgctxt "field:payroll.contract.ruleset,compute_interventions:"
+msgid "Compute Interventions"
+msgstr "Calcula intervencions"
+
+msgctxt "field:payroll.contract.ruleset,create_date:"
+msgid "Create Date"
+msgstr "Data creació"
+
+msgctxt "field:payroll.contract.ruleset,create_uid:"
+msgid "Create User"
+msgstr "Usuari creació"
+
+msgctxt "field:payroll.contract.ruleset,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:payroll.contract.ruleset,name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:payroll.contract.ruleset,rec_name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:payroll.contract.ruleset,rules:"
+msgid "Rules"
+msgstr "Regles"
+
+msgctxt "field:payroll.contract.ruleset,write_date:"
+msgid "Write Date"
+msgstr "Data modificació"
+
+msgctxt "field:payroll.contract.ruleset,write_uid:"
 msgid "Write User"
 msgstr "Usuari modificació"
 
@@ -299,6 +351,10 @@ msgctxt "field:payroll.payslip.line,currency_digits:"
 msgid "Currency Digits"
 msgstr "Dígits de la moneda"
 
+msgctxt "field:payroll.payslip.line,extra_hours:"
+msgid "Extra Hours"
+msgstr "Hores extra"
+
 msgctxt "field:payroll.payslip.line,generated_entitled_hours:"
 msgid "Generated Entitled Hours"
 msgstr "Hores de dret generades"
@@ -407,10 +463,6 @@ msgctxt "field:working_shift,cost:"
 msgid "Amount"
 msgstr "Import"
 
-msgctxt "field:working_shift,cost_hours:"
-msgid "Cost Hours"
-msgstr "Hores de cost"
-
 msgctxt "field:working_shift,currency_digits:"
 msgid "Currency Digits"
 msgstr "Dígits de la moneda"
@@ -424,8 +476,9 @@ msgid "Payslip Line"
 msgstr "Línia nòmina"
 
 msgctxt "help:payroll.contract.rule,cost_price:"
-msgid "Price per working shift to compute the amount of payslips."
-msgstr "Preu per torn per calcular l'import de les nòmines."
+msgid ""
+"Price per working shift or intervention to compute the amount of payslips."
+msgstr "Preu per torn o intervenció per calcular l'import de les nòmines."
 
 msgctxt "help:payroll.contract.rule,hour_type:"
 msgid "Used to automatically fill payslip lines."
@@ -438,6 +491,10 @@ msgstr "Número d'hores de treball en el mes actual. Habitualment són 8 * 20"
 msgctxt "model:ir.action,name:act_contract"
 msgid "Employee Contracts"
 msgstr "Contractes d'empleat"
+
+msgctxt "model:ir.action,name:act_contract_ruleset"
+msgid "Employee Contract Rulesets"
+msgstr "Conjunts de regles contracte empleat"
 
 msgctxt "model:ir.action,name:act_payslip"
 msgid "Payslips"
@@ -458,6 +515,10 @@ msgstr "Tots"
 msgctxt "model:ir.ui.menu,name:menu_contract"
 msgid "Employee Contracts"
 msgstr "Contractes d'empleat"
+
+msgctxt "model:ir.ui.menu,name:menu_contract_ruleset"
+msgid "Employee Contract Rulesets"
+msgstr "Conjunts de regles contracte empleat"
 
 msgctxt "model:ir.ui.menu,name:menu_payroll"
 msgid "Payroll"
@@ -483,6 +544,10 @@ msgctxt "model:payroll.contract.rule,name:"
 msgid "Payroll Contract Rule"
 msgstr "Regla contracte empleat"
 
+msgctxt "model:payroll.contract.ruleset,name:"
+msgid "Payroll Contract Ruleset"
+msgstr "Conjunt de regles contracte nòmines"
+
 msgctxt "model:payroll.payslip,name:"
 msgid "Payslip"
 msgstr "Nòmina"
@@ -503,6 +568,14 @@ msgctxt "model:res.group,name:group_payroll_contract"
 msgid "Payroll Contracts"
 msgstr "Contractes empleat"
 
+msgctxt "selection:payroll.contract.rule,compute_method:"
+msgid "Interventions"
+msgstr "Intervencions"
+
+msgctxt "selection:payroll.contract.rule,compute_method:"
+msgid "Working Shifts"
+msgstr "Torns de treball"
+
 msgctxt "view:payroll.contract.hours_summary:"
 msgid "Contract Hours Summary"
 msgstr "Resum hores contracte"
@@ -518,6 +591,14 @@ msgstr "Regla contracte empleats"
 msgctxt "view:payroll.contract.rule:"
 msgid "Result"
 msgstr "Resultat"
+
+msgctxt "view:payroll.contract.ruleset:"
+msgid "Employee Contract Ruleset"
+msgstr "Conjunt de regles contracte empleat"
+
+msgctxt "view:payroll.contract.ruleset:"
+msgid "Employee Contract Rulesets"
+msgstr "Conjunts de regles contracte empleat"
 
 msgctxt "view:payroll.contract:"
 msgid "Employee Contract"

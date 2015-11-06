@@ -5,6 +5,7 @@ from decimal import Decimal
 from trytond.model import ModelSQL, ModelView, fields
 from trytond.pyson import Bool, Date, Eval
 from trytond.pool import Pool, PoolMeta
+from trytond.transaction import Transaction
 
 __all__ = ['PayslipLineType', 'Payslip', 'PayslipLine', 'Entitlement',
     'LeavePayment', 'WorkingShift']
@@ -66,6 +67,23 @@ class Payslip(ModelSQL, ModelView):
             digits=(16, Eval('currency_digits', 2)),
             depends=['currency_digits']),
         'get_amount')
+
+    def get_rec_name(self, name):
+        pool = Pool()
+        User = pool.get('res.user')
+        user = User(Transaction().user)
+        date_format = (user.language.date if (user and user.language)
+            else '%d/%m/%y')
+        return '%s (%s - %s)' % (self.employee.rec_name,
+            self.start.strftime(date_format), self.end.strftime(date_format))
+
+    @classmethod
+    def search_rec_name(cls, name, clause):
+        return [
+            ['OR',
+                ('employee',) + clause[1:],
+                ('start',) + clause[1:]],
+            ]
 
     @fields.depends('employee')
     def on_change_employee(self):
@@ -133,7 +151,7 @@ class PayslipLine(ModelSQL, ModelView):
         select=True)
     working_hours = fields.Numeric('Working Hours', digits=(16, 2), domain=[
             ('working_hours', '>=', Decimal(0)),
-            ],
+            ], required=True,
         help='Number of working hours in the current month. Usually 8 * 20.')
     payslip_employee = fields.Function(fields.Many2One('company.employee',
             'Payslip Employee'),
@@ -188,7 +206,12 @@ class PayslipLine(ModelSQL, ModelView):
             digits=(16, 2), states={
                 'invisible': ~Eval('working_hours', 0),
                 }, depends=['working_hours']),
-        'get_remaining_hours')
+        'get_remaining_extra_hours')
+    extra_hours = fields.Function(fields.Numeric('Extra Hours',
+            digits=(16, 2), states={
+                'invisible': ~Eval('working_hours', 0),
+                }, depends=['working_hours']),
+        'get_remaining_extra_hours')
     leave_payment_hours = fields.Function(fields.Numeric('Leave Payment Hours',
             digits=(16, 2), states={
                 'invisible': ~Bool(Eval('working_hours', 0)),
@@ -233,7 +256,8 @@ class PayslipLine(ModelSQL, ModelView):
     def get_worked_hours(self, name):
         if not self.working_shifts:
             return Decimal(0)
-        return sum([s.cost_hours for s in self.working_shifts])
+        return (len(self.working_shifts)
+            * self.payslip.contract.working_shift_hours)
 
     # Only payslip lines with working_hours set will take into account
     # leave_hours as most of the time they will be holidays and it doesn't
@@ -258,8 +282,13 @@ class PayslipLine(ModelSQL, ModelView):
         return (self.worked_hours + self.leave_hours
             - self.generated_entitled_hours)
 
-    def get_remaining_hours(self, name):
-        return self.working_hours - self.total_hours
+    def get_remaining_extra_hours(self, name):
+        difference = self.total_hours - self.working_hours
+        if name == 'remaining_hours' and difference < Decimal(0):
+            return difference
+        elif name == 'extra_hours' and difference > 0:
+            return difference
+        return Decimal(0)
 
     def get_leave_payment_hours(self, name):
         if not self.leave_payments:
@@ -272,8 +301,6 @@ class PayslipLine(ModelSQL, ModelView):
     def get_amount(self, name):
         if not self.working_shifts:
             return Decimal(0)
-        # TODO: Sum leave hours? substract entitled hours? how to sum leave
-        # payment amount?
         return sum([s.cost for s in self.working_shifts])
 
     @classmethod
@@ -337,8 +364,6 @@ class WorkingShift:
         readonly=True)
     payslip = fields.Function(fields.Many2One('payroll.payslip', 'Payslip'),
         'get_payslip', searcher='search_payslip')
-    cost_hours = fields.Function(fields.Numeric('Cost Hours', digits=(16, 2)),
-        'get_cost_hours')
     currency_digits = fields.Function(fields.Integer('Currency Digits'),
         'get_currency_digits')
     cost = fields.Function(fields.Numeric('Amount',
@@ -356,30 +381,29 @@ class WorkingShift:
             ('payslip_line.payslip',) + clause[1:],
             ]
 
-    def get_cost_hours(self, name):
-        '''
-        Cost hours should return the number of hours after rounding according
-        to employee's configuration.
-        '''
-        rule = self._compute_matching_rule()
-        if rule and rule.hours:
-            return rule.hours
-        return self.hours
-
     def get_currency_digits(self, name):
         return self.employee.company.currency.digits
 
+    @property
+    def compute_interventions(self):
+        return len(self.interventions) > 0
+
     def get_cost(self, name):
         currency = self.employee.company.currency
-        rule = self._compute_matching_rule()
-        if rule:
-            cost = rule.get_unit_price()
-            return currency.round(cost)
-        return Decimal(0)
-
-    def _compute_matching_rule(self):
         employee_contract = self.employee.current_payroll_contract
-        if employee_contract:
-            rule = employee_contract.compute_matching_rule(self)
-            if rule:
-                return rule
+        if not employee_contract:
+            return Decimal(0)
+
+        if (employee_contract.ruleset.compute_interventions
+                and self.compute_interventions):
+            cost = Decimal(0)
+            for intervention in self.interventions:
+                rule = employee_contract.compute_intervention_matching_rule(
+                    intervention)
+                if rule:
+                    cost += rule.cost_price
+            return cost
+        rule = employee_contract.compute_working_shift_matching_rule(self)
+        if rule:
+            return currency.round(rule.cost_price)
+        return Decimal(0)

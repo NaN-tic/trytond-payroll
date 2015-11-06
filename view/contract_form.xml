@@ -11,12 +11,17 @@
     <field name="end"/>
     <label name="yearly_hours"/>
     <field name="yearly_hours"/>
+    <label name="working_shift_hours"/>
+    <field name="working_shift_hours"/>
     <notebook colspan="4">
         <page name="hours_summary">
             <field name="hours_summary" colspan="4"/>
         </page>
         <page name="rules">
-            <field name="rules" colspan="4"/>
+            <label name="ruleset"/>
+            <field name="ruleset"/>
+            <newline/>
+            <field name="rules" colspan="4" mode="tree,form"/>
         </page>
     </notebook>
 </form>

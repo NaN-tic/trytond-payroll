@@ -10,4 +10,5 @@
     <field name="leave_payment_hours"/>
     <field name="total_hours"/>
     <field name="remaining_hours"/>
+    <field name="extra_hours"/>
 </tree>

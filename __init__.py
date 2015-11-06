@@ -4,12 +4,14 @@ from trytond.pool import Pool
 from .contract import *
 from .payslip import *
 
+
 def register():
     Pool.register(
         PayslipLineType,
+        ContractRuleSet,
+        ContractRule,
         Contract,
         ContractHoursSummary,
-        ContractRule,
         Employee,
         Payslip,
         PayslipLine,

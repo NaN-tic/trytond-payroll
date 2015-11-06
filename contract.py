@@ -13,8 +13,76 @@ from trytond.pyson import Eval
 from trytond.transaction import Transaction
 DIGITS = config.getint('digits', 'unit_price_digits', 4)
 
-__all__ = ['Contract', 'ContractHoursSummary', 'ContractRule', 'Employee']
+__all__ = ['ContractRuleSet', 'ContractRule',
+    'Contract', 'ContractHoursSummary', 'Employee']
 __metaclass__ = PoolMeta
+
+
+class ContractRuleSet(ModelSQL, ModelView):
+    '''Payroll Contract Ruleset'''
+    __name__ = 'payroll.contract.ruleset'
+    name = fields.Char('Name', required=True)
+    rules = fields.One2Many('payroll.contract.rule', 'ruleset', 'Rules')
+    compute_interventions = fields.Function(
+        fields.Boolean('Compute Interventions'),
+        'get_compute_interventions')
+
+    def get_compute_interventions(self, name):
+        return any(r.compute_method == 'intervention' for r in self.rules)
+
+
+class ContractRule(ModelSQL, ModelView, MatchMixin):
+    'Payroll Contract Rule'
+    __name__ = 'payroll.contract.rule'
+    ruleset = fields.Many2One('payroll.contract.ruleset', 'Ruleset',
+        required=True, select=True, ondelete='CASCADE')
+    sequence = fields.Integer('Sequence')
+    # Matching
+    compute_method = fields.Selection([
+            ('working_shift', 'Working Shifts'),
+            ('intervention', 'Interventions'),
+            ], 'Compute Method', required=True)
+    hours = fields.Numeric('Hours', domain=[
+            ['OR',
+                ('hours', '=', None),
+                ('hours', '>', Decimal(0)),
+                ],
+            ])
+    # Result
+    hour_type = fields.Many2One('payroll.payslip.line.type', 'Hour Type',
+        required=True, help="Used to automatically fill payslip lines.")
+    product = fields.Many2One('product.product', 'Product', required=True)
+    cost_price = fields.Numeric('Cost Price', digits=(16, DIGITS),
+        required=True,
+        help="Price per working shift or intervention to compute the amount "
+        "of payslips.")
+
+    @classmethod
+    def __setup__(cls):
+        super(ContractRule, cls).__setup__()
+        cls._order = [
+            ('ruleset', 'ASC'),
+            ('sequence', 'ASC'),
+            ]
+
+    @staticmethod
+    def order_sequence(tables):
+        table, _ = tables[None]
+        return [table.sequence == None, table.sequence]
+
+    def get_rec_name(self, name):
+        return '%s, %s' % (self.ruleset.rec_name, self.sequence)
+
+    @staticmethod
+    def default_compute_method():
+        return 'working_shift'
+
+    def match(self, pattern):
+        if 'hours' in pattern and self.hours:
+            pattern = pattern.copy()
+            if self.hours < pattern.pop('hours'):
+                return False
+        return super(ContractRule, self).match(pattern)
 
 
 class Contract(ModelSQL, ModelView):
@@ -30,11 +98,17 @@ class Contract(ModelSQL, ModelView):
             ], depends=['start'])
     yearly_hours = fields.Numeric('Yearly Hours', domain=[
             ('yearly_hours', '>=', Decimal(0)),
-            ])
+            ], required=True)
+    working_shift_hours = fields.Numeric('Working Shift Hours', domain=[
+            ('working_shift_hours', '>=', Decimal(0)),
+            ], required=True)
     hours_summary = fields.One2Many('payroll.contract.hours_summary',
         'contract', 'Hours Summary', readonly=True)
-    rules = fields.One2Many('payroll.contract.rule', 'contract',
-        'Payslip Rules')
+    ruleset = fields.Many2One('payroll.contract.ruleset', 'Ruleset',
+        required=True)
+    rules = fields.Function(fields.One2Many('payroll.contract.rule', None,
+            'Payslip Rules'),
+        'on_change_with_rules')
 
     @classmethod
     def __setup__(cls):
@@ -56,6 +130,10 @@ class Contract(ModelSQL, ModelView):
                 ('employee',) + clause[1:],
                 ('start',) + clause[1:]],
             ]
+
+    @fields.depends('ruleset')
+    def on_change_with_rules(self, name=None):
+        return [r.id for r in self.ruleset.rules] if self.ruleset else None
 
     @classmethod
     def validate(cls, contracts):
@@ -79,13 +157,27 @@ class Contract(ModelSQL, ModelView):
                     'overlaped_contract': overlaping_contracts[0].rec_name,
                     })
 
-    def compute_matching_rule(self, working_shift, pattern=None):
+    def compute_working_shift_matching_rule(self, working_shift, pattern=None):
         if pattern is None:
             pattern = {}
         else:
             pattern = pattern.copy()
         pattern['hours'] = working_shift.hours
         for rule in self.rules:
+            if rule.compute_method != 'working_shift':
+                continue
+            if rule.match(pattern):
+                return rule
+
+    def compute_intervention_matching_rule(self, intervention, pattern=None):
+        if pattern is None:
+            pattern = {}
+        else:
+            pattern = pattern.copy()
+        pattern['hours'] = intervention.hours
+        for rule in self.rules:
+            if rule.compute_method != 'intervention':
+                continue
             if rule.match(pattern):
                 return rule
 
@@ -111,7 +203,10 @@ class ContractHoursSummary(ModelSQL, ModelView):
         'get_total_hours')
     remaining_hours = fields.Function(fields.Numeric('Remaining Hours',
             digits=(16, 2)),
-        'get_remaining_hours')
+        'get_remaining_extra_hours')
+    extra_hours = fields.Function(fields.Numeric('Extra Hours',
+            digits=(16, 2)),
+        'get_remaining_extra_hours')
     leave_payment_hours = fields.Function(fields.Numeric('Leave Payment Hours',
             digits=(16, 2)),
         'get_leave_payment_hours')
@@ -131,7 +226,7 @@ class ContractHoursSummary(ModelSQL, ModelView):
                 ])
         if not working_shifts:
             return Decimal(0)
-        return sum([s.cost_hours for s in working_shifts])
+        return len(working_shifts) * self.contract.working_shift_hours
 
     def get_leave_hours(self, name):
         Leave = Pool().get('employee.leave')
@@ -165,7 +260,7 @@ class ContractHoursSummary(ModelSQL, ModelView):
     def get_total_hours(self, name):
         return self.worked_hours + self.leave_hours - self.entitled_hours
 
-    def get_remaining_hours(self, name):
+    def get_remaining_extra_hours(self, name):
         pool = Pool()
         PayslipLine = pool.get('payroll.payslip.line')
         lines = PayslipLine.search([
@@ -176,7 +271,11 @@ class ContractHoursSummary(ModelSQL, ModelView):
                 ])
         if lines:
             working_hours = sum(l.working_hours for l in lines)
-            return working_hours - self.total_hours
+            difference = self.total_hours - working_hours
+            if name == 'remaining_hours' and difference < Decimal(0):
+                return difference
+            elif name == 'extra_hours' and difference > 0:
+                return difference
         return Decimal(0)
 
     @classmethod
@@ -199,57 +298,6 @@ class ContractHoursSummary(ModelSQL, ModelView):
             contract.write_date,
             contract.id.as_('contract'),
             leave_period.id.as_('leave_period'))
-
-
-class ContractRule(ModelSQL, ModelView, MatchMixin):
-    'Payroll Contract Rule'
-    __name__ = 'payroll.contract.rule'
-    contract = fields.Many2One('payroll.contract', 'Contract',
-        required=True, select=True, ondelete='CASCADE')
-    sequence = fields.Integer('Sequence')
-    # Matching
-    hours = fields.Numeric('Hours', domain=[
-            ['OR',
-                ('hours', '=', None),
-                ('hours', '>', Decimal(0)),
-                ],
-            ])
-    # Result
-    hour_type = fields.Many2One('payroll.payslip.line.type', 'Hour Type',
-        required=True, help="Used to automatically fill payslip lines.")
-    product = fields.Many2One('product.product', 'Product', required=True)
-    cost_price = fields.Numeric('Cost Price', digits=(16, DIGITS),
-        required=True,
-        help="Price per working shift to compute the amount of payslips.")
-
-    @classmethod
-    def __setup__(cls):
-        super(ContractRule, cls).__setup__()
-        cls._order = [
-            ('contract', 'ASC'),
-            ('sequence', 'ASC'),
-            ]
-
-    @staticmethod
-    def order_sequence(tables):
-        table, _ = tables[None]
-        return [table.sequence == None, table.sequence]
-
-    def get_rec_name(self, name):
-        return '%s, %s' % (self.contract.rec_name, self.sequence)
-
-    def match(self, pattern):
-        if 'hours' in pattern and self.hours:
-            pattern = pattern.copy()
-            if self.hours < pattern.pop('hours'):
-                return False
-        return super(ContractRule, self).match(pattern)
-
-    def get_unit_price(self):
-        '''
-        Return unit price (as Decimal)
-        '''
-        return self.cost_price
 
 
 class Employee:

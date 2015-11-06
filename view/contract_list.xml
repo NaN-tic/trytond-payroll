@@ -5,4 +5,5 @@
     <field name="employee"/>
     <field name="start"/>
     <field name="end"/>
+    <field name="ruleset"/>
 </tree>
