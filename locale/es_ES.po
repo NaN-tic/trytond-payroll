@@ -82,6 +82,10 @@ msgctxt "field:payroll.contract,working_shift_hours:"
 msgid "Working Shift Hours"
 msgstr "Horas turno de trabajo"
 
+msgctxt "field:payroll.contract,working_shift_price:"
+msgid "Working Shift Price"
+msgstr "Precio turno de trabajo"
+
 msgctxt "field:payroll.contract,write_date:"
 msgid "Write Date"
 msgstr "Fecha modificación"
@@ -302,6 +306,10 @@ msgctxt "field:payroll.payslip,leave_payments:"
 msgid "Leave Payments"
 msgstr "Pago de ausencias"
 
+msgctxt "field:payroll.payslip,leaves:"
+msgid "Leaves"
+msgstr "Ausencias"
+
 msgctxt "field:payroll.payslip,lines:"
 msgid "Lines"
 msgstr "Líneas"
@@ -473,6 +481,10 @@ msgstr "Nómina"
 msgctxt "field:working_shift,payslip_line:"
 msgid "Payslip Line"
 msgstr "Línea de nómina"
+
+msgctxt "help:payroll.contract,working_shift_price:"
+msgid "Price used to compute the amount corresponding to leaves."
+msgstr "Precio usado para calcular el importe correspondiente a las bajas."
 
 msgctxt "help:payroll.contract.rule,cost_price:"
 msgid ""
