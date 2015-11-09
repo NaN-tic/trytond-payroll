@@ -163,37 +163,29 @@ class PayslipLine(ModelSQL, ModelView):
             ('working_hours', '>=', Decimal(0)),
             ], required=True,
         help='Number of working hours in the current month. Usually 8 * 20.')
-    payslip_employee = fields.Function(fields.Many2One('company.employee',
-            'Payslip Employee'),
-        'on_change_with_payslip_employee')
-    payslip_start = fields.Function(fields.Date('Payslip Start'),
-        'on_change_with_payslip_start')
-    payslip_end = fields.Function(fields.Date('Payslip Start'),
-        'on_change_with_payslip_end')
     working_shifts = fields.One2Many('working_shift', 'payslip_line',
         'Working Shifts', domain=[
-            ('employee', '=', Eval('payslip_employee')),
+            ('employee', '=', Eval('_parent_payslip', {}).get('employee')),
             ('state', '=', 'done'),
             ],
         add_remove=[
             ('payslip_line', '=', None),
-            ],
-        depends=['payslip_employee'])
+            ])
     generated_entitlements = fields.One2Many('employee.leave.entitlement',
         'payslip_line', 'Generated Entitlements', domain=[
-            ('employee', '=', Eval('payslip_employee')),
-            ('date', '>=', Eval('payslip_start', Date())),
-            ('date', '<=', Eval('payslip_end', Date())),
-            ], depends=['payslip_employee', 'payslip_start', 'payslip_end'])
+            ('employee', '=', Eval('_parent_payslip', {}).get('employee')),
+            ('date', '>=', Eval('_parent_payslip', {}).get('start', Date())),
+            ('date', '<=', Eval('_parent_payslip', {}).get('end', Date())),
+            ])
     leave_payments = fields.One2Many('employee.leave.payment', 'payslip_line',
         'Leave Payments', domain=[
-            ('employee', '=', Eval('payslip_employee')),
-            ('date', '>=', Eval('payslip_start', Date())),
-            ('date', '<=', Eval('payslip_end', Date())),
+            ('employee', '=', Eval('_parent_payslip', {}).get('employee')),
+            ('date', '>=', Eval('_parent_payslip', {}).get('start', Date())),
+            ('date', '<=', Eval('_parent_payslip', {}).get('end', Date())),
             ],
         add_remove=[
             ('payslip_line', '=', None),
-            ], depends=['payslip_employee', 'payslip_start', 'payslip_end'])
+            ])
     worked_hours = fields.Function(fields.Numeric('Worked Hours',
             digits=(16, 2)),
         'get_worked_hours')
@@ -244,21 +236,6 @@ class PayslipLine(ModelSQL, ModelView):
                     '"%(existing_line)s" with hours in the same Payslip.'),
                 })
 
-    @fields.depends('_parent_payslip.employee')
-    def on_change_with_payslip_employee(self, name=None):
-        if self.payslip and self.payslip.employee:
-            return self.payslip.employee.id
-
-    @fields.depends('_parent_payslip.start')
-    def on_change_with_payslip_start(self, name=None):
-        if self.payslip:
-            return self.payslip.start
-
-    @fields.depends('_parent_payslip.end')
-    def on_change_with_payslip_end(self, name=None):
-        if self.payslip:
-            return self.payslip.end
-
     @staticmethod
     def default_currency_digits():
         return 2
@@ -280,8 +257,8 @@ class PayslipLine(ModelSQL, ModelView):
         # Search on 'employee.leave' and find the number of hours that fit
         # inside this payslip
         Leave = Pool().get('employee.leave')
-        return Leave.get_leave_hours(self.payslip.employee, self.payslip_start,
-            self.payslip_end, type_=self.type)
+        return Leave.get_leave_hours(self.payslip.employee, self.payslip.start,
+            self.payslip.end, type_=self.type)
 
     def get_generated_entitled_hours(self, name):
         if not self.generated_entitlements:

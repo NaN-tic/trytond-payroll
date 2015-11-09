@@ -391,18 +391,6 @@ msgctxt "field:payroll.payslip.line,payslip:"
 msgid "Payslip"
 msgstr "Nòmina"
 
-msgctxt "field:payroll.payslip.line,payslip_employee:"
-msgid "Payslip Employee"
-msgstr "Empleat nòmina"
-
-msgctxt "field:payroll.payslip.line,payslip_end:"
-msgid "Payslip Start"
-msgstr "Inici nòmina"
-
-msgctxt "field:payroll.payslip.line,payslip_start:"
-msgid "Payslip Start"
-msgstr "Inici nòmina"
-
 msgctxt "field:payroll.payslip.line,rec_name:"
 msgid "Name"
 msgstr "Nom"
