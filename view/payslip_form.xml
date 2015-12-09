@@ -39,4 +39,10 @@
             </group>
         </page>
     </notebook>
+    <group col="4" colspan="4" id="supplier_invoice_buttons">
+        <label name="supplier_invoice"/>
+        <field name="supplier_invoice"/>
+        <label id="spacing" string="" xexpand="1"/>
+        <button string="Invoice" name="create_supplier_invoices"/>
+    </group>
 </form>

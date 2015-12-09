@@ -8,4 +8,7 @@
     <field name="end"/>
     <field name="total_hours"/>
     <field name="amount"/>
+    <field name="supplier_invoice"/>
+    <button string="Invoice" name="create_supplier_invoices"
+        tree_invisible="1"/>
 </tree>
