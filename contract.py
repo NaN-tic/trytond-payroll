@@ -51,7 +51,6 @@ class ContractRule(ModelSQL, ModelView, MatchMixin):
     # Result
     hour_type = fields.Many2One('payroll.payslip.line.type', 'Hour Type',
         required=True, help="Used to automatically fill payslip lines.")
-    product = fields.Many2One('product.product', 'Product', required=True)
     cost_price = fields.Numeric('Cost Price', digits=(16, DIGITS),
         required=True,
         help="Price per working shift or intervention to compute the amount "

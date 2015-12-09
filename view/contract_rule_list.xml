@@ -6,6 +6,5 @@
     <field name="compute_method"/>
     <field name="hours"/>
     <field name="hour_type"/>
-    <field name="product"/>
     <field name="cost_price"/>
 </tree>
