@@ -8,35 +8,44 @@ from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
 
 __all__ = ['PayslipLineType', 'Payslip', 'PayslipLine', 'Entitlement',
-    'LeavePayment', 'WorkingShift']
+    'LeavePayment', 'WorkingShift', 'InvoiceLine']
 __metaclass__ = PoolMeta
+
+STATES = {
+    'readonly': Bool(Eval('supplier_invoice')),
+    }
+DEPENDS = ['supplier_invoice']
 
 
 class PayslipLineType(ModelSQL, ModelView):
     'Payslip Line Type'
     __name__ = 'payroll.payslip.line.type'
     name = fields.Char('Name', required=True, translate=True)
+    product = fields.Many2One('product.product', 'Product', required=True)
 
 
 class Payslip(ModelSQL, ModelView):
     'Payslip'
     __name__ = 'payroll.payslip'
     employee = fields.Many2One('company.employee', 'Employee', required=True,
-        select=True)
+        select=True, states=STATES, depends=DEPENDS)
     contract = fields.Many2One('payroll.contract', 'Contract', required=True,
         select=True, domain=[
             ('employee', '=', Eval('employee', -1)),
-            ], depends=['employee'])
+            ],
+        states=STATES, depends=DEPENDS + ['employee'])
     contract_start = fields.Function(fields.Date('Contract Start'),
         'on_change_with_contract_start')
     contract_end = fields.Function(fields.Date('Contract Start'),
         'on_change_with_contract_end')
-    start = fields.Date('Start', required=True)
+    start = fields.Date('Start', required=True, states=STATES, depends=DEPENDS)
     end = fields.Date('End', required=True, domain=[
             ('end', '>', Eval('start')),
-            ], depends=['start'])
+            ],
+        states=STATES, depends=DEPENDS + ['start'])
 
-    lines = fields.One2Many('payroll.payslip.line', 'payslip', 'Lines')
+    lines = fields.One2Many('payroll.payslip.line', 'payslip', 'Lines',
+        states=STATES, depends=DEPENDS)
     working_shifts = fields.Function(fields.One2Many('working_shift',
             'payslip', 'Working Shifts'),
         'get_working_shifts')
@@ -70,6 +79,20 @@ class Payslip(ModelSQL, ModelView):
             digits=(16, Eval('currency_digits', 2)),
             depends=['currency_digits']),
         'get_amount')
+    supplier_invoice = fields.Many2One('account.invoice', 'Supplier Invoice',
+        domain=[
+            ('type', '=', 'in_invoice'),
+            ], readonly=True, select=True)
+
+    @classmethod
+    def __setup__(cls):
+        super(Payslip, cls).__setup__()
+        cls._buttons.update({
+                'create_supplier_invoices': {
+                    'invisible': Bool(Eval('supplier_invoice')),
+                    'icon': 'tryton-ok',
+                    },
+                })
 
     def get_rec_name(self, name):
         pool = Pool()
@@ -151,6 +174,73 @@ class Payslip(ModelSQL, ModelView):
     def get_amount(self, name):
         return sum([x.amount for x in self.lines])
 
+    @classmethod
+    @ModelView.button
+    def create_supplier_invoices(cls, payslips):
+        pool = Pool()
+        Invoice = pool.get('account.invoice')
+
+        to_write = []
+        for payslip in payslips:
+            if payslip.supplier_invoice:
+                continue
+
+            invoice_lines = []
+            for line in payslip.lines:
+                invoice_line = line.get_supplier_invoice_line()
+                if invoice_line:
+                    invoice_lines.append(invoice_line)
+            if not invoice_lines:
+                continue
+
+            invoice = payslip.get_supplier_invoice()
+            if hasattr(invoice, 'lines'):
+                invoice_lines = invoice.lines + tuple(invoice_lines)
+            invoice.lines = invoice_lines
+            invoice.save()
+
+            Invoice.update_taxes([invoice])
+
+            to_write.extend(([payslip], {'supplier_invoice': invoice.id}))
+
+        if to_write:
+            cls.write(*to_write)
+
+    def get_supplier_invoice(self):
+        pool = Pool()
+        Invoice = pool.get('account.invoice')
+        Journal = pool.get('account.journal')
+
+        invoices = Invoice.search([
+                ('type', '=', 'in_invoice'),
+                ('party', '=', self.employee.party.id),
+                ])
+        if invoices:
+            return invoices[0]
+
+        journals = Journal.search([
+                ('type', '=', 'expense'),
+                ], limit=1)
+        if journals:
+            journal, = journals
+        else:
+            journal = None
+
+        invoice_address = self.employee.party.address_get(type='invoice')
+        payment_term = self.employee.party.supplier_payment_term
+
+        invoice = Invoice(
+            type='in_invoice',
+            journal=journal,
+            party=self.employee.party,
+            invoice_address=invoice_address,
+            account=self.employee.party.account_payable,
+            payment_term=payment_term,
+            )
+        if hasattr(Invoice, 'payment_type'):
+            invoice.payment_type = self.employee.party.supplier_payment_type
+        return invoice
+
 
 class PayslipLine(ModelSQL, ModelView):
     'Payslip Line'
@@ -225,6 +315,8 @@ class PayslipLine(ModelSQL, ModelView):
             digits=(16, Eval('currency_digits', 2)),
             depends=['currency_digits']),
         'get_amount')
+    supplier_invoice_lines = fields.One2Many('account.invoice.line', 'origin',
+        'Invoice Lines', readonly=True)
 
     @classmethod
     def __setup__(cls):
@@ -234,6 +326,8 @@ class PayslipLine(ModelSQL, ModelView):
                     'You can\'t set Working Hours to Payslip Line '
                     '"%(current_line)s" because already exists line '
                     '"%(existing_line)s" with hours in the same Payslip.'),
+                'missing_account_expense': ('The product "%s" used to invoice '
+                    'payslips doesn\'t have Expense Account.'),
                 })
 
     @staticmethod
@@ -300,6 +394,47 @@ class PayslipLine(ModelSQL, ModelView):
         amount += self.leave_hours * self.hour_unit_price
         amount -= self.generated_entitled_hours * self.hour_unit_price
         return amount
+
+    def get_supplier_invoice_line(self):
+        pool = Pool()
+        InvoiceLine = pool.get('account.invoice.line')
+        Tax = pool.get('account.tax')
+
+        if self.amount == Decimal(0):
+            return
+
+        if not self.type.product.account_expense_used:
+            self.raise_user_error('missing_account_expense',
+                self.type.product.rec_name)
+
+        invoice_line = InvoiceLine()
+        invoice_line.invoice_type = 'in_invoice'
+        invoice_line.party = self.payslip.employee.party
+        invoice_line.type = 'line'
+        invoice_line.description = self.type.product.rec_name
+        invoice_line.product = self.type.product
+        invoice_line.unit_price = self.amount
+        invoice_line.quantity = 1
+        invoice_line.unit = self.type.product.default_uom
+        invoice_line.account = self.type.product.account_expense_used
+
+        invoice_line.taxes = []
+        pattern = invoice_line._get_tax_rule_pattern()
+        for tax in self.type.product.supplier_taxes_used:
+            if invoice_line.party.supplier_tax_rule:
+                tax_ids = invoice_line.party.supplier_tax_rule.apply(tax,
+                    pattern)
+                if tax_ids:
+                    invoice_line.taxes.extend(Tax.browse(tax_ids))
+                continue
+            invoice_line.taxes.append(tax.id)
+        if invoice_line.party.supplier_tax_rule:
+            tax_ids = invoice_line.party.supplier_tax_rule.apply(None, pattern)
+            if tax_ids:
+                invoice_line.taxes.extend(Tax.browse(tax_ids))
+
+        invoice_line.origin = self
+        return invoice_line
 
     @classmethod
     def validate(cls, lines):
@@ -405,3 +540,22 @@ class WorkingShift:
         if rule:
             return currency.round(rule.cost_price)
         return Decimal(0)
+
+
+class InvoiceLine:
+    __name__ = 'account.invoice.line'
+
+    @property
+    def origin_name(self):
+        pool = Pool()
+        PayslipLine = pool.get('payroll.payslip.line')
+        name = super(InvoiceLine, self).origin_name
+        if isinstance(self.origin, PayslipLine):
+            name = self.origin.rec_name
+        return name
+
+    @classmethod
+    def _get_origin(cls):
+        models = super(InvoiceLine, cls)._get_origin()
+        models.append('payroll.payslip.line')
+        return models
