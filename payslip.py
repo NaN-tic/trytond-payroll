@@ -208,12 +208,17 @@ class Payslip(ModelSQL, ModelView):
 
     def get_supplier_invoice(self):
         pool = Pool()
+        try:
+            BankAccount = pool.get('bank.account')
+        except KeyError:
+            BankAccount = None
         Invoice = pool.get('account.invoice')
         Journal = pool.get('account.journal')
 
         invoices = Invoice.search([
                 ('type', '=', 'in_invoice'),
                 ('party', '=', self.employee.party.id),
+                ('invoice_date', '=', self.end),
                 ])
         if invoices:
             return invoices[0]
@@ -232,13 +237,19 @@ class Payslip(ModelSQL, ModelView):
         invoice = Invoice(
             type='in_invoice',
             journal=journal,
+            invoice_date=self.end,
             party=self.employee.party,
             invoice_address=invoice_address,
             account=self.employee.party.account_payable,
             payment_term=payment_term,
             )
+
         if hasattr(Invoice, 'payment_type'):
             invoice.payment_type = self.employee.party.supplier_payment_type
+            if hasattr(Invoice, 'bank_account') and invoice.payment_type:
+                bank_account_id = invoice.on_change_with_bank_account()
+                if bank_account_id:
+                    invoice.bank_account = BankAccount(bank_account_id)
         return invoice
 
 
