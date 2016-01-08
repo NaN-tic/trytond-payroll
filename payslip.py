@@ -438,7 +438,7 @@ class PayslipLine(ModelSQL, ModelView):
                 if tax_ids:
                     invoice_line.taxes.extend(Tax.browse(tax_ids))
                 continue
-            invoice_line.taxes.append(tax.id)
+            invoice_line.taxes.append(tax)
         if invoice_line.party.supplier_tax_rule:
             tax_ids = invoice_line.party.supplier_tax_rule.apply(None, pattern)
             if tax_ids:
