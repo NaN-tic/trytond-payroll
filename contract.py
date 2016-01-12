@@ -96,14 +96,23 @@ class Contract(ModelSQL, ModelView):
                 ('end', '>=', Eval('start'))],
             ], depends=['start'])
     yearly_hours = fields.Numeric('Yearly Hours', domain=[
-            ('yearly_hours', '>=', Decimal(0)),
+            ['OR',
+                ('yearly_hours', '=', None),
+                ('yearly_hours', '>=', Decimal(0)),
+                ],
             ], required=True)
     working_shift_hours = fields.Numeric('Working Shift Hours', domain=[
-            ('working_shift_hours', '>=', Decimal(0)),
+            ['OR',
+                ('working_shift_hours', '=', None),
+                ('working_shift_hours', '>=', Decimal(0)),
+                ],
             ], required=True)
     working_shift_price = fields.Numeric('Working Shift Price', required=True,
         digits=(16, DIGITS), domain=[
-            ('working_shift_hours', '>=', Decimal(0)),
+            ['OR',
+                ('working_shift_price', '=', None),
+                ('working_shift_price', '>=', Decimal(0)),
+                ],
             ],
         help="Price used to compute the amount corresponding to leaves.")
     hours_summary = fields.One2Many('payroll.contract.hours_summary',
