@@ -72,6 +72,12 @@ class ContractRule(ModelSQL, ModelView, MatchMixin):
     def get_rec_name(self, name):
         return '%s, %s' % (self.ruleset.rec_name, self.sequence)
 
+    @classmethod
+    def search_rec_name(cls, name, clause):
+        return [
+            ('ruleset',) + tuple(clause[1:]),
+            ]
+
     @staticmethod
     def default_compute_method():
         return 'working_shift'
@@ -139,9 +145,7 @@ class Contract(ModelSQL, ModelView):
     @classmethod
     def search_rec_name(cls, name, clause):
         return [
-            ['OR',
-                ('employee',) + clause[1:],
-                ('start',) + clause[1:]],
+            ('employee',) + tuple(clause[1:]),
             ]
 
     @fields.depends('ruleset')
