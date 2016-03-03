@@ -1,3 +1,4 @@
+* Adapted tests
 * Use the payslip dates to select the correct employee contract
 * Return Numeric functional fields with the correct digits
 
