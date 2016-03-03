@@ -1,1 +1,5 @@
+* Use the payslip dates to select the correct employee contract
+* Return Numeric functional fields with the correct digits
+
+Version 3.4.0 - 2016-01-21
 * Initial release
