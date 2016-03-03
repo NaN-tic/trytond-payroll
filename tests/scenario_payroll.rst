@@ -56,6 +56,78 @@ Reload the context::
     >>> Group = Model.get('res.group')
     >>> config._context = User.get_preferences(True, config.context)
 
+Create fiscal year::
+
+    >>> FiscalYear = Model.get('account.fiscalyear')
+    >>> Sequence = Model.get('ir.sequence')
+    >>> SequenceStrict = Model.get('ir.sequence.strict')
+    >>> fiscalyear = FiscalYear(name=str(today.year))
+    >>> fiscalyear.start_date = today + relativedelta(month=1, day=1)
+    >>> fiscalyear.end_date = today + relativedelta(month=12, day=31)
+    >>> fiscalyear.company = company
+    >>> post_move_seq = Sequence(name=str(today.year), code='account.move',
+    ...     company=company)
+    >>> post_move_seq.save()
+    >>> fiscalyear.post_move_sequence = post_move_seq
+    >>> invoice_seq = SequenceStrict(name=str(today.year),
+    ...     code='account.invoice', company=company)
+    >>> invoice_seq.save()
+    >>> fiscalyear.out_invoice_sequence = invoice_seq
+    >>> fiscalyear.in_invoice_sequence = invoice_seq
+    >>> fiscalyear.out_credit_note_sequence = invoice_seq
+    >>> fiscalyear.in_credit_note_sequence = invoice_seq
+    >>> fiscalyear.save()
+    >>> FiscalYear.create_period([fiscalyear.id], config.context)
+
+Create chart of accounts::
+
+    >>> AccountTemplate = Model.get('account.account.template')
+    >>> Account = Model.get('account.account')
+    >>> Journal = Model.get('account.journal')
+    >>> account_template, = AccountTemplate.find([('parent', '=', None)])
+    >>> create_chart = Wizard('account.create_chart')
+    >>> create_chart.execute('account')
+    >>> create_chart.form.account_template = account_template
+    >>> create_chart.form.company = company
+    >>> create_chart.execute('create_account')
+    >>> receivable, = Account.find([
+    ...         ('kind', '=', 'receivable'),
+    ...         ('company', '=', company.id),
+    ...         ])
+    >>> payable, = Account.find([
+    ...         ('kind', '=', 'payable'),
+    ...         ('company', '=', company.id),
+    ...         ])
+    >>> revenue, = Account.find([
+    ...         ('kind', '=', 'revenue'),
+    ...         ('company', '=', company.id),
+    ...         ])
+    >>> expense, = Account.find([
+    ...         ('kind', '=', 'expense'),
+    ...         ('company', '=', company.id),
+    ...         ])
+    >>> create_chart.form.account_receivable = receivable
+    >>> create_chart.form.account_payable = payable
+    >>> create_chart.execute('create_properties')
+    >>> cash, = Account.find([
+    ...         ('kind', '=', 'other'),
+    ...         ('name', '=', 'Main Cash'),
+    ...         ('company', '=', company.id),
+    ...         ])
+    >>> cash_journal, = Journal.find([('type', '=', 'cash')])
+    >>> cash_journal.credit_account = cash
+    >>> cash_journal.debit_account = cash
+    >>> cash_journal.save()
+
+Create payment term::
+
+    >>> PaymentTerm = Model.get('account.invoice.payment_term')
+    >>> PaymentTermLine = Model.get('account.invoice.payment_term.line')
+    >>> payment_term = PaymentTerm(name='Direct')
+    >>> payment_term_line = PaymentTermLine(type='remainder', days=0)
+    >>> payment_term.lines.append(payment_term_line)
+    >>> payment_term.save()
+
 Create employees::
 
     >>> Employee = Model.get('company.employee')
@@ -81,6 +153,8 @@ Create products::
     >>> template.list_price = Decimal('800')
     >>> template.cost_price = Decimal('200')
     >>> template.cost_price_method = 'fixed'
+    >>> template.account_expense = expense
+    >>> template.account_revenue = revenue
     >>> template.save()
     >>> large_shift, = template.products
 
@@ -93,6 +167,8 @@ Create products::
     >>> template.list_price = Decimal('300')
     >>> template.cost_price = Decimal('70')
     >>> template.cost_price_method = 'fixed'
+    >>> template.account_expense = expense
+    >>> template.account_revenue = revenue
     >>> template.save()
     >>> short_shift, = template.products
 
@@ -105,8 +181,38 @@ Create products::
     >>> template.list_price = Decimal('70')
     >>> template.cost_price = Decimal('30')
     >>> template.cost_price_method = 'fixed'
+    >>> template.account_expense = expense
+    >>> template.account_revenue = revenue
     >>> template.save()
     >>> guard, = template.products
+
+    >>> template = ProductTemplate()
+    >>> template.name = 'Professional Services'
+    >>> template.default_uom = hour
+    >>> template.type = 'service'
+    >>> template.salable = True
+    >>> template.purchasable = True
+    >>> template.list_price = Decimal('0')
+    >>> template.cost_price = Decimal('0')
+    >>> template.cost_price_method = 'fixed'
+    >>> template.account_expense = expense
+    >>> template.account_revenue = revenue
+    >>> template.save()
+    >>> professional_services, = template.products
+
+    >>> template = ProductTemplate()
+    >>> template.name = 'Extra Professional Services'
+    >>> template.default_uom = hour
+    >>> template.type = 'service'
+    >>> template.salable = True
+    >>> template.purchasable = True
+    >>> template.list_price = Decimal('0')
+    >>> template.cost_price = Decimal('0')
+    >>> template.cost_price_method = 'fixed'
+    >>> template.account_expense = expense
+    >>> template.account_revenue = revenue
+    >>> template.save()
+    >>> extra_professional_services, = template.products
 
 Configure sequences::
 
@@ -125,9 +231,28 @@ Create Payslip Types::
 
     >>> PayslipLineType = Model.get('payroll.payslip.line.type')
     >>> normal_line_type = PayslipLineType(name='Normal')
+    >>> normal_line_type.product = professional_services
     >>> normal_line_type.save()
     >>> extra_line_type = PayslipLineType(name='Extra')
+    >>> extra_line_type.product = extra_professional_services
     >>> extra_line_type.save()
+
+Create Ruleset::
+
+    >>> RuleSet = Model.get('payroll.contract.ruleset')
+    >>> ruleset = RuleSet()
+    >>> ruleset.name = 'Employees'
+    >>> rule = ruleset.rules.new()
+    >>> rule.sequence= 1
+    >>> rule.hours = Decimal('4.5')
+    >>> rule.hour_type = normal_line_type
+    >>> rule.cost_price = Decimal('300')
+    >>> rule = ruleset.rules.new()
+    >>> rule.sequence= 2
+    >>> rule.hours = Decimal(8)
+    >>> rule.hour_type = normal_line_type
+    >>> rule.cost_price = Decimal('800')
+    >>> ruleset.save()
 
 Create Contract::
 
@@ -137,18 +262,9 @@ Create Contract::
     >>> contract.start = today.replace(month=1, day=1)
     >>> contract.end = today.replace(month=12, day=31)
     >>> contract.yearly_hours = Decimal(1840)
-    >>> rule = contract.rules.new()
-    >>> rule.sequence= 1
-    >>> rule.hours = Decimal('4.5')
-    >>> rule.hour_type = normal_line_type
-    >>> rule.product = short_shift
-    >>> rule.cost_price = Decimal('300')
-    >>> rule = contract.rules.new()
-    >>> rule.sequence= 2
-    >>> rule.hours = Decimal(8)
-    >>> rule.hour_type = normal_line_type
-    >>> rule.product = large_shift
-    >>> rule.cost_price = Decimal('800')
+    >>> contract.working_shift_hours = Decimal(8)
+    >>> contract.working_shift_price = Decimal(360)
+    >>> contract.ruleset = ruleset
     >>> contract.save()
 
 Create overlaped Contract::
@@ -158,6 +274,9 @@ Create overlaped Contract::
     >>> contract2.start = today.replace(month=12, day=1)
     >>> contract2.end = today.replace(month=12, day=31)
     >>> contract2.yearly_hours = Decimal(1840)
+    >>> contract2.working_shift_hours = Decimal(8)
+    >>> contract2.working_shift_price = Decimal(360)
+    >>> contract2.ruleset = ruleset
     >>> contract2.save()
     Traceback (most recent call last):
         ...
@@ -226,8 +345,8 @@ Create working shifts::
     >>> WorkingShift = Model.get('working_shift')
     >>> working_shift1 = WorkingShift()
     >>> working_shift1.employee = employee
-    >>> working_shift1.start_date = datetime.datetime(today.year, 5, 6, 9, 0, 0)
-    >>> working_shift1.end_date = datetime.datetime(today.year, 5, 6, 12, 0, 0)
+    >>> working_shift1.start = datetime.datetime(today.year, 5, 6, 9, 0, 0)
+    >>> working_shift1.end = datetime.datetime(today.year, 5, 6, 12, 0, 0)
     >>> working_shift1.hours
     Decimal('3.00')
     >>> working_shift1.save()
@@ -236,8 +355,8 @@ Create working shifts::
 
     >>> working_shift2 = WorkingShift()
     >>> working_shift2.employee = employee
-    >>> working_shift2.start_date = datetime.datetime(today.year, 5, 7, 9, 0, 0)
-    >>> working_shift2.end_date = datetime.datetime(today.year, 5, 7, 17, 0, 0)
+    >>> working_shift2.start = datetime.datetime(today.year, 5, 7, 9, 0, 0)
+    >>> working_shift2.end = datetime.datetime(today.year, 5, 7, 17, 0, 0)
     >>> working_shift2.hours
     Decimal('8.00')
     >>> working_shift2.save()
@@ -246,8 +365,8 @@ Create working shifts::
 
     >>> working_shift3 = WorkingShift()
     >>> working_shift3.employee = employee
-    >>> working_shift3.start_date = datetime.datetime(today.year, 5, 8, 9, 0, 0)
-    >>> working_shift3.end_date = datetime.datetime(today.year, 5, 8, 16, 30, 0)
+    >>> working_shift3.start = datetime.datetime(today.year, 5, 8, 9, 0, 0)
+    >>> working_shift3.end = datetime.datetime(today.year, 5, 8, 16, 30, 0)
     >>> working_shift3.hours
     Decimal('7.50')
     >>> working_shift3.save()
@@ -256,8 +375,8 @@ Create working shifts::
 
     >>> working_shift4 = WorkingShift()
     >>> working_shift4.employee = employee
-    >>> working_shift4.start_date = datetime.datetime(today.year, 5, 9, 9, 0, 0)
-    >>> working_shift4.end_date = datetime.datetime(today.year, 5, 9, 16, 30, 0)
+    >>> working_shift4.start = datetime.datetime(today.year, 5, 9, 9, 0, 0)
+    >>> working_shift4.end = datetime.datetime(today.year, 5, 9, 16, 30, 0)
     >>> working_shift4.hours
     Decimal('7.50')
     >>> working_shift4.save()
@@ -280,10 +399,10 @@ Create May Payslip::
     >>> Payslip = Model.get('payroll.payslip')
     >>> payslip = Payslip()
     >>> payslip.employee = employee
-    >>> payslip.contract == contract
-    True
     >>> payslip.start = today.replace(month=5, day=1)
     >>> payslip.end = today.replace(month=5, day=31)
+    >>> payslip.contract == contract
+    True
     >>> line = payslip.lines.new()
     >>> line.type = normal_line_type
     >>> line.working_hours = Decimal('160')
@@ -304,41 +423,41 @@ Check may payslip functionals::
 
     >>> line, = payslip.lines
     >>> line.worked_hours
-    Decimal('28.5')
+    Decimal('32.00')
     >>> line.leave_hours
-    Decimal('8.0')
+    Decimal('8.00')
     >>> line.generated_entitled_hours
-    Decimal('4')
+    Decimal('4.00')
     >>> line.total_hours
-    Decimal('32.5')
+    Decimal('36.00')
     >>> line.remaining_hours
-    Decimal('127.5')
+    Decimal('124.00')
     >>> line.leave_payment_hours
-    Decimal('8')
+    Decimal('8.00')
     >>> line.amount
-    Decimal('2700.00')
+    Decimal('2880.00')
 
     >>> payslip.worked_hours
-    Decimal('28.5')
+    Decimal('32.00')
     >>> payslip.leave_hours
-    Decimal('8.0')
+    Decimal('8.00')
     >>> payslip.generated_entitled_hours
-    Decimal('4')
+    Decimal('4.00')
     >>> payslip.total_hours
-    Decimal('32.5')
+    Decimal('36.00')
     >>> line.leave_payment_hours
-    Decimal('8')
+    Decimal('8.00')
     >>> payslip.amount
-    Decimal('2700.00')
+    Decimal('2880.00')
 
 Create empty December Payslip::
 
     >>> payslip = Payslip()
     >>> payslip.employee = employee
-    >>> payslip.contract == contract
-    True
     >>> payslip.start = datetime.date(2015, 12, 1)
     >>> payslip.end = datetime.date(2015, 12, 31)
+    >>> payslip.contract == contract
+    True
     >>> line = payslip.lines.new()
     >>> line.type = normal_line_type
     >>> line.working_hours = Decimal('160')
@@ -350,15 +469,15 @@ Check payslip functionals::
     >>> line.worked_hours
     Decimal('0')
     >>> line.leave_hours
-    Decimal('40.0')
+    Decimal('40.00')
     >>> line.generated_entitled_hours
     Decimal('0')
     >>> line.leave_payment_hours
     Decimal('0')
     >>> line.total_hours
-    Decimal('40.0')
+    Decimal('40.00')
     >>> line.remaining_hours
-    Decimal('120.0')
+    Decimal('120.00')
     >>> line.amount
     Decimal('0')
 
@@ -367,26 +486,26 @@ Check employee contract hours summary::
     >>> contract.reload()
     >>> summary_by_period = {s.leave_period.id: s for s in contract.hours_summary}
     >>> summary_by_period[leave_period.id].worked_hours
-    Decimal('28.5')
+    Decimal('32.00')
     >>> summary_by_period[leave_period.id].leave_hours
-    Decimal('48.0')
+    Decimal('48.00')
     >>> summary_by_period[leave_period.id].entitled_hours
-    Decimal('4')
+    Decimal('4.00')
     >>> summary_by_period[leave_period.id].total_hours
-    Decimal('72.5')
+    Decimal('76.00')
     >>> summary_by_period[leave_period.id].remaining_hours
-    Decimal('247.5')
+    Decimal('244.00')
     >>> summary_by_period[leave_period.id].leave_payment_hours
-    Decimal('8')
+    Decimal('8.00')
 
     >>> summary_by_period[leave_period2.id].worked_hours
     Decimal('0')
     >>> summary_by_period[leave_period2.id].leave_hours
-    Decimal('56.0')
+    Decimal('56.00')
     >>> summary_by_period[leave_period2.id].entitled_hours
     Decimal('0')
     >>> summary_by_period[leave_period2.id].total_hours
-    Decimal('56.0')
+    Decimal('56.00')
     >>> summary_by_period[leave_period2.id].remaining_hours
     Decimal('0')
     >>> summary_by_period[leave_period2.id].leave_payment_hours
