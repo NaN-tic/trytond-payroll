@@ -111,24 +111,21 @@ class Payslip(ModelSQL, ModelView):
                 ('start',) + clause[1:]],
             ]
 
-    @fields.depends('employee')
-    def on_change_employee(self):
-        if self.employee:
-            current_contract = self.employee.current_payroll_contract
-            if current_contract:
-                return {
-                    'contract': current_contract.id,
-                    'contract_start': current_contract.start,
-                    'contract_end': current_contract.end,
-                    }
-        return {}
+    @fields.depends('employee', 'start', 'end')
+    def on_change_with_contract(self, name=None):
+        if not self.employee or not self.start or not self.end:
+            return
+        employee_contract = self.employee.get_payroll_contract(
+            self.start, self.end)
+        if employee_contract:
+            return employee_contract.id
 
-    @fields.depends('contract.start')
+    @fields.depends('contract', methods=['contract'])
     def on_change_with_contract_start(self, name=None):
         if self.contract:
             return self.contract.start
 
-    @fields.depends('contract.end')
+    @fields.depends('contract', methods=['contract'])
     def on_change_with_contract_end(self, name=None):
         if self.contract:
             return self.contract.end
@@ -150,19 +147,29 @@ class Payslip(ModelSQL, ModelView):
         return [p.id for l in self.lines for p in l.leave_payments]
 
     def get_worked_hours(self, name):
-        return sum(l.worked_hours for l in self.lines)
+        digits = self.__class__.worked_hours.digits
+        return sum(l.worked_hours for l in self.lines).quantize(
+            Decimal(str(10 ** -digits[1])))
 
     def get_leave_hours(self, name):
-        return sum(l.leave_hours for l in self.lines)
+        digits = self.__class__.leave_hours.digits
+        return sum(l.leave_hours for l in self.lines).quantize(
+            Decimal(str(10 ** -digits[1])))
 
     def get_generated_entitled_hours(self, name):
-        return sum(l.generated_entitled_hours for l in self.lines)
+        digits = self.__class__.generated_entitled_hours.digits
+        return sum(l.generated_entitled_hours for l in self.lines).quantize(
+            Decimal(str(10 ** -digits[1])))
 
     def get_total_hours(self, name):
-        return sum(l.total_hours for l in self.lines)
+        digits = self.__class__.total_hours.digits
+        return sum(l.total_hours for l in self.lines).quantize(
+            Decimal(str(10 ** -digits[1])))
 
     def get_leave_payment_hours(self, name):
-        return sum(l.leave_payment_hours for l in self.lines)
+        digits = self.__class__.leave_payment_hours.digits
+        return sum(l.leave_payment_hours for l in self.lines).quantize(
+            Decimal(str(10 ** -digits[1])))
 
     @staticmethod
     def default_currency_digits():
@@ -346,10 +353,12 @@ class PayslipLine(ModelSQL, ModelView):
         return 2
 
     def get_worked_hours(self, name):
+        digits = self.__class__.worked_hours.digits
         if not self.working_shifts:
             return Decimal(0)
         return (len(self.working_shifts)
-            * self.payslip.contract.working_shift_hours)
+            * self.payslip.contract.working_shift_hours).quantize(
+                Decimal(str(10 ** -digits[1])))
 
     # Only payslip lines with working_hours set will take into account
     # leave_hours as most of the time they will be holidays and it doesn't
@@ -362,30 +371,40 @@ class PayslipLine(ModelSQL, ModelView):
         # Search on 'employee.leave' and find the number of hours that fit
         # inside this payslip
         Leave = Pool().get('employee.leave')
+        digits = self.__class__.leave_hours.digits
         return Leave.get_leave_hours(self.payslip.employee, self.payslip.start,
-            self.payslip.end, type_=self.type)
+            self.payslip.end, type_=self.type).quantize(
+                Decimal(str(10 ** -digits[1])))
 
     def get_generated_entitled_hours(self, name):
+        digits = self.__class__.generated_entitled_hours.digits
         if not self.generated_entitlements:
             return Decimal(0)
-        return sum([x.hours for x in self.generated_entitlements])
+        return sum([x.hours for x in self.generated_entitlements]).quantize(
+            Decimal(str(10 ** -digits[1])))
 
     def get_total_hours(self, name):
+        digits = self.__class__.total_hours.digits
         return (self.worked_hours + self.leave_hours
-            - self.generated_entitled_hours)
+            - self.generated_entitled_hours).quantize(
+                Decimal(str(10 ** -digits[1])))
 
     def get_remaining_extra_hours(self, name):
-        difference = self.total_hours - self.working_hours
+        difference = (self.total_hours - self.working_hours)
         if name == 'remaining_hours' and difference < Decimal(0):
-            return difference
+            digits = self.__class__.remaining_hours.digits
+            return -difference.quantize(Decimal(str(10 ** -digits[1])))
         elif name == 'extra_hours' and difference > 0:
-            return difference
+            digits = self.__class__.extra_hours.digits
+            return difference.quantize(Decimal(str(10 ** -digits[1])))
         return Decimal(0)
 
     def get_leave_payment_hours(self, name):
+        digits = self.__class__.leave_payment_hours.digits
         if not self.leave_payments:
             return Decimal(0)
-        return sum([p.hours for p in self.leave_payments])
+        return sum([p.hours for p in self.leave_payments]).quantize(
+                Decimal(str(10 ** -digits[1])))
 
     def get_currency_digits(self, name):
         return self.payslip.employee.company.currency.digits
@@ -404,7 +423,7 @@ class PayslipLine(ModelSQL, ModelView):
         amount = sum([s.cost for s in self.working_shifts])
         amount += self.leave_hours * self.hour_unit_price
         amount -= self.generated_entitled_hours * self.hour_unit_price
-        return amount
+        return amount.quantize(Decimal(str(10 ** -self.currency_digits)))
 
     def get_supplier_invoice_line(self):
         pool = Pool()
@@ -534,7 +553,8 @@ class WorkingShift:
 
     def get_cost(self, name):
         currency = self.employee.company.currency
-        employee_contract = self.employee.current_payroll_contract
+        employee_contract = self.employee.get_payroll_contract(
+            self.start.date(), self.end.date())
         if not employee_contract:
             return Decimal(0)
 
