@@ -540,8 +540,12 @@ class WorkingShift:
 
     @classmethod
     def search_payslip(cls, name, clause):
+        if clause[1] == '=' and clause[2] is None:
+            return [
+                ('payslip_line', '=', None),
+                ]
         return [
-            ('payslip_line.payslip',) + clause[1:],
+            ('payslip_line.payslip',) + tuple(clause[1:]),
             ]
 
     def get_currency_digits(self, name):
