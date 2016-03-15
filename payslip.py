@@ -148,26 +148,36 @@ class Payslip(ModelSQL, ModelView):
 
     def get_worked_hours(self, name):
         digits = self.__class__.worked_hours.digits
+        if not self.lines:
+            return Decimal(0)
         return sum(l.worked_hours for l in self.lines).quantize(
             Decimal(str(10 ** -digits[1])))
 
     def get_leave_hours(self, name):
         digits = self.__class__.leave_hours.digits
+        if not self.lines:
+            return Decimal(0)
         return sum(l.leave_hours for l in self.lines).quantize(
             Decimal(str(10 ** -digits[1])))
 
     def get_generated_entitled_hours(self, name):
         digits = self.__class__.generated_entitled_hours.digits
+        if not self.lines:
+            return Decimal(0)
         return sum(l.generated_entitled_hours for l in self.lines).quantize(
             Decimal(str(10 ** -digits[1])))
 
     def get_total_hours(self, name):
         digits = self.__class__.total_hours.digits
+        if not self.lines:
+            return Decimal(0)
         return sum(l.total_hours for l in self.lines).quantize(
             Decimal(str(10 ** -digits[1])))
 
     def get_leave_payment_hours(self, name):
         digits = self.__class__.leave_payment_hours.digits
+        if not self.lines:
+            return Decimal(0)
         return sum(l.leave_payment_hours for l in self.lines).quantize(
             Decimal(str(10 ** -digits[1])))
 
@@ -179,6 +189,8 @@ class Payslip(ModelSQL, ModelView):
         return self.employee.company.currency.digits
 
     def get_amount(self, name):
+        if not self.lines:
+            return Decimal(0)
         return sum([x.amount for x in self.lines])
 
     @classmethod
