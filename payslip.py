@@ -106,10 +106,7 @@ class Payslip(ModelSQL, ModelView):
     @classmethod
     def search_rec_name(cls, name, clause):
         return [
-            ['OR',
-                ('employee',) + tuple(clause[1:]),
-                ('start',) + tuple(clause[1:]),
-                ],
+            ('employee',) + tuple(clause[1:]),
             ]
 
     @fields.depends('employee', 'start', 'end')
