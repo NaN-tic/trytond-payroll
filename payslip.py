@@ -382,9 +382,9 @@ class PayslipLine(ModelSQL, ModelView):
         # inside this payslip
         Leave = Pool().get('employee.leave')
         digits = self.__class__.leave_hours.digits
-        return Leave.get_leave_hours(self.payslip.employee, self.payslip.start,
-            self.payslip.end, type_=self.type).quantize(
-                Decimal(str(10 ** -digits[1])))
+        return Leave.get_leave_hours(
+            self.payslip.employee, self.payslip.start, self.payslip.end
+            ).quantize(Decimal(str(10 ** -digits[1])))
 
     def get_generated_entitled_hours(self, name):
         digits = self.__class__.generated_entitled_hours.digits
