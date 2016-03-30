@@ -107,8 +107,8 @@ class Payslip(ModelSQL, ModelView):
     def search_rec_name(cls, name, clause):
         return [
             ['OR',
-                ('employee',) + clause[1:],
-                ('start',) + clause[1:]],
+                ('employee',) + tuple(clause[1:]),
+                ('start',) + tuple(clause[1:]]),
             ]
 
     @fields.depends('employee', 'start', 'end')
@@ -512,7 +512,7 @@ class Entitlement:
     @classmethod
     def search_payslip(cls, name, clause):
         return [
-            ('payslip_line.payslip',) + clause[1:],
+            ('payslip_line.payslip',) + tuple(clause[1:]),
             ]
 
 
@@ -529,7 +529,7 @@ class LeavePayment:
     @classmethod
     def search_payslip(cls, name, clause):
         return [
-            ('payslip_line.payslip',) + clause[1:],
+            ('payslip_line.payslip',) + tuple(clause[1:]),
             ]
 
 
