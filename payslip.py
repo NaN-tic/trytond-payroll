@@ -108,7 +108,8 @@ class Payslip(ModelSQL, ModelView):
         return [
             ['OR',
                 ('employee',) + tuple(clause[1:]),
-                ('start',) + tuple(clause[1:]]),
+                ('start',) + tuple(clause[1:]),
+                ],
             ]
 
     @fields.depends('employee', 'start', 'end')
