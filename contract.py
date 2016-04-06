@@ -206,6 +206,9 @@ class ContractHoursSummary(ModelSQL, ModelView):
     contract = fields.Many2One('payroll.contract', 'Payroll', readonly=True)
     leave_period = fields.Many2One('employee.leave.period', 'Period',
         readonly=True)
+    working_hours = fields.Function(fields.Numeric('Working Hours',
+            digits=(16, 2)),
+        'get_working_hours')
     worked_hours = fields.Function(fields.Numeric('Worked Hours',
             digits=(16, 2)),
         'get_worked_hours')
@@ -215,9 +218,9 @@ class ContractHoursSummary(ModelSQL, ModelView):
     entitled_hours = fields.Function(fields.Numeric('Entitled Hours',
             digits=(16, 2)),
         'get_entitled_hours')
-    total_hours = fields.Function(fields.Numeric('Total Hours',
+    hours_to_do = fields.Function(fields.Numeric('Hours To Do',
             digits=(16, 2)),
-        'get_total_hours')
+        'get_hours_to_do')
     remaining_hours = fields.Function(fields.Numeric('Remaining Hours',
             digits=(16, 2)),
         'get_remaining_extra_hours')
@@ -228,12 +231,40 @@ class ContractHoursSummary(ModelSQL, ModelView):
             digits=(16, 2)),
         'get_leave_payment_hours')
 
+    def get_working_hours(self, name):
+        pool = Pool()
+        PayslipLine = pool.get('payroll.payslip.line')
+
+        payslip_lines = PayslipLine.search([
+                ('payslip.employee', '=', self.contract.employee.id),
+                ('payslip.contract', '=', self.contract.id),
+                ('payslip.start', '>=', self.leave_period.start),
+                ('payslip.end', '<=', self.leave_period.end),
+                ])
+        if not payslip_lines:
+            return Decimal(0)
+        digits = self.__class__.working_hours.digits
+        return sum(l.working_hours for l in payslip_lines).quantize(
+            Decimal(str(10 ** -digits[1])))
+
+    def get_leave_hours(self, name):
+        Leave = Pool().get('employee.leave')
+        digits = self.__class__.leave_hours.digits
+        return Leave.get_leave_hours(self.contract.employee,
+            self.leave_period.start, self.leave_period.end).quantize(
+                Decimal(str(10 ** -digits[1])))
+
+    def get_hours_to_do(self, name):
+        if not self.working_hours:
+            return Decimal(0)
+        digits = self.__class__.hours_to_do.digits
+        return (self.working_hours - self.leave_hours).quantize(
+            Decimal(str(10 ** -digits[1])))
+
     def get_worked_hours(self, name):
         pool = Pool()
         WorkingShift = pool.get('working_shift')
 
-        period_end = self.leave_period.end + relativedelta(days=1)
-        period_end = datetime.combine(period_end, time(0, 0))
         working_shifts = WorkingShift.search([
                 ('employee', '=', self.contract.employee.id),
                 ('payslip_line.payslip.start', '>=', self.leave_period.start),
@@ -246,13 +277,6 @@ class ContractHoursSummary(ModelSQL, ModelView):
         digits = self.__class__.worked_hours.digits
         return (len(working_shifts) * self.contract.working_shift_hours
             ).quantize(Decimal(str(10 ** -digits[1])))
-
-    def get_leave_hours(self, name):
-        Leave = Pool().get('employee.leave')
-        digits = self.__class__.leave_hours.digits
-        return Leave.get_leave_hours(self.contract.employee,
-            self.leave_period.start, self.leave_period.end).quantize(
-                Decimal(str(10 ** -digits[1])))
 
     def get_entitled_hours(self, name):
         pool = Pool()
@@ -268,6 +292,17 @@ class ContractHoursSummary(ModelSQL, ModelView):
         return sum([e.hours for e in entitlements]).quantize(
             Decimal(str(10 ** -digits[1])))
 
+    def get_remaining_extra_hours(self, name):
+        difference = (self.worked_hours - self.hours_to_do
+            - self.entitled_hours)
+        if name == 'remaining_hours' and difference < Decimal(0):
+            digits = self.__class__.remaining_hours.digits
+            return -difference.quantize(Decimal(str(10 ** -digits[1])))
+        elif name == 'extra_hours' and difference > 0:
+            digits = self.__class__.extra_hours.digits
+            return difference.quantize(Decimal(str(10 ** -digits[1])))
+        return Decimal(0)
+
     def get_leave_payment_hours(self, name):
         pool = Pool()
         LeavePayment = pool.get('employee.leave.payment')
@@ -281,31 +316,6 @@ class ContractHoursSummary(ModelSQL, ModelView):
         digits = self.__class__.leave_payment_hours.digits
         return sum([p.hours for p in leave_payments]).quantize(
             Decimal(str(10 ** -digits[1])))
-
-    def get_total_hours(self, name):
-        digits = self.__class__.total_hours.digits
-        return (self.worked_hours + self.leave_hours - self.entitled_hours
-            ).quantize(Decimal(str(10 ** -digits[1])))
-
-    def get_remaining_extra_hours(self, name):
-        pool = Pool()
-        PayslipLine = pool.get('payroll.payslip.line')
-        lines = PayslipLine.search([
-                ('payslip.contract', '=', self.contract.id),
-                ('payslip.start', '<', self.leave_period.end),
-                ('payslip.end', '>=', self.leave_period.start),
-                ('working_hours', '!=', Decimal(0)),
-                ])
-        if lines:
-            working_hours = sum(l.working_hours for l in lines)
-            difference = self.total_hours - working_hours
-            if name == 'remaining_hours' and difference < Decimal(0):
-                digits = self.__class__.remaining_hours.digits
-                return -difference.quantize(Decimal(str(10 ** -digits[1])))
-            elif name == 'extra_hours' and difference > 0:
-                digits = self.__class__.extra_hours.digits
-                return difference.quantize(Decimal(str(10 ** -digits[1])))
-        return Decimal(0)
 
     @classmethod
     def table_query(cls):
