@@ -422,14 +422,14 @@ Create May Payslip::
 Check may payslip functionals::
 
     >>> line, = payslip.lines
-    >>> line.worked_hours
-    Decimal('32.00')
     >>> line.leave_hours
     Decimal('8.00')
+    >>> line.hours_to_do
+    Decimal('152.00')
+    >>> line.worked_hours
+    Decimal('32.00')
     >>> line.generated_entitled_hours
     Decimal('4.00')
-    >>> line.total_hours
-    Decimal('36.00')
     >>> line.remaining_hours
     Decimal('124.00')
     >>> line.leave_payment_hours
@@ -437,14 +437,14 @@ Check may payslip functionals::
     >>> line.amount
     Decimal('2880.00')
 
-    >>> payslip.worked_hours
-    Decimal('32.00')
     >>> payslip.leave_hours
     Decimal('8.00')
+    >>> payslip.hours_to_do
+    Decimal('152.00')
+    >>> payslip.worked_hours
+    Decimal('32.00')
     >>> payslip.generated_entitled_hours
     Decimal('4.00')
-    >>> payslip.total_hours
-    Decimal('36.00')
     >>> line.leave_payment_hours
     Decimal('8.00')
     >>> payslip.amount
@@ -466,16 +466,16 @@ Create empty December Payslip::
 Check payslip functionals::
 
     >>> line, = payslip.lines
-    >>> line.worked_hours
-    Decimal('0')
     >>> line.leave_hours
     Decimal('40.00')
+    >>> line.hours_to_do
+    Decimal('120.00')
+    >>> line.worked_hours
+    Decimal('0')
     >>> line.generated_entitled_hours
     Decimal('0')
     >>> line.leave_payment_hours
     Decimal('0')
-    >>> line.total_hours
-    Decimal('40.00')
     >>> line.remaining_hours
     Decimal('120.00')
     >>> line.amount
@@ -485,27 +485,27 @@ Check employee contract hours summary::
 
     >>> contract.reload()
     >>> summary_by_period = {s.leave_period.id: s for s in contract.hours_summary}
-    >>> summary_by_period[leave_period.id].worked_hours
-    Decimal('32.00')
     >>> summary_by_period[leave_period.id].leave_hours
     Decimal('48.00')
+    >>> summary_by_period[leave_period.id].hours_to_do
+    Decimal('272.00')
+    >>> summary_by_period[leave_period.id].worked_hours
+    Decimal('32.00')
     >>> summary_by_period[leave_period.id].entitled_hours
     Decimal('4.00')
-    >>> summary_by_period[leave_period.id].total_hours
-    Decimal('76.00')
     >>> summary_by_period[leave_period.id].remaining_hours
     Decimal('244.00')
     >>> summary_by_period[leave_period.id].leave_payment_hours
     Decimal('8.00')
 
-    >>> summary_by_period[leave_period2.id].worked_hours
-    Decimal('0')
     >>> summary_by_period[leave_period2.id].leave_hours
     Decimal('56.00')
+    >>> summary_by_period[leave_period2.id].hours_to_do
+    Decimal('0')
+    >>> summary_by_period[leave_period2.id].worked_hours
+    Decimal('0')
     >>> summary_by_period[leave_period2.id].entitled_hours
     Decimal('0')
-    >>> summary_by_period[leave_period2.id].total_hours
-    Decimal('56.00')
     >>> summary_by_period[leave_period2.id].remaining_hours
     Decimal('0')
     >>> summary_by_period[leave_period2.id].leave_payment_hours

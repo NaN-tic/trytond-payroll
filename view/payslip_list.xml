@@ -6,7 +6,8 @@
     <field name="employee"/>
     <field name="start"/>
     <field name="end"/>
-    <field name="total_hours"/>
+    <field name="hours_to_do"/>
+    <field name="worked_hours"/>
     <field name="amount"/>
     <field name="supplier_invoice"/>
     <button string="Invoice" name="create_supplier_invoices"

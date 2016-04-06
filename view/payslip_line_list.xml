@@ -5,10 +5,10 @@
     <field name="payslip"/>
     <field name="type"/>
     <field name="working_hours"/>
-    <field name="worked_hours"/>
     <field name="leave_hours"/>
+    <field name="hours_to_do"/>
+    <field name="worked_hours"/>
     <field name="generated_entitled_hours"/>
-    <field name="total_hours"/>
     <field name="remaining_hours"/>
     <field name="extra_hours"/>
     <field name="leave_payment_hours"/>
