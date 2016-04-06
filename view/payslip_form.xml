@@ -25,15 +25,15 @@
                 <field name="generated_entitlements"/>
             </group>
             <group id="hours" colspan="4" col="6">
+                <label name="leave_hours"/>
+                <field name="leave_hours"/>
                 <label name="worked_hours"/>
                 <field name="worked_hours"/>
                 <label name="generated_entitled_hours"/>
                 <field name="generated_entitled_hours"/>
-                <label name="leave_hours"/>
-                <field name="leave_hours"/>
                 <separator id="totals" colspan="6"/>
-                <label name="total_hours"/>
-                <field name="total_hours"/>
+                <label name="hours_to_do"/>
+                <field name="hours_to_do"/>
                 <label name="leave_payment_hours"/>
                 <field name="leave_payment_hours"/>
             </group>

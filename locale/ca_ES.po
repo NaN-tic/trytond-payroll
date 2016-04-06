@@ -20,7 +20,7 @@ msgid ""
 "You can't set Working Hours to Payslip Line \"%(current_line)s\" because "
 "already exists line \"%(existing_line)s\" with hours in the same Payslip."
 msgstr ""
-"No pot establir hores de treball a la línia de nòmina \"%(current_line)s\" "
+"No pot establir hores laborals a la línia de nòmina \"%(current_line)s\" "
 "perquè ja existeix la línia \"%(existing_line)s\" amb hores a la mateixa "
 "nòmina."
 
@@ -124,6 +124,10 @@ msgctxt "field:payroll.contract.hours_summary,extra_hours:"
 msgid "Extra Hours"
 msgstr "Hores extra"
 
+msgctxt "field:payroll.contract.hours_summary,hours_to_do:"
+msgid "Hours To Do"
+msgstr "Hores a realitzar"
+
 msgctxt "field:payroll.contract.hours_summary,id:"
 msgid "ID"
 msgstr "Identificador"
@@ -148,13 +152,13 @@ msgctxt "field:payroll.contract.hours_summary,remaining_hours:"
 msgid "Remaining Hours"
 msgstr "Hores pendents"
 
-msgctxt "field:payroll.contract.hours_summary,total_hours:"
-msgid "Total Hours"
-msgstr "Hores totals"
-
 msgctxt "field:payroll.contract.hours_summary,worked_hours:"
 msgid "Worked Hours"
 msgstr "Hores treballades"
+
+msgctxt "field:payroll.contract.hours_summary,working_hours:"
+msgid "Working Hours"
+msgstr "Hores laborals"
 
 msgctxt "field:payroll.contract.hours_summary,write_date:"
 msgid "Write Date"
@@ -292,6 +296,10 @@ msgctxt "field:payroll.payslip,generated_entitlements:"
 msgid "Generated Entitlements"
 msgstr "Drets generats"
 
+msgctxt "field:payroll.payslip,hours_to_do:"
+msgid "Hours To Do"
+msgstr "Hores a realitzar"
+
 msgctxt "field:payroll.payslip,id:"
 msgid "ID"
 msgstr "Identificador"
@@ -327,10 +335,6 @@ msgstr "Inici"
 msgctxt "field:payroll.payslip,supplier_invoice:"
 msgid "Supplier Invoice"
 msgstr "Factura de proveïdor"
-
-msgctxt "field:payroll.payslip,total_hours:"
-msgid "Total Hours"
-msgstr "Hores totals"
 
 msgctxt "field:payroll.payslip,worked_hours:"
 msgid "Worked Hours"
@@ -408,10 +412,6 @@ msgctxt "field:payroll.payslip.line,supplier_invoice_lines:"
 msgid "Invoice Lines"
 msgstr "Línies de factura"
 
-msgctxt "field:payroll.payslip.line,total_hours:"
-msgid "Total Hours"
-msgstr "Hores totals"
-
 msgctxt "field:payroll.payslip.line,type:"
 msgid "Type"
 msgstr "Tipus"
@@ -422,7 +422,7 @@ msgstr "Hores treballades"
 
 msgctxt "field:payroll.payslip.line,working_hours:"
 msgid "Working Hours"
-msgstr "Hores de treball"
+msgstr "Hores laborals"
 
 msgctxt "field:payroll.payslip.line,working_shifts:"
 msgid "Working Shifts"
@@ -499,7 +499,7 @@ msgstr "S'utilitza per omplir automàticament les línies de la nòmina"
 
 msgctxt "help:payroll.payslip.line,working_hours:"
 msgid "Number of working hours in the current month. Usually 8 * 20."
-msgstr "Número d'hores de treball en el mes actual. Habitualment són 8 * 20"
+msgstr "Número d'hores laborals en el mes actual. Habitualment són 8 * 20"
 
 msgctxt "model:ir.action,name:act_contract"
 msgid "Employee Contracts"
