@@ -585,12 +585,15 @@ class WorkingShift:
         if (employee_contract.ruleset.compute_interventions
                 and self.compute_interventions):
             cost = Decimal(0)
+            found_any = False
             for intervention in self.interventions:
                 rule = employee_contract.compute_intervention_matching_rule(
                     intervention)
                 if rule:
+                    found_any = True
                     cost += rule.cost_price
-            return cost
+            if found_any:
+                return cost
         rule = employee_contract.compute_working_shift_matching_rule(self)
         if rule:
             return currency.round(rule.cost_price)
