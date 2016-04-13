@@ -236,6 +236,7 @@ class Payslip(ModelSQL, ModelView):
                 ('type', '=', 'in_invoice'),
                 ('party', '=', self.employee.party.id),
                 ('invoice_date', '=', self.end),
+                ('state', '=', 'draft'),
                 ])
         if invoices:
             return invoices[0]
