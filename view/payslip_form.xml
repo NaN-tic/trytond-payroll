@@ -2,10 +2,6 @@
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
 <form string="Payslip">
-    <label name="employee"/>
-    <field name="employee"/>
-    <label name="contract"/>
-    <field name="contract"/>
     <group id="start_end_amount" colspan="4" col="6">
         <label name="start"/>
         <field name="start"/>
@@ -14,6 +10,10 @@
         <label name="amount"/>
         <field name="amount"/>
     </group>
+    <label name="employee"/>
+    <field name="employee"/>
+    <label name="contract"/>
+    <field name="contract"/>
     <notebook>
         <page string="Lines" id="lines">
             <field name="lines" colspan="4"/>
