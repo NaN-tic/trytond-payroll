@@ -112,7 +112,7 @@ class Payslip(ModelSQL, ModelView):
                     'You cannot delete the payslip "%s" because it is already '
                     'invoiced.\n'
                     'Please, delete or cancel the invoice before delete the '
-                    'paylsip.'),
+                    'payslip.'),
                 })
 
     def get_rec_name(self, name):
