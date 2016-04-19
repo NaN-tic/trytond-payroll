@@ -12,9 +12,10 @@ __all__ = ['PayslipLineType', 'Payslip', 'PayslipLine', 'Entitlement',
 __metaclass__ = PoolMeta
 
 STATES = {
-    'readonly': Bool(Eval('supplier_invoice')),
+    'readonly': Eval('supplier_invoice_state').in_(
+        ['validated', 'posted', 'paid']),
     }
-DEPENDS = ['supplier_invoice']
+DEPENDS = ['supplier_invoice_state']
 
 
 class PayslipLineType(ModelSQL, ModelView):
@@ -28,12 +29,16 @@ class Payslip(ModelSQL, ModelView):
     'Payslip'
     __name__ = 'payroll.payslip'
     employee = fields.Many2One('company.employee', 'Employee', required=True,
-        select=True, states=STATES, depends=DEPENDS)
+        select=True, states={
+            'readonly': Bool(Eval('lines')),
+            }, depends=['lines'])
     contract = fields.Many2One('payroll.contract', 'Contract', required=True,
         select=True, domain=[
             ('employee', '=', Eval('employee', -1)),
             ],
-        states=STATES, depends=DEPENDS + ['employee'])
+        states={
+            'readonly': Bool(Eval('lines')),
+            }, depends=['lines', 'employee'])
     contract_start = fields.Function(fields.Date('Contract Start'),
         'on_change_with_contract_start')
     contract_end = fields.Function(fields.Date('Contract Start'),
@@ -83,15 +88,31 @@ class Payslip(ModelSQL, ModelView):
         domain=[
             ('type', '=', 'in_invoice'),
             ], readonly=True, select=True)
+    supplier_invoice_state = fields.Function(fields.Selection([
+                ('draft', 'Draft'),
+                ('validated', 'Validated'),
+                ('posted', 'Posted'),
+                ('paid', 'Paid'),
+                ('cancel', 'Canceled'),
+                ], 'Supplier Invoice State'),
+        'get_supplier_invoice_state', searcher='search_supplier_invoice_state')
 
     @classmethod
     def __setup__(cls):
         super(Payslip, cls).__setup__()
         cls._buttons.update({
                 'create_supplier_invoices': {
-                    'invisible': Bool(Eval('supplier_invoice')),
+                    'readonly': Eval('supplier_invoice_state').in_(
+                        ['validated', 'posted', 'paid']),
                     'icon': 'tryton-ok',
                     },
+                })
+        cls._error_messages.update({
+                'delete_invoiced_payslp': (
+                    'You cannot delete the payslip "%s" because it is already '
+                    'invoiced.\n'
+                    'Please, delete or cancel the invoice before delete the '
+                    'paylsip.'),
                 })
 
     def get_rec_name(self, name):
@@ -191,6 +212,15 @@ class Payslip(ModelSQL, ModelView):
             return Decimal(0)
         return sum([x.amount for x in self.lines])
 
+    def get_supplier_invoice_state(self, name):
+        return self.supplier_invoice.state if self.supplier_invoice else None
+
+    @classmethod
+    def search_supplier_invoice_state(cls, name, clause):
+        return [
+            ('supplier_invoice.state',) + tuple(clause[1:]),
+            ]
+
     @classmethod
     @ModelView.button
     def create_supplier_invoices(cls, payslips):
@@ -199,7 +229,9 @@ class Payslip(ModelSQL, ModelView):
 
         to_write = []
         for payslip in payslips:
-            if payslip.supplier_invoice:
+            if (payslip.supplier_invoice
+                    and payslip.supplier_invoice.state
+                    in ('validated', 'posted', 'paid')):
                 continue
 
             invoice_lines = []
@@ -269,6 +301,15 @@ class Payslip(ModelSQL, ModelView):
                 if bank_account_id:
                     invoice.bank_account = BankAccount(bank_account_id)
         return invoice
+
+    @classmethod
+    def delete(cls, payslips):
+        for payslip in payslips:
+            if (payslip.supplier_invoice
+                    and payslip.supplier_invoice.state != 'cancel'):
+                cls.raise_user_error('delete_invoiced_payslp',
+                    (payslip.rec_name,))
+        super(Payslip, cls).delete(payslips)
 
 
 class PayslipLine(ModelSQL, ModelView):
