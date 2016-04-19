@@ -24,6 +24,14 @@ msgstr ""
 "perquè ja existeix la línia \"%(existing_line)s\" amb hores a la mateixa "
 "nòmina."
 
+msgctxt "error:payroll.payslip:"
+msgid ""
+"You cannot delete the payslip \"%s\" because it is already invoiced.\n"
+"Please, delete or cancel the invoice before delete the paylsip."
+msgstr ""
+"No pots eliminar la nòmina \"%s\" perquè ja está facturada.\n"
+"Si us plau, elimina o cancel·la la factura abans d'eliminar la nòmina."
+
 msgctxt "field:company.employee,payroll_contracts:"
 msgid "Contracts"
 msgstr "Contractes"
@@ -336,6 +344,10 @@ msgctxt "field:payroll.payslip,supplier_invoice:"
 msgid "Supplier Invoice"
 msgstr "Factura de proveïdor"
 
+msgctxt "field:payroll.payslip,supplier_invoice_state:"
+msgid "Supplier Invoice State"
+msgstr "Estat factura proveïdor"
+
 msgctxt "field:payroll.payslip,worked_hours:"
 msgid "Worked Hours"
 msgstr "Hores treballades"
@@ -379,6 +391,10 @@ msgstr "Hores de dret generades"
 msgctxt "field:payroll.payslip.line,generated_entitlements:"
 msgid "Generated Entitlements"
 msgstr "Drets generats"
+
+msgctxt "field:payroll.payslip.line,hours_to_do:"
+msgid "Hours To Do"
+msgstr "Hores a realitzar"
 
 msgctxt "field:payroll.payslip.line,id:"
 msgid "ID"
@@ -600,6 +616,26 @@ msgstr "Intervencions"
 msgctxt "selection:payroll.contract.rule,compute_method:"
 msgid "Working Shifts"
 msgstr "Torns de treball"
+
+msgctxt "selection:payroll.payslip,supplier_invoice_state:"
+msgid "Canceled"
+msgstr "Cancel·lada"
+
+msgctxt "selection:payroll.payslip,supplier_invoice_state:"
+msgid "Draft"
+msgstr "Esborrany"
+
+msgctxt "selection:payroll.payslip,supplier_invoice_state:"
+msgid "Paid"
+msgstr "Pagada"
+
+msgctxt "selection:payroll.payslip,supplier_invoice_state:"
+msgid "Posted"
+msgstr "Confirmada"
+
+msgctxt "selection:payroll.payslip,supplier_invoice_state:"
+msgid "Validated"
+msgstr "Validada"
 
 msgctxt "view:payroll.contract.hours_summary:"
 msgid "Contract Hours Summary"

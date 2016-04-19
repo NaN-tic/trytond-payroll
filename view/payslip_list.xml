@@ -10,6 +10,7 @@
     <field name="worked_hours"/>
     <field name="amount"/>
     <field name="supplier_invoice"/>
+    <field name="supplier_invoice_state" tree_invisible="1"/>
     <button string="Invoice" name="create_supplier_invoices"
         tree_invisible="1"/>
 </tree>
