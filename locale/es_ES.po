@@ -294,6 +294,11 @@ msgctxt "field:payroll.payslip,end:"
 msgid "End"
 msgstr "Finalización"
 
+#, fuzzy
+msgctxt "field:payroll.payslip,extra_hours:"
+msgid "Extra Hours"
+msgstr "Horas extra"
+
 msgctxt "field:payroll.payslip,generated_entitled_hours:"
 msgid "Generated Entitled Hours"
 msgstr "Horas derechos generadas"
@@ -333,6 +338,11 @@ msgstr "Líneas"
 msgctxt "field:payroll.payslip,rec_name:"
 msgid "Name"
 msgstr "Nombre"
+
+#, fuzzy
+msgctxt "field:payroll.payslip,remaining_hours:"
+msgid "Remaining Hours"
+msgstr "Horas pendientes"
 
 msgctxt "field:payroll.payslip,start:"
 msgid "Start"
