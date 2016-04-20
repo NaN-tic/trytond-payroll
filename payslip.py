@@ -53,31 +53,37 @@ class Payslip(ModelSQL, ModelView):
         states=STATES, depends=DEPENDS)
     working_shifts = fields.Function(fields.One2Many('working_shift',
             'payslip', 'Working Shifts'),
-        'get_working_shifts')
+        'get_lines_relations')
     leaves = fields.Function(fields.One2Many('employee.leave', None,
             'Leaves'),
         'get_leaves')
     generated_entitlements = fields.Function(fields.One2Many(
             'employee.leave.entitlement', 'payslip', 'Generated Entitlements'),
-        'get_generated_entitlements')
+        'get_lines_relations')
     leave_payments = fields.Function(fields.One2Many('employee.leave.payment',
             'payslip', 'Leave Payments'),
-        'get_leave_payments')
+        'get_lines_relations')
     leave_hours = fields.Function(fields.Numeric('Leave Hours',
             digits=(16, 2)),
-        'get_leave_hours')
+        'get_lines_hours')
     hours_to_do = fields.Function(fields.Numeric('Hours To Do',
             digits=(16, 2)),
-        'get_hours_to_do')
+        'get_lines_hours')
     worked_hours = fields.Function(fields.Numeric('Worked Hours',
             digits=(16, 2)),
-        'get_worked_hours')
+        'get_lines_hours')
     generated_entitled_hours = fields.Function(
         fields.Numeric('Generated Entitled Hours', digits=(16, 2)),
-        'get_generated_entitled_hours')
+        'get_lines_hours')
+    remaining_hours = fields.Function(fields.Numeric('Remaining Hours',
+            digits=(16, 2)),
+        'get_lines_hours')
+    extra_hours = fields.Function(fields.Numeric('Extra Hours',
+            digits=(16, 2)),
+        'get_lines_hours')
     leave_payment_hours = fields.Function(fields.Numeric('Leave Payment Hours',
             digits=(16, 2)),
-        'get_leave_payment_hours')
+        'get_lines_hours')
     currency_digits = fields.Function(fields.Integer('Currency Digits'),
         'get_currency_digits')
     amount = fields.Function(fields.Numeric('Amount',
@@ -149,8 +155,8 @@ class Payslip(ModelSQL, ModelView):
         if self.contract:
             return self.contract.end
 
-    def get_working_shifts(self, name):
-        return [s.id for l in self.lines for s in l.working_shifts]
+    def get_lines_relations(self, name):
+        return [p.id for l in self.lines for p in getattr(l, name, [])]
 
     def get_leaves(self, name):
         # Search on 'employee.leave' and find the number of hours that fit
@@ -159,45 +165,11 @@ class Payslip(ModelSQL, ModelView):
         return [l.id for l in Leave.get_leaves(self.employee, self.start,
                 self.end)]
 
-    def get_generated_entitlements(self, name):
-        return [e.id for l in self.lines for e in l.generated_entitlements]
-
-    def get_leave_payments(self, name):
-        return [p.id for l in self.lines for p in l.leave_payments]
-
-    def get_worked_hours(self, name):
-        digits = self.__class__.worked_hours.digits
+    def get_lines_hours(self, name):
         if not self.lines:
             return Decimal(0)
-        return sum(l.worked_hours for l in self.lines).quantize(
-            Decimal(str(10 ** -digits[1])))
-
-    def get_leave_hours(self, name):
-        digits = self.__class__.leave_hours.digits
-        if not self.lines:
-            return Decimal(0)
-        return sum(l.leave_hours for l in self.lines).quantize(
-            Decimal(str(10 ** -digits[1])))
-
-    def get_generated_entitled_hours(self, name):
-        digits = self.__class__.generated_entitled_hours.digits
-        if not self.lines:
-            return Decimal(0)
-        return sum(l.generated_entitled_hours for l in self.lines).quantize(
-            Decimal(str(10 ** -digits[1])))
-
-    def get_hours_to_do(self, name):
-        digits = self.__class__.hours_to_do.digits
-        if not self.lines:
-            return Decimal(0)
-        return sum(l.hours_to_do for l in self.lines).quantize(
-            Decimal(str(10 ** -digits[1])))
-
-    def get_leave_payment_hours(self, name):
-        digits = self.__class__.leave_payment_hours.digits
-        if not self.lines:
-            return Decimal(0)
-        return sum(l.leave_payment_hours for l in self.lines).quantize(
+        digits = getattr(self.__class__, name).digits
+        return sum(getattr(l, name, Decimal(0)) for l in self.lines).quantize(
             Decimal(str(10 ** -digits[1])))
 
     @staticmethod
@@ -370,9 +342,7 @@ class PayslipLine(ModelSQL, ModelView):
                 }, depends=['working_hours']),
         'get_remaining_extra_hours')
     extra_hours = fields.Function(fields.Numeric('Extra Hours',
-            digits=(16, 2), states={
-                'invisible': ~Eval('working_hours', 0),
-                }, depends=['working_hours']),
+            digits=(16, 2)),
         'get_remaining_extra_hours')
     leave_payment_hours = fields.Function(fields.Numeric('Leave Payment Hours',
             digits=(16, 2), states={
@@ -447,7 +417,7 @@ class PayslipLine(ModelSQL, ModelView):
             Decimal(str(10 ** -digits[1])))
 
     def get_remaining_extra_hours(self, name):
-        if not self.working_hours:
+        if not self.working_hours and name == 'remaining_hours':
             return Decimal(0)
         difference = (self.worked_hours - self.hours_to_do
             - self.generated_entitled_hours)
