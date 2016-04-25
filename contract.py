@@ -197,6 +197,14 @@ class Contract(ModelSQL, ModelView):
             if rule.match(pattern):
                 return rule
 
+    @classmethod
+    def copy(cls, contracts, default=None):
+        if default is None:
+            default = {}
+        default = default.copy()
+        default['hours_summary'] = None
+        return super(Contract, cls).copy(contracts, default=default)
+
 
 class ContractHoursSummary(ModelSQL, ModelView):
     'Payroll Contract Hours Summary'
@@ -361,3 +369,11 @@ class Employee:
             limit=1)
         if contracts:
             return contracts[0]
+
+    @classmethod
+    def copy(cls, employees, default=None):
+        if default is None:
+            default = {}
+        default = default.copy()
+        default['payroll_contracts'] = None
+        return super(Employee, cls).copy(employees, default=default)
