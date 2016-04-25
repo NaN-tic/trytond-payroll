@@ -518,6 +518,17 @@ class PayslipLine(ModelSQL, ModelView):
                     'existing_line': other_lines[0].rec_name,
                     })
 
+    @classmethod
+    def copy(cls, lines, default=None):
+        if default is None:
+            default = {}
+        default = default.copy()
+        default['working_shifts'] = None
+        default['generated_entitlements'] = None
+        default['leave_payments'] = None
+        default['supplier_invoice_lines'] = None
+        return super(PayslipLine, cls).copy(lines, default=default)
+
 
 class Entitlement:
     __name__ = 'employee.leave.entitlement'
