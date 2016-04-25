@@ -546,6 +546,14 @@ class Entitlement:
             ('payslip_line.payslip',) + tuple(clause[1:]),
             ]
 
+    @classmethod
+    def copy(cls, entitlements, default=None):
+        if default is None:
+            default = {}
+        default = default.copy()
+        default['payslip_line'] = None
+        return super(Entitlement, cls).copy(entitlements, default=default)
+
 
 class LeavePayment:
     __name__ = 'employee.leave.payment'
@@ -562,6 +570,14 @@ class LeavePayment:
         return [
             ('payslip_line.payslip',) + tuple(clause[1:]),
             ]
+
+    @classmethod
+    def copy(cls, leave_payments, default=None):
+        if default is None:
+            default = {}
+        default = default.copy()
+        default['payslip_line'] = None
+        return super(LeavePayment, cls).copy(leave_payments, default=default)
 
 
 class WorkingShift:
@@ -621,6 +637,14 @@ class WorkingShift:
         if rule:
             return currency.round(rule.cost_price)
         return Decimal(0)
+
+    @classmethod
+    def copy(cls, working_shifts, default=None):
+        if default is None:
+            default = {}
+        default = default.copy()
+        default['payslip_line'] = None
+        return super(WorkingShift, cls).copy(working_shifts, default=default)
 
 
 class InvoiceLine:
