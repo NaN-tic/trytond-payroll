@@ -180,7 +180,7 @@ class Contract(ModelSQL, ModelView):
         else:
             pattern = pattern.copy()
         pattern['hours'] = working_shift.hours
-        for rule in self.rules:
+        for rule in self.ruleset.rules:
             if rule.compute_method != 'working_shift':
                 continue
             if rule.match(pattern):
@@ -192,7 +192,7 @@ class Contract(ModelSQL, ModelView):
         else:
             pattern = pattern.copy()
         pattern['hours'] = intervention.hours
-        for rule in self.rules:
+        for rule in self.ruleset.rules:
             if rule.compute_method != 'intervention':
                 continue
             if rule.match(pattern):
