@@ -689,12 +689,22 @@ class WorkingShift:
         cls.set_cache_values(working_shifts)
 
     @classmethod
+    @ModelView.button
+    def cancel(cls, working_shifts):
+        super(WorkingShift, cls).cancel(working_shifts)
+        cls.clear_cache_values(working_shifts)
+
+    @classmethod
     def set_cache_values(cls, working_shifts):
         to_write = []
         for w in working_shifts:
             to_write.extend(([w], {'cost_cache': w.cost}))
         if to_write:
             cls.write(*to_write)
+
+    @classmethod
+    def clear_cache_values(cls, working_shifts):
+        cls.write(working_shifts, {'cost_cache': None})
 
     @classmethod
     def copy(cls, working_shifts, default=None):
