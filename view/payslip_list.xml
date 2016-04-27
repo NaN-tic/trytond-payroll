@@ -2,8 +2,8 @@
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
 <tree string="Payslip">
-    <field name="contract"/>
     <field name="employee"/>
+    <field name="contract"/>
     <field name="start"/>
     <field name="end"/>
     <field name="hours_to_do"/>

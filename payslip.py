@@ -467,18 +467,13 @@ class PayslipLine(ModelSQL, ModelView):
                 / self.payslip.contract.working_shift_hours)
         return Decimal(0)
 
-    @classmethod
-    def get_amount(cls, records, name):
-        result = {}.fromkeys((r.id for r in records), Decimal(0))
-        for record in records:
-            if not record.working_shifts:
-                continue
-            amount = sum([s.cost for s in record.working_shifts])
-            amount += record.leave_hours * record.hour_unit_price
-            amount -= record.generated_entitled_hours * record.hour_unit_price
-            result[record.id] = amount.quantize(Decimal(str(
-                        10 ** -record.currency_digits)))
-        return result
+    def get_amount(self, name):
+        if not self.working_shifts:
+            return Decimal(0)
+        amount = sum([s.cost for s in self.working_shifts])
+        amount += self.leave_hours * self.hour_unit_price
+        amount -= self.generated_entitled_hours * self.hour_unit_price
+        return amount.quantize(Decimal(str(10 ** -self.currency_digits)))
 
     def get_supplier_invoice_line(self):
         pool = Pool()
@@ -651,36 +646,32 @@ class WorkingShift:
     def compute_interventions(self):
         return len(self.interventions) > 0
 
-    @classmethod
-    def get_cost(cls, records, name):
-        result = {}.fromkeys((r.id for r in records), Decimal(0))
-        for record in records:
-            if record.cost_cache:
-                result[record.id] = record.cost_cache
-                continue
-            value = Decimal(0)
-            currency = record.employee.company.currency
-            employee_contract = record.employee.get_payroll_contract(
-                record.start.date(), record.end.date())
-            if not employee_contract:
-                continue
+    def get_cost(self, name):
+        if self.cost_cache:
+            return self.cost_cache
 
-            if (employee_contract.ruleset.compute_interventions
-                    and record.compute_interventions):
-                cost = Decimal(0)
-                for intervention in record.interventions:
-                    r = employee_contract.compute_intervention_matching_rule(
-                        intervention)
-                    if r:
-                        cost += r.cost_price
-                if cost:
-                    value = cost
-            rule = employee_contract.compute_working_shift_matching_rule(
-                record)
-            if rule:
-                value = currency.round(rule.cost_price)
-            result[record.id] = value
-        return result
+        currency = self.employee.company.currency
+        employee_contract = self.employee.get_payroll_contract(
+            self.start.date(), self.end.date())
+        if not employee_contract:
+            return Decimal(0)
+
+        if (employee_contract.ruleset.compute_interventions
+                and self.compute_interventions):
+            cost = Decimal(0)
+            found_any = False
+            for intervention in self.interventions:
+                rule = employee_contract.compute_intervention_matching_rule(
+                    intervention)
+                if rule:
+                    found_any = True
+                    cost += rule.cost_price
+            if found_any:
+                return cost
+        rule = employee_contract.compute_working_shift_matching_rule(self)
+        if rule:
+            return currency.round(rule.cost_price)
+        return Decimal(0)
 
     @classmethod
     @ModelView.button
