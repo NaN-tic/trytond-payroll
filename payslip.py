@@ -5,7 +5,9 @@ from decimal import Decimal
 from trytond.model import ModelSQL, ModelView, fields
 from trytond.pyson import Bool, Date, Eval
 from trytond.pool import Pool, PoolMeta
+from trytond.tools import grouped_slice
 from trytond.transaction import Transaction
+from trytond import backend
 
 __all__ = ['PayslipLineType', 'Payslip', 'PayslipLine', 'Entitlement',
     'LeavePayment', 'WorkingShift', 'InvoiceLine']
@@ -155,8 +157,17 @@ class Payslip(ModelSQL, ModelView):
         if self.contract:
             return self.contract.end
 
-    def get_lines_relations(self, name):
-        return [p.id for l in self.lines for p in getattr(l, name, [])]
+    @classmethod
+    def get_lines_relations(cls, records, names):
+        result = {}
+        for name in names:
+            result[name] = {}
+        for sub_records in grouped_slice(records):
+            for record in sub_records:
+                for name in names:
+                    result[name][record.id] = [p.id for l in record.lines
+                        for p in getattr(l, name, [])]
+        return result
 
     def get_leaves(self, name):
         # Search on 'employee.leave' and find the number of hours that fit
@@ -165,12 +176,19 @@ class Payslip(ModelSQL, ModelView):
         return [l.id for l in Leave.get_leaves(self.employee, self.start,
                 self.end)]
 
-    def get_lines_hours(self, name):
-        if not self.lines:
-            return Decimal(0)
-        digits = getattr(self.__class__, name).digits
-        return sum(getattr(l, name, Decimal(0)) for l in self.lines).quantize(
-            Decimal(str(10 ** -digits[1])))
+    @classmethod
+    def get_lines_hours(cls, records, names):
+        result = {}
+        for name in names:
+            result[name] = {}
+        for sub_records in grouped_slice(records):
+            for record in sub_records:
+                for name in names:
+                    digits = getattr(cls, name).digits
+                    result[name][record.id] = sum((getattr(l, name, Decimal(0))
+                            for l in record.lines), Decimal(0)).quantize(
+                                Decimal(str(10 ** -digits[1])))
+        return result
 
     @staticmethod
     def default_currency_digits():
@@ -588,11 +606,25 @@ class WorkingShift:
         'get_payslip', searcher='search_payslip')
     currency_digits = fields.Function(fields.Integer('Currency Digits'),
         'get_currency_digits')
+    cost_cache = fields.Numeric('Amount Cache',
+        digits=(16, Eval('currency_digits', 2)),
+        depends=['currency_digits'])
     cost = fields.Function(fields.Numeric('Amount',
-            digits=(16, Eval('currency_digits', 2)), domain=[
-                ('amount', '>=', Decimal(0)),
-                ], depends=['currency_digits']),
+            digits=(16, Eval('currency_digits', 2)),
+            depends=['currency_digits']),
         'get_cost')
+
+    @classmethod
+    def __register__(cls, module_name):
+        TableHandler = backend.get('TableHandler')
+        cursor = Transaction().cursor
+        table = TableHandler(cursor, cls, module_name)
+        created_cost_cache = not table.column_exist('cost_cache')
+        super(WorkingShift, cls).__register__(module_name)
+        cursor = Transaction().cursor
+        table = TableHandler(cursor, cls, module_name)
+        if created_cost_cache and table.column_exist('cost_cache'):
+            cls.set_cache_values(cls.search([]))
 
     def get_payslip(self, name):
         return self.payslip_line.payslip.id if self.payslip_line else None
@@ -615,6 +647,9 @@ class WorkingShift:
         return len(self.interventions) > 0
 
     def get_cost(self, name):
+        if self.cost_cache:
+            return self.cost_cache
+
         currency = self.employee.company.currency
         employee_contract = self.employee.get_payroll_contract(
             self.start.date(), self.end.date())
@@ -637,6 +672,30 @@ class WorkingShift:
         if rule:
             return currency.round(rule.cost_price)
         return Decimal(0)
+
+    @classmethod
+    @ModelView.button
+    def done(cls, working_shifts):
+        super(WorkingShift, cls).done(working_shifts)
+        cls.set_cache_values(working_shifts)
+
+    @classmethod
+    @ModelView.button
+    def cancel(cls, working_shifts):
+        super(WorkingShift, cls).cancel(working_shifts)
+        cls.clear_cache_values(working_shifts)
+
+    @classmethod
+    def set_cache_values(cls, working_shifts):
+        to_write = []
+        for w in working_shifts:
+            to_write.extend(([w], {'cost_cache': w.cost}))
+        if to_write:
+            cls.write(*to_write)
+
+    @classmethod
+    def clear_cache_values(cls, working_shifts):
+        cls.write(working_shifts, {'cost_cache': None})
 
     @classmethod
     def copy(cls, working_shifts, default=None):

@@ -6,10 +6,9 @@
     <field name="contract"/>
     <field name="start"/>
     <field name="end"/>
-    <!-- Hidden because has performance issues (specially amount)
     <field name="hours_to_do"/>
     <field name="worked_hours"/>
-    <field name="amount"/>-->
+    <field name="amount"/>
     <field name="supplier_invoice"/>
     <field name="supplier_invoice_state" tree_invisible="1"/>
     <button string="Invoice" name="create_supplier_invoices"
