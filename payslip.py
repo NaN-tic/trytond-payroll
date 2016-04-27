@@ -1,5 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
+import logging
 from decimal import Decimal
 
 from trytond.model import ModelSQL, ModelView, fields
@@ -619,12 +620,10 @@ class WorkingShift:
         TableHandler = backend.get('TableHandler')
         cursor = Transaction().cursor
         table = TableHandler(cursor, cls, module_name)
-        created_cost_cache = not table.column_exist('cost_cache')
+        if not table.column_exist('cost_cache'):
+            logging.getLogger(cls.__name__).warning("You must to set manually "
+                "the cost_cache values for working shifts in state 'done'")
         super(WorkingShift, cls).__register__(module_name)
-        cursor = Transaction().cursor
-        table = TableHandler(cursor, cls, module_name)
-        if created_cost_cache and table.column_exist('cost_cache'):
-            cls.set_cache_values(cls.search([]))
 
     def get_payslip(self, name):
         return self.payslip_line.payslip.id if self.payslip_line else None
