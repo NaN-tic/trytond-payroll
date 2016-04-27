@@ -667,7 +667,7 @@ class WorkingShift:
                     found_any = True
                     cost += rule.cost_price
             if found_any:
-                return cost
+                return currency.round(cost)
         rule = employee_contract.compute_working_shift_matching_rule(self)
         if rule:
             return currency.round(rule.cost_price)
