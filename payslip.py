@@ -1,9 +1,10 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 import logging
+from datetime import datetime
 from decimal import Decimal
 
-from trytond.model import ModelSQL, ModelView, fields
+from trytond.model import ModelSQL, ModelView, Workflow, fields
 from trytond.pyson import Bool, Date, Eval
 from trytond.pool import Pool, PoolMeta
 from trytond.tools import grouped_slice
@@ -11,7 +12,7 @@ from trytond.transaction import Transaction
 from trytond import backend
 
 __all__ = ['PayslipLineType', 'Payslip', 'PayslipLine', 'Entitlement',
-    'LeavePayment', 'WorkingShift', 'InvoiceLine']
+    'LeavePayment', 'WorkingShift', 'Intervention', 'InvoiceLine']
 __metaclass__ = PoolMeta
 
 STATES = {
@@ -607,9 +608,12 @@ class WorkingShift:
         'get_payslip', searcher='search_payslip')
     currency_digits = fields.Function(fields.Integer('Currency Digits'),
         'get_currency_digits')
+    employee_contract_rule = fields.Many2One('payroll.contract.rule',
+        'Employee Contract Rule', readonly=True)
     cost_cache = fields.Numeric('Amount Cache',
         digits=(16, Eval('currency_digits', 2)),
         depends=['currency_digits'])
+    cache_timestamp = fields.DateTime('Cache Timestamp', readonly=True)
     cost = fields.Function(fields.Numeric('Amount',
             digits=(16, Eval('currency_digits', 2)),
             depends=['currency_digits']),
@@ -646,40 +650,58 @@ class WorkingShift:
         return len(self.interventions) > 0
 
     def get_cost(self, name):
-        if self.cost_cache:
+        if self.cost_cache and self.state == 'done':
             return self.cost_cache
+        return self._calc_cost()
 
-        currency = self.employee.company.currency
+    def _calc_employee_constract_rules(self):
+        """
+        Return a tuple with the rule for the working shift and a diccionary
+        with the rules for interventions. But one or both are allways None
+        """
         employee_contract = self.employee.get_payroll_contract(
             self.start.date(), self.end.date())
         if not employee_contract:
-            return Decimal(0)
+            return None, None
 
         if (employee_contract.ruleset.compute_interventions
                 and self.compute_interventions):
-            cost = Decimal(0)
-            found_any = False
+            interventions_rules = {}
             for intervention in self.interventions:
                 rule = employee_contract.compute_intervention_matching_rule(
                     intervention)
                 if rule:
-                    found_any = True
-                    cost += rule.cost_price
-            if found_any:
-                return currency.round(cost)
+                    interventions_rules[intervention] = rule
+            if interventions_rules:
+                return None, interventions_rules
         rule = employee_contract.compute_working_shift_matching_rule(self)
-        if rule:
-            return currency.round(rule.cost_price)
-        return Decimal(0)
+        return rule, None
+
+    def _calc_cost(self, working_shift_rule=None, interventions_rules=None):
+        currency = self.employee.company.currency
+
+        if not working_shift_rule and not interventions_rules:
+            working_shift_rule, interventions_rules = (
+                self._calc_employee_constract_rules())
+
+        if interventions_rules:
+            cost = sum(r.cost_price for r in interventions_rules.values())
+        elif working_shift_rule:
+            cost = working_shift_rule.cost_price
+        else:
+            cost = Decimal(0)
+        return currency.round(cost)
 
     @classmethod
     @ModelView.button
+    @Workflow.transition('done')
     def done(cls, working_shifts):
         super(WorkingShift, cls).done(working_shifts)
         cls.set_cache_values(working_shifts)
 
     @classmethod
     @ModelView.button
+    @Workflow.transition('canceled')
     def cancel(cls, working_shifts):
         super(WorkingShift, cls).cancel(working_shifts)
         cls.clear_cache_values(working_shifts)
@@ -687,14 +709,44 @@ class WorkingShift:
     @classmethod
     def set_cache_values(cls, working_shifts):
         to_write = []
-        for w in working_shifts:
-            to_write.extend(([w], {'cost_cache': w.cost}))
+        for ws in working_shifts:
+            if ws.state != 'done':
+                continue
+            ws_rule, int_rules = ws._calc_employee_constract_rules()
+            cost = ws._calc_cost(
+                working_shift_rule=ws_rule,
+                interventions_rules=int_rules)
+            if int_rules:
+                to_write.extend(([ws], {
+                            'interventions': [
+                                ('write', [i], {'employee_contract_rule': r})
+                                for (i, r) in int_rules.iteritems()],
+                            'cost_cache': cost,
+                            'cache_timestamp': datetime.now(),
+                            }))
+            elif ws_rule:
+                to_write.extend(([ws], {
+                            'employee_contract_rule': ws_rule,
+                            'cost_cache': cost,
+                            'cache_timestamp': datetime.now(),
+                            }))
         if to_write:
             cls.write(*to_write)
 
     @classmethod
     def clear_cache_values(cls, working_shifts):
-        cls.write(working_shifts, {'cost_cache': None})
+        pool = Pool()
+        Intervention = pool.get('working_shift.intervention')
+        cls.write(working_shifts, {
+                'employee_contract_rule': None,
+                'cost_cache': None,
+                })
+        interventions = [i for ws in working_shifts for i in ws.intervetions
+            if i.employee_contract_rule]
+        if interventions:
+            Intervention.write(interventions, {
+                    'employee_contract_rule': None,
+                    })
 
     @classmethod
     def copy(cls, working_shifts, default=None):
@@ -703,6 +755,12 @@ class WorkingShift:
         default = default.copy()
         default['payslip_line'] = None
         return super(WorkingShift, cls).copy(working_shifts, default=default)
+
+
+class Intervention:
+    __name__ = 'working_shift.intervention'
+    employee_contract_rule = fields.Many2One('payroll.contract.rule',
+        'Employee Contract Rule', readonly=True)
 
 
 class InvoiceLine:
