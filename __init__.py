@@ -18,5 +18,6 @@ def register():
         Entitlement,
         LeavePayment,
         WorkingShift,
+        Intervention,
         InvoiceLine,
         module='payroll', type_='model')

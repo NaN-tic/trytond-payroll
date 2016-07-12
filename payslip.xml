@@ -166,6 +166,21 @@
             <field name="name">working_shift_list</field>
         </record>
 
+        <!-- working_shift.intervention -->
+        <record model="ir.ui.view" id="intervention_view_form">
+            <field name="model">working_shift.intervention</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="working_shift.intervention_view_form"/>
+            <field name="name">intervention_form</field>
+        </record>
+
+        <record model="ir.ui.view" id="intervention_view_list">
+            <field name="model">working_shift.intervention</field>
+            <field name="type">tree</field>
+            <field name="inherit" ref="working_shift.intervention_view_list"/>
+            <field name="name">intervention_list</field>
+        </record>
+
         <!-- employee.leave.entitlement -->
         <record model="ir.ui.view" id="employee_leave_entitlement_view_form">
             <field name="model">employee.leave.entitlement</field>

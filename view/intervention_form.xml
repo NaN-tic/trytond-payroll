@@ -2,12 +2,9 @@
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
 <data>
-    <xpath expr="/form/notebook" position="after">
-        <label name="payslip"/>
-        <field name="payslip"/>
+    <xpath expr="/form/field[@name='comments']" position="after">
         <label name="employee_contract_rule"/>
         <field name="employee_contract_rule"/>
-        <label name="cost"/>
-        <field name="cost"/>
+        <newline/>
     </xpath>
 </data>
