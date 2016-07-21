@@ -741,7 +741,7 @@ class WorkingShift:
                 'employee_contract_rule': None,
                 'cost_cache': None,
                 })
-        interventions = [i for ws in working_shifts for i in ws.intervetions
+        interventions = [i for ws in working_shifts for i in ws.interventions
             if i.employee_contract_rule]
         if interventions:
             Intervention.write(interventions, {
