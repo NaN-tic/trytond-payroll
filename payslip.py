@@ -121,7 +121,13 @@ class Payslip(ModelSQL, ModelView):
                     },
                 })
         cls._error_messages.update({
-                'delete_invoiced_payslp': (
+                'payslip_invoice_with_lines': (
+                    'You cannot invoice the payslip "%(payslip)s" because it '
+                    'will be invoiced in invoice "%(invoice)s" that already '
+                    'has lines.\n'
+                    'Please, confirm invoice to create a new one or delete '
+                    'its lines.'),
+                'delete_invoiced_payslip': (
                     'You cannot delete the payslip "%s" because it is already '
                     'invoiced.\n'
                     'Please, delete or cancel the invoice before delete the '
@@ -229,6 +235,13 @@ class Payslip(ModelSQL, ModelView):
                     in ('validated', 'posted', 'paid')):
                 continue
 
+            invoice = payslip.get_supplier_invoice()
+            if getattr(invoice, 'lines', []):
+                cls.raise_user_error('payslip_invoice_with_lines', {
+                        'payslip': payslip.rec_name,
+                        'invoice': invoice.rec_name,
+                        })
+
             invoice_lines = []
             for line in payslip.lines:
                 invoice_line = line.get_supplier_invoice_line()
@@ -237,9 +250,6 @@ class Payslip(ModelSQL, ModelView):
             if not invoice_lines:
                 continue
 
-            invoice = payslip.get_supplier_invoice()
-            if hasattr(invoice, 'lines'):
-                invoice_lines = invoice.lines + tuple(invoice_lines)
             invoice.lines = invoice_lines
             invoice.save()
 
@@ -302,7 +312,7 @@ class Payslip(ModelSQL, ModelView):
         for payslip in payslips:
             if (payslip.supplier_invoice
                     and payslip.supplier_invoice.state != 'cancel'):
-                cls.raise_user_error('delete_invoiced_payslp',
+                cls.raise_user_error('delete_invoiced_payslip',
                     (payslip.rec_name,))
         super(Payslip, cls).delete(payslips)
 
