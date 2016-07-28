@@ -30,6 +30,14 @@ msgstr ""
 "No puedes eliminar la nómina \"%s\" porque ya está factuada.\n"
 "Por favor, elimina o cancela la factura antes de eliminar la nómina."
 
+msgctxt "error:payroll.payslip:"
+msgid ""
+"You cannot invoice the payslip \"%(payslip)s\" because it will be invoiced in invoice \"%(invoice)s\" that already has lines.\n"
+"Please, confirm invoice to create a new one or delete its lines."
+msgstr ""
+"No se puede facturar la nómina \"%(payslip)s\" porque se usaría la factura \"%(invoice)s\" que ya tiene líneas.\n"
+"Por favor, confirma la factura para que se cree una de nueva o elimina sus líneas."
+
 msgctxt "field:company.employee,payroll_contracts:"
 msgid "Contracts"
 msgstr "Contratos"
@@ -294,7 +302,6 @@ msgctxt "field:payroll.payslip,end:"
 msgid "End"
 msgstr "Finalización"
 
-#, fuzzy
 msgctxt "field:payroll.payslip,extra_hours:"
 msgid "Extra Hours"
 msgstr "Horas extra"
@@ -339,7 +346,6 @@ msgctxt "field:payroll.payslip,rec_name:"
 msgid "Name"
 msgstr "Nombre"
 
-#, fuzzy
 msgctxt "field:payroll.payslip,remaining_hours:"
 msgid "Remaining Hours"
 msgstr "Horas pendientes"
@@ -492,13 +498,25 @@ msgctxt "field:payroll.payslip.line.type,write_uid:"
 msgid "Write User"
 msgstr "Usuario modificación"
 
+msgctxt "field:working_shift,cache_timestamp:"
+msgid "Cache Timestamp"
+msgstr "Fecha y hora cache"
+
 msgctxt "field:working_shift,cost:"
 msgid "Amount"
 msgstr "Importe"
 
+msgctxt "field:working_shift,cost_cache:"
+msgid "Amount Cache"
+msgstr "Cache importe"
+
 msgctxt "field:working_shift,currency_digits:"
 msgid "Currency Digits"
 msgstr "Decimales de la moneda"
+
+msgctxt "field:working_shift,employee_contract_rule:"
+msgid "Employee Contract Rule"
+msgstr "Regla contrato de empleado"
 
 msgctxt "field:working_shift,payslip:"
 msgid "Payslip"
@@ -507,6 +525,10 @@ msgstr "Nómina"
 msgctxt "field:working_shift,payslip_line:"
 msgid "Payslip Line"
 msgstr "Línea de nómina"
+
+msgctxt "field:working_shift.intervention,employee_contract_rule:"
+msgid "Employee Contract Rule"
+msgstr "Regla contrato de empleado"
 
 msgctxt "help:payroll.contract,working_shift_price:"
 msgid "Price used to compute the amount corresponding to leaves."
