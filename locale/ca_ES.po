@@ -32,6 +32,14 @@ msgstr ""
 "No pots eliminar la nòmina \"%s\" perquè ja está facturada.\n"
 "Si us plau, elimina o cancel·la la factura abans d'eliminar la nòmina."
 
+msgctxt "error:payroll.payslip:"
+msgid ""
+"You cannot invoice the payslip \"%(payslip)s\" because it will be invoiced in invoice \"%(invoice)s\" that already has lines.\n"
+"Please, confirm invoice to create a new one or delete its lines."
+msgstr ""
+"No pot facturar la nòmina \"%(payslip)s\" perquè s'utilitzaria la factura \"%(invoice)s\" que ja té línies.\n"
+"Si us plau, confirma la factura perquè es crei una de nova o elimina les seves línies."
+
 msgctxt "field:company.employee,payroll_contracts:"
 msgid "Contracts"
 msgstr "Contractes"
@@ -492,13 +500,25 @@ msgctxt "field:payroll.payslip.line.type,write_uid:"
 msgid "Write User"
 msgstr "Usuari modificació"
 
+msgctxt "field:working_shift,cache_timestamp:"
+msgid "Cache Timestamp"
+msgstr "Data i hora cache"
+
 msgctxt "field:working_shift,cost:"
 msgid "Amount"
 msgstr "Import"
 
+msgctxt "field:working_shift,cost_cache:"
+msgid "Amount Cache"
+msgstr "Cache import"
+
 msgctxt "field:working_shift,currency_digits:"
 msgid "Currency Digits"
 msgstr "Dígits de la moneda"
+
+msgctxt "field:working_shift,employee_contract_rule:"
+msgid "Employee Contract Rule"
+msgstr "Regla contracte empleats"
 
 msgctxt "field:working_shift,payslip:"
 msgid "Payslip"
@@ -507,6 +527,10 @@ msgstr "Nòmina"
 msgctxt "field:working_shift,payslip_line:"
 msgid "Payslip Line"
 msgstr "Línia nòmina"
+
+msgctxt "field:working_shift.intervention,employee_contract_rule:"
+msgid "Employee Contract Rule"
+msgstr "Regla contracte empleats"
 
 msgctxt "help:payroll.contract,working_shift_price:"
 msgid "Price used to compute the amount corresponding to leaves."
