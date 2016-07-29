@@ -5,7 +5,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from trytond.model import ModelSQL, ModelView, Workflow, fields
-from trytond.pyson import Bool, Date, Eval
+from trytond.pyson import Bool, Date, Eval, If
 from trytond.pool import Pool, PoolMeta
 from trytond.tools import grouped_slice
 from trytond.transaction import Transaction
@@ -39,6 +39,7 @@ class Payslip(ModelSQL, ModelView):
     contract = fields.Many2One('payroll.contract', 'Contract', required=True,
         select=True, domain=[
             ('employee', '=', Eval('employee', -1)),
+            ('state', '=', 'confirmed'),
             ],
         states={
             'readonly': Bool(Eval('lines')),
@@ -49,7 +50,9 @@ class Payslip(ModelSQL, ModelView):
         'on_change_with_contract_end')
     start = fields.Date('Start', required=True, states=STATES, depends=DEPENDS)
     end = fields.Date('End', required=True, domain=[
-            ('end', '>', Eval('start')),
+            ['OR',
+                ('end', '=', None),
+                ('end', '>=', Eval('start'))],
             ],
         states=STATES, depends=DEPENDS + ['start'])
 
@@ -322,7 +325,9 @@ class PayslipLine(ModelSQL, ModelView):
     type = fields.Many2One('payroll.payslip.line.type', 'Type', required=True,
         select=True)
     working_hours = fields.Numeric('Working Hours', digits=(16, 2), domain=[
-            ('working_hours', '>=', Decimal(0)),
+            ['OR',
+                ('working_hours', '=', None),
+                ('working_hours', '>=', Decimal(0))],
             ], required=True,
         help='Number of working hours in the current month. Usually 8 * 20.')
     working_shifts = fields.One2Many('working_shift', 'payslip_line',
