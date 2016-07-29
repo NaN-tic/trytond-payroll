@@ -1,3 +1,9 @@
+Version 3.4.2 - 2016-07-29
+* Add state and workflow to contract
+* Don't allow to invoice payslip in an invoice with lines
+* Save cost, contract rule and timestamp in cache values
+
+Version 3.4.1 - 2016-03-03
 * Adapted tests
 * Use the payslip dates to select the correct employee contract
 * Return Numeric functional fields with the correct digits
