@@ -100,6 +100,10 @@ msgctxt "field:payroll.contract,start:"
 msgid "Start"
 msgstr "Inici"
 
+msgctxt "field:payroll.contract,state:"
+msgid "State"
+msgstr "Estat"
+
 msgctxt "field:payroll.contract,working_shift_hours:"
 msgid "Working Shift Hours"
 msgstr "Hores torn de treball"
@@ -565,13 +569,23 @@ msgctxt "model:ir.action,name:act_payslip_line_type"
 msgid "Payslip Line Types"
 msgstr "Tipus línia nòmina"
 
-msgctxt "model:ir.action.act_window.domain,name:act_contract_domain_active"
-msgid "Active"
-msgstr "Actiu"
-
 msgctxt "model:ir.action.act_window.domain,name:act_contract_domain_all"
 msgid "All"
 msgstr "Tots"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_contract_domain_confirmed_active"
+msgid "Confirmed & Active"
+msgstr "Confirmat & Actiu"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_contract_domain_confirmed_inactive"
+msgid "Confirmed & Inactive"
+msgstr "Confirmat & Inactiu"
+
+msgctxt "model:ir.action.act_window.domain,name:act_contract_domain_draft"
+msgid "Draft"
+msgstr "Esborrany"
 
 msgctxt "model:ir.action.act_window.domain,name:act_payslip_domain_all"
 msgid "All"
@@ -641,6 +655,18 @@ msgctxt "model:res.group,name:group_payroll_contract"
 msgid "Payroll Contracts"
 msgstr "Contractes empleat"
 
+msgctxt "selection:payroll.contract,state:"
+msgid "Canceled"
+msgstr "Cancel·lat"
+
+msgctxt "selection:payroll.contract,state:"
+msgid "Confirmed"
+msgstr "Confirmat"
+
+msgctxt "selection:payroll.contract,state:"
+msgid "Draft"
+msgstr "Esborrany"
+
 msgctxt "selection:payroll.contract.rule,compute_method:"
 msgid "Interventions"
 msgstr "Intervencions"
@@ -692,6 +718,18 @@ msgstr "Conjunt de regles contracte empleat"
 msgctxt "view:payroll.contract.ruleset:"
 msgid "Employee Contract Rulesets"
 msgstr "Conjunts de regles contracte empleat"
+
+msgctxt "view:payroll.contract:"
+msgid "Cancel"
+msgstr "Cancel·la"
+
+msgctxt "view:payroll.contract:"
+msgid "Confirm"
+msgstr "Confirma"
+
+msgctxt "view:payroll.contract:"
+msgid "Draft"
+msgstr "Esborrany"
 
 msgctxt "view:payroll.contract:"
 msgid "Employee Contract"

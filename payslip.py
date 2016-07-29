@@ -1,10 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-<<<<<<< local
-=======
-import logging
 from datetime import datetime
->>>>>>> other
 from decimal import Decimal
 
 from trytond.model import ModelSQL, ModelView, Workflow, fields

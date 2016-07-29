@@ -98,6 +98,10 @@ msgctxt "field:payroll.contract,start:"
 msgid "Start"
 msgstr "Inicio"
 
+msgctxt "field:payroll.contract,state:"
+msgid "State"
+msgstr "Estado"
+
 msgctxt "field:payroll.contract,working_shift_hours:"
 msgid "Working Shift Hours"
 msgstr "Horas turno de trabajo"
@@ -565,13 +569,23 @@ msgctxt "model:ir.action,name:act_payslip_line_type"
 msgid "Payslip Line Types"
 msgstr "Tipos de línea de nómina"
 
-msgctxt "model:ir.action.act_window.domain,name:act_contract_domain_active"
-msgid "Active"
-msgstr "Activo"
-
 msgctxt "model:ir.action.act_window.domain,name:act_contract_domain_all"
 msgid "All"
 msgstr "Todos"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_contract_domain_confirmed_active"
+msgid "Confirmed & Active"
+msgstr "Confirmado & Activo"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_contract_domain_confirmed_inactive"
+msgid "Confirmed & Inactive"
+msgstr "Confirmado & Inactivo"
+
+msgctxt "model:ir.action.act_window.domain,name:act_contract_domain_draft"
+msgid "Draft"
+msgstr "Borrador"
 
 msgctxt "model:ir.action.act_window.domain,name:act_payslip_domain_all"
 msgid "All"
@@ -641,6 +655,18 @@ msgctxt "model:res.group,name:group_payroll_contract"
 msgid "Payroll Contracts"
 msgstr "Contratos de empleado"
 
+msgctxt "selection:payroll.contract,state:"
+msgid "Canceled"
+msgstr "Cancelado"
+
+msgctxt "selection:payroll.contract,state:"
+msgid "Confirmed"
+msgstr "Confirmado"
+
+msgctxt "selection:payroll.contract,state:"
+msgid "Draft"
+msgstr "Borrador"
+
 msgctxt "selection:payroll.contract.rule,compute_method:"
 msgid "Interventions"
 msgstr "Intervenciones"
@@ -692,6 +718,18 @@ msgstr "Conjunto de reglas contrato empleado"
 msgctxt "view:payroll.contract.ruleset:"
 msgid "Employee Contract Rulesets"
 msgstr "Conjuntos de reglas contrato empleado"
+
+msgctxt "view:payroll.contract:"
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgctxt "view:payroll.contract:"
+msgid "Confirm"
+msgstr "Confirmar"
+
+msgctxt "view:payroll.contract:"
+msgid "Draft"
+msgstr "Borrador"
 
 msgctxt "view:payroll.contract:"
 msgid "Employee Contract"

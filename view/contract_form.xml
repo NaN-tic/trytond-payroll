@@ -26,4 +26,16 @@
             <field name="rules" colspan="4" mode="tree,form"/>
         </page>
     </notebook>
+    <separator id="state_buttons" colspan="4"/>
+    <group id="state_buttons" colspan="4" col="3">
+        <label name="state"/>
+        <field name="state"/>
+        <group id="buttons">
+            <button name="cancel" string="Cancel"
+                icon="tryton-cancel"/>
+            <button name="draft" string="Draft"/>
+            <button name="confirm" string="Confirm"
+                icon="tryton-go-next"/>
+        </group>
+    </group>
 </form>

@@ -266,6 +266,38 @@ Create Contract::
     >>> contract.working_shift_price = Decimal(360)
     >>> contract.ruleset = ruleset
     >>> contract.save()
+    >>> contract.state
+    u'draft'
+
+Confirm it:
+
+    >>> contract.click('confirm')
+    >>> contract.state
+    u'confirmed'
+
+Move to draft it:
+
+    >>> contract.click('draft')
+    >>> contract.state
+    u'draft'
+
+Cancel it:
+
+    >>> contract.click('cancel')
+    >>> contract.state
+    u'cancel'
+
+Move to draft it:
+
+    >>> contract.click('draft')
+    >>> contract.state
+    u'draft'
+
+Confirm it:
+
+    >>> contract.click('confirm')
+    >>> contract.state
+    u'confirmed'
 
 Create overlaped Contract::
 
@@ -278,9 +310,32 @@ Create overlaped Contract::
     >>> contract2.working_shift_price = Decimal(360)
     >>> contract2.ruleset = ruleset
     >>> contract2.save()
+    >>> contract2.state
+    u'draft'
+
+Check it can't be confirmed::
+
+    >>> contract2.click('confirm')
     Traceback (most recent call last):
         ...
     UserError: ('UserError', (u'The Payroll Contract "Employee (2015-12-01)" overlaps with existing contract "Employee (2015-01-01)".', ''))
+
+Change contract period to be before the confirmed one::
+
+    >>> contract2.start = today.replace(year=today.year - 1, month=1, day=1)
+    >>> contract2.end = today.replace(year=today.year - 1, month=12, day=31)
+
+Confirm it::
+
+    >>> contract2.click('confirm')
+    >>> contract2.state
+    u'confirmed'
+
+Duplicate it::
+
+    >>> contract3 = Contract(Contract.copy([contract2.id], config.context)[0])
+    >>> contract3.state
+    u'draft'
 
 Create leave periods::
 
