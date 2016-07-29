@@ -18,6 +18,10 @@ msgstr ""
 "No puedes cambiar el estado del contrato \"%s\" porque tiene nóminas "
 "facturadas."
 
+msgctxt "error:payroll.contract:"
+msgid "You cannot delete the contract \"%s\" because it is confirmed."
+msgstr "No puedes eliminar el contrato \"%s\" porque está confirmado."
+
 msgctxt "error:payroll.payslip.line:"
 msgid "The product \"%s\" used to invoice payslips doesn't have Expense Account."
 msgstr "El producto \"%s\" usado para facturar nóminas no tiene cuenta de gastos."

@@ -174,6 +174,8 @@ class Contract(Workflow, ModelSQL, ModelView):
                 'contract_with_invoiced_payslips': (
                     'You cannot change the state of contract "%s" because it '
                     'has invoiced payslips.'),
+                'delete_confirmed_contract': ('You cannot delete the contract '
+                    '"%s" because it is confirmed.'),
                 })
 
     @classmethod
@@ -303,6 +305,14 @@ class Contract(Workflow, ModelSQL, ModelView):
         default['hours_summary'] = None
         default['state'] = 'draft'
         return super(Contract, cls).copy(contracts, default=default)
+
+    @classmethod
+    def delete(cls, contracts):
+        for contract in contracts:
+            if contract.state == 'confirmed':
+                cls.raise_user_error('delete_confirmed_contract',
+                    (contract.rec_name,))
+        super(Contract, cls).delete(contracts)
 
 
 class ContractHoursSummary(ModelSQL, ModelView):
