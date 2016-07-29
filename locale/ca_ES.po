@@ -10,6 +10,13 @@ msgstr ""
 "El contracte \"%(current_contract)s\" se solapa amb el contracte existent "
 "\"%(overlaped_contract)s\"."
 
+msgctxt "error:payroll.contract:"
+msgid ""
+"You cannot change the state of contract \"%s\" because it has invoiced "
+"payslips."
+msgstr ""
+"No pots canviar l'estat del contracte \"%s\" perquè té nòmines facturades."
+
 msgctxt "error:payroll.payslip.line:"
 msgid "The product \"%s\" used to invoice payslips doesn't have Expense Account."
 msgstr ""

@@ -171,6 +171,9 @@ class Contract(Workflow, ModelSQL, ModelView):
                 'overlaping_contract': (
                     'The Payroll Contract "%(current_contract)s" overlaps '
                     'with existing contract "%(overlaped_contract)s".'),
+                'contract_with_invoiced_payslips': (
+                    'You cannot change the state of contract "%s" because it '
+                    'has invoiced payslips.'),
                 })
 
     @classmethod
@@ -263,7 +266,8 @@ class Contract(Workflow, ModelSQL, ModelView):
     @ModelView.button
     @Workflow.transition('draft')
     def draft(cls, contracts):
-        pass
+        for contract in contracts:
+            contract.check_contracts_invoiced_payslips()
 
     @classmethod
     @ModelView.button
@@ -275,7 +279,21 @@ class Contract(Workflow, ModelSQL, ModelView):
     @ModelView.button
     @Workflow.transition('cancel')
     def cancel(cls, contracts):
-        pass
+        for contract in contracts:
+            contract.check_contracts_invoiced_payslips()
+
+    def check_contracts_invoiced_payslips(self):
+        pool = Pool()
+        Payslip = pool.get('payroll.payslip')
+        if self.state != 'confirmed':
+            return
+        if Payslip.search([
+                ('contract', '=', self),
+                ('supplier_invoice', '!=', None),
+                ('supplier_invoice.state', '!=', 'cancel'),
+                ]):
+            self.raise_user_error('contract_with_invoiced_payslips',
+                (self.rec_name,))
 
     @classmethod
     def copy(cls, contracts, default=None):
@@ -441,6 +459,7 @@ class Employee:
         contracts = Contract.search([
                 ('employee', '=', self.id),
                 ('start', '<=', end_date),
+                ('state', '=', 'confirmed'),
                 ['OR',
                     ('end', '=', None),
                     ('end', '>=', start_date),
