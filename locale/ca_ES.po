@@ -17,6 +17,10 @@ msgid ""
 msgstr ""
 "No pots canviar l'estat del contracte \"%s\" perquè té nòmines facturades."
 
+msgctxt "error:payroll.contract:"
+msgid "You cannot delete the contract \"%s\" because it is confirmed."
+msgstr "No pots eliminar el contracte \"%s\" perquè està confirmat."
+
 msgctxt "error:payroll.payslip.line:"
 msgid "The product \"%s\" used to invoice payslips doesn't have Expense Account."
 msgstr ""
