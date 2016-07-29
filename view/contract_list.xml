@@ -7,4 +7,5 @@
     <field name="end"/>
     <field name="yearly_hours"/>
     <field name="ruleset"/>
+    <field name="state"/>
 </tree>

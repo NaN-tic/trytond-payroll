@@ -1,20 +1,25 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from datetime import datetime, time
 from decimal import Decimal
-from dateutil.relativedelta import relativedelta
 from sql import Literal
 from sql.aggregate import Max
 
-from trytond.model import ModelSQL, ModelView, MatchMixin, fields
+from trytond import backend
+from trytond.model import MatchMixin, ModelSQL, ModelView, Workflow, fields
 from trytond.pool import Pool, PoolMeta
-from trytond.pyson import Eval
+from trytond.pyson import Eval, If
 from trytond.transaction import Transaction
+
 from trytond.modules.product import price_digits
 
 __all__ = ['ContractRuleSet', 'ContractRule',
     'Contract', 'ContractHoursSummary', 'Employee']
 __metaclass__ = PoolMeta
+
+STATES = {
+    'readonly': Eval('state') != 'draft',
+    }
+DEPENDS = ['state']
 
 
 class ContractRuleSet(ModelSQL, ModelView):
@@ -89,29 +94,33 @@ class ContractRule(ModelSQL, ModelView, MatchMixin):
         return super(ContractRule, self).match(pattern)
 
 
-class Contract(ModelSQL, ModelView):
+class Contract(Workflow, ModelSQL, ModelView):
     'Payroll Contract'
     __name__ = 'payroll.contract'
     employee = fields.Many2One('company.employee', 'Employee', required=True,
-        select=True)
-    start = fields.Date('Start', required=True)
+        select=True, states=STATES, depends=DEPENDS)
+    start = fields.Date('Start', required=True, states=STATES, depends=DEPENDS)
     end = fields.Date('End', domain=[
             ['OR',
                 ('end', '=', None),
                 ('end', '>=', Eval('start'))],
-            ], depends=['start'])
+            ],
+        states={
+            'readonly': ~Eval('state').in_(['draft', 'confirmed']),
+            },
+        depends=['start', 'state'])
     yearly_hours = fields.Numeric('Yearly Hours', domain=[
             ['OR',
                 ('yearly_hours', '=', None),
                 ('yearly_hours', '>=', Decimal(0)),
                 ],
-            ], required=True)
+            ], required=True, states=STATES, depends=DEPENDS)
     working_shift_hours = fields.Numeric('Working Shift Hours', domain=[
             ['OR',
                 ('working_shift_hours', '=', None),
                 ('working_shift_hours', '>=', Decimal(0)),
                 ],
-            ], required=True)
+            ], required=True, states=STATES, depends=DEPENDS)
     working_shift_price = fields.Numeric('Working Shift Price', required=True,
         digits=price_digits, domain=[
             ['OR',
@@ -119,24 +128,69 @@ class Contract(ModelSQL, ModelView):
                 ('working_shift_price', '>=', Decimal(0)),
                 ],
             ],
+        states=STATES, depends=DEPENDS,
         help="Price used to compute the amount corresponding to leaves.")
     hours_summary = fields.One2Many('payroll.contract.hours_summary',
         'contract', 'Hours Summary', readonly=True)
     ruleset = fields.Many2One('payroll.contract.ruleset', 'Ruleset',
-        required=True)
+        required=True, states=STATES, depends=DEPENDS)
     rules = fields.Function(fields.One2Many('payroll.contract.rule', None,
             'Payslip Rules'),
         'on_change_with_rules')
+    state = fields.Selection([
+            ('draft', 'Draft'),
+            ('confirmed', 'Confirmed'),
+            ('cancel', 'Canceled'),
+            ], 'State', required=True, readonly=True)
 
     @classmethod
     def __setup__(cls):
         super(Contract, cls).__setup__()
         cls._order.insert(0, ('start', 'ASC'))
+        cls._transitions |= set((
+                ('draft', 'confirmed'),
+                ('confirmed', 'cancel'),
+                ('confirmed', 'draft'),
+                ('draft', 'cancel'),
+                ('cancel', 'draft'),
+                ))
+        cls._buttons.update({
+                'draft': {
+                    'invisible': Eval('state') == 'draft',
+                    'icon': If(Eval('state') == 'cancel', 'tryton-clear',
+                        'tryton-go-previous'),
+                    },
+                'confirm': {
+                    'invisible': Eval('state') != 'draft',
+                    },
+                'cancel': {
+                    'invisible': Eval('state') == 'cancel',
+                    },
+                })
         cls._error_messages.update({
                 'overlaping_contract': (
                     'The Payroll Contract "%(current_contract)s" overlaps '
                     'with existing contract "%(overlaped_contract)s".'),
                 })
+
+    @classmethod
+    def __register__(cls, module_name):
+        TableHandler = backend.get('TableHandler')
+        cursor = Transaction().cursor
+        table = cls.__table__()
+
+        # Migration from 3.4.1: Add state
+        handler = TableHandler(cursor, cls, module_name)
+        state_exists = handler.column_exist('state')
+
+        super(Contract, cls).__register__(module_name)
+
+        # Migration from 3.4.1: Add state
+        handler = TableHandler(cursor, cls, module_name)
+        if not state_exists:
+            cursor.execute(*table.update(
+                    columns=[table.state],
+                    values=[Literal('confirmed')]))
 
     def get_rec_name(self, name):
         return '%s (%s)' % (self.employee.rec_name, self.start)
@@ -151,15 +205,23 @@ class Contract(ModelSQL, ModelView):
     def on_change_with_rules(self, name=None):
         return [r.id for r in self.ruleset.rules] if self.ruleset else None
 
+    @staticmethod
+    def default_state():
+        return 'draft'
+
     @classmethod
     def validate(cls, contracts):
         for contract in contracts:
             contract.check_overlaping_contracts()
 
     def check_overlaping_contracts(self):
+        if self.state != 'confirmed':
+            return
+
         domain = [
             ('id', '!=', self.id),
             ('employee', '=', self.employee.id),
+            ('state', '=', 'confirmed'),
             ['OR',
                 ('end', '=', None),
                 ('end', '>=', self.start)],
@@ -198,11 +260,30 @@ class Contract(ModelSQL, ModelView):
                 return rule
 
     @classmethod
+    @ModelView.button
+    @Workflow.transition('draft')
+    def draft(cls, contracts):
+        pass
+
+    @classmethod
+    @ModelView.button
+    @Workflow.transition('confirmed')
+    def confirm(cls, contracts):
+        pass
+
+    @classmethod
+    @ModelView.button
+    @Workflow.transition('cancel')
+    def cancel(cls, contracts):
+        pass
+
+    @classmethod
     def copy(cls, contracts, default=None):
         if default is None:
             default = {}
         default = default.copy()
         default['hours_summary'] = None
+        default['state'] = 'draft'
         return super(Contract, cls).copy(contracts, default=default)
 
 
