@@ -674,8 +674,10 @@ class WorkingShift:
         Return a tuple with the rule for the working shift and a diccionary
         with the rules for interventions. But one or both are allways None
         """
-        employee_contract = self.employee.get_payroll_contract(
-            self.payslip.start.date(), self.payslip.end.date())
+        employee_contract = None
+        if self.payslip_line
+            employee_contract = self.employee.get_payroll_contract(
+                self.payslip.start.date(), self.payslip.end.date())
         if not employee_contract:
             return None, None
 
