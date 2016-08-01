@@ -675,7 +675,7 @@ class WorkingShift:
         with the rules for interventions. But one or both are allways None
         """
         employee_contract = None
-        if self.payslip_line
+        if self.payslip_line:
             employee_contract = self.employee.get_payroll_contract(
                 self.payslip.start.date(), self.payslip.end.date())
         if not employee_contract:
