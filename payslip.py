@@ -678,7 +678,7 @@ class WorkingShift:
         employee_contract = None
         if self.payslip_line:
             employee_contract = self.employee.get_payroll_contract(
-                self.payslip.start.date(), self.payslip.end.date())
+                self.payslip.start, self.payslip.end)
         if not employee_contract:
             return None, None
 
