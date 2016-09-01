@@ -636,12 +636,12 @@ class WorkingShift:
     @classmethod
     def __register__(cls, module_name):
         TableHandler = backend.get('TableHandler')
-        cursor = Transaction().cursor
-        table = TableHandler(cursor, cls, module_name)
+        cursor = Transaction().connection.cursor()
+        table = TableHandler(cls, module_name)
         created_cost_cache = not table.column_exist('cost_cache')
         super(WorkingShift, cls).__register__(module_name)
-        cursor = Transaction().cursor
-        table = TableHandler(cursor, cls, module_name)
+        cursor = Transaction().connection.cursor()
+        table = TableHandler(cls, module_name)
         if created_cost_cache and table.column_exist('cost_cache'):
             cls.set_cache_values(cls.search([]))
 

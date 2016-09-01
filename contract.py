@@ -181,17 +181,17 @@ class Contract(Workflow, ModelSQL, ModelView):
     @classmethod
     def __register__(cls, module_name):
         TableHandler = backend.get('TableHandler')
-        cursor = Transaction().cursor
+        cursor = Transaction().connection.cursor()
         table = cls.__table__()
 
         # Migration from 3.4.1: Add state
-        handler = TableHandler(cursor, cls, module_name)
+        handler = TableHandler(cls, module_name)
         state_exists = handler.column_exist('state')
 
         super(Contract, cls).__register__(module_name)
 
         # Migration from 3.4.1: Add state
-        handler = TableHandler(cursor, cls, module_name)
+        handler = TableHandler(cls, module_name)
         if not state_exists:
             cursor.execute(*table.update(
                     columns=[table.state],
@@ -441,7 +441,7 @@ class ContractHoursSummary(ModelSQL, ModelView):
         contract = Contract.__table__()
         leave_period = LeavePeriod.__table__()
 
-        cursor = Transaction().cursor
+        cursor = Transaction().connection.cursor()
         cursor.execute(*contract.select(Max(contract.id)))
         max_contract_id, = cursor.fetchone()
         id_padding = 10 ** len(str(max_contract_id))
