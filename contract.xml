@@ -33,6 +33,14 @@
             <field name="view" ref="contract_ruleset_view_form"/>
         </record>
 
+        <record model="ir.model.access" id="access_contract_ruleset_payroll_default">
+            <field name="model"
+                search="[('model', '=', 'payroll.contract.ruleset')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
         <record model="ir.model.access" id="access_contract_ruleset_payroll">
             <field name="model"
                 search="[('model', '=', 'payroll.contract.ruleset')]"/>
@@ -124,6 +132,13 @@
             <field name="domain"></field>
         </record>
 
+        <record model="ir.model.access" id="access_contract_payroll_default">
+            <field name="model" search="[('model', '=', 'payroll.contract')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
         <record model="ir.model.access" id="access_contract_payroll">
             <field name="model" search="[('model', '=', 'payroll.contract')]"/>
             <field name="group" ref="group_payroll"/>
