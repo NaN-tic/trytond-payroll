@@ -106,7 +106,7 @@
             <field name="name">Confirmed &#38; Active</field>
             <field name="sequence" eval="20"/>
             <field name="domain"
-                eval="[('state', '=', 'confirmed'), ('start', '&lt;=', Date()), ['OR', ('end', '=', None), ('end', '&gt;=', Date())]"
+                eval="[('state', '=', 'confirmed'), ('start', '&lt;=', Date()), ['OR', ('end', '=', None), ('end', '&gt;=', Date())]]"
                 pyson="1"/>
         </record>
         <record model="ir.action.act_window.domain" id="act_contract_domain_confirmed_inactive">
@@ -114,7 +114,7 @@
             <field name="name">Confirmed &#38; Inactive</field>
             <field name="sequence" eval="30"/>
             <field name="domain"
-                eval="[('state', '=', 'confirmed'), ['OR', ('start', '&gt;', Date()), ('end', '&lt;', Date())]"
+                eval="[('state', '=', 'confirmed'), ['OR', ('start', '&gt;', Date()), ('end', '&lt;', Date())]]"
                 pyson="1"/>
         </record>
         <record model="ir.action.act_window.domain" id="act_contract_domain_all">
