@@ -158,14 +158,14 @@
         <!-- working_shift -->
         <record model="ir.ui.view" id="working_shift_view_form">
             <field name="model">working_shift</field>
-            <field name="type">form</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="working_shift.working_shift_view_form"/>
             <field name="name">working_shift_form</field>
         </record>
 
         <record model="ir.ui.view" id="working_shift_view_list">
             <field name="model">working_shift</field>
-            <field name="type">tree</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="working_shift.working_shift_view_list"/>
             <field name="name">working_shift_list</field>
         </record>
@@ -173,14 +173,14 @@
         <!-- working_shift.intervention -->
         <record model="ir.ui.view" id="intervention_view_form">
             <field name="model">working_shift.intervention</field>
-            <field name="type">form</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="working_shift.intervention_view_form"/>
             <field name="name">intervention_form</field>
         </record>
 
         <record model="ir.ui.view" id="intervention_view_list">
             <field name="model">working_shift.intervention</field>
-            <field name="type">tree</field>
+            <field name="type" eval="None"/>
             <field name="inherit" ref="working_shift.intervention_view_list"/>
             <field name="name">intervention_list</field>
         </record>
@@ -188,7 +188,7 @@
         <!-- employee.leave.entitlement -->
         <record model="ir.ui.view" id="employee_leave_entitlement_view_form">
             <field name="model">employee.leave.entitlement</field>
-            <field name="type">form</field>
+            <field name="type" eval="None"/>
             <field name="inherit"
                 ref="employee_leave.employee_leave_entitlement_view_form"/>
             <field name="name">employee_leave_entitlement_form</field>
@@ -196,7 +196,7 @@
 
         <record model="ir.ui.view" id="employee_leave_entitlement_view_list">
             <field name="model">employee.leave.entitlement</field>
-            <field name="type">tree</field>
+            <field name="type" eval="None"/>
             <field name="inherit"
                 ref="employee_leave.employee_leave_entitlement_view_list"/>
             <field name="name">employee_leave_entitlement_list</field>
@@ -205,7 +205,7 @@
         <!-- employee.leave.payment -->
         <record model="ir.ui.view" id="employee_leave_payment_view_form">
             <field name="model">employee.leave.payment</field>
-            <field name="type">form</field>
+            <field name="type" eval="None"/>
             <field name="inherit"
                 ref="employee_leave.employee_leave_payment_view_form"/>
             <field name="name">employee_leave_payment_form</field>
@@ -213,7 +213,7 @@
 
         <record model="ir.ui.view" id="employee_leave_payment_view_list">
             <field name="model">employee.leave.payment</field>
-            <field name="type">tree</field>
+            <field name="type" eval="None"/>
             <field name="inherit"
                 ref="employee_leave.employee_leave_payment_view_list"/>
             <field name="name">employee_leave_payment_list</field>
