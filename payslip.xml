@@ -105,14 +105,18 @@
             <field name="act_window" ref="act_payslip"/>
             <field name="name">To Invoice</field>
             <field name="sequence" eval="10"/>
-            <field name="domain">[('supplier_invoice', '=', None)]</field>
+            <field name="domain"
+                eval="[('supplier_invoice', '=', None)"
+                pyson"1"/>
         </record>
         <record model="ir.action.act_window.domain"
                 id="act_payslip_domain_invoiced">
             <field name="act_window" ref="act_payslip"/>
             <field name="name">Invoiced</field>
             <field name="sequence" eval="20"/>
-            <field name="domain">[('supplier_invoice', '!=', None)]</field>
+            <field name="domain"
+                eval="[('supplier_invoice', '!=', None)"
+                pyson"1"/>
         </record>
         <record model="ir.action.act_window.domain"
                 id="act_payslip_domain_all">
