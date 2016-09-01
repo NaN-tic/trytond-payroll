@@ -98,7 +98,7 @@ class Payslip(ModelSQL, ModelView):
         'get_amount')
     supplier_invoice = fields.Many2One('account.invoice', 'Supplier Invoice',
         domain=[
-            ('type', '=', 'in_invoice'),
+            ('type', '=', 'in'),
             ], readonly=True, select=True)
     supplier_invoice_state = fields.Function(fields.Selection([
                 ('draft', 'Draft'),
@@ -269,7 +269,7 @@ class Payslip(ModelSQL, ModelView):
         Journal = pool.get('account.journal')
 
         invoices = Invoice.search([
-                ('type', '=', 'in_invoice'),
+                ('type', '=', 'in'),
                 ('party', '=', self.employee.party.id),
                 ('invoice_date', '=', self.end),
                 ('state', '=', 'draft'),
@@ -289,7 +289,7 @@ class Payslip(ModelSQL, ModelView):
         payment_term = self.employee.party.supplier_payment_term
 
         invoice = Invoice(
-            type='in_invoice',
+            type='in',
             journal=journal,
             invoice_date=self.end,
             party=self.employee.party,
@@ -504,7 +504,7 @@ class PayslipLine(ModelSQL, ModelView):
                 self.type.product.rec_name)
 
         invoice_line = InvoiceLine()
-        invoice_line.invoice_type = 'in_invoice'
+        invoice_line.invoice_type = 'in'
         invoice_line.party = self.payslip.employee.party
         invoice_line.type = 'line'
         invoice_line.description = self.type.product.rec_name
