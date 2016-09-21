@@ -39,6 +39,12 @@ Una vez facturada la nómina, veremos que en la parte inferior izquierda de la m
 tenemos un campo llamado *Factura de proveedor* que se rellenará. En este campo 
 encontraremos el número de la factura, la referencia y el tercero al que pertenece.
 
+Cuando la factura se confirma, la nómina se bloquea y ya no se podrá editar. Si la 
+factura se cancela o se pasa a borrador, la nómina estará disponible para editar de
+nuevo. Una vez modificada la nómina, si eliminamos las líneas de la factura que tenemos
+en borrador y le damos al botón *Facturar* de la nómina, nos generará las nuevas
+líneas de factura. 
+
 Contratos de empleado
 =====================
 
@@ -52,7 +58,7 @@ tendrá unas reglas de nómina específicas. Los conjuntos de empleados y las
 reglas de estos los crearemos des del submenu **"Conjuntos de reglas del 
 contrato de empleado"**. Al crear el grupo de empleados le añadiremos unas 
 reglas a este conjunto. En cada regla deberemos seleccionar de forma 
-obligatória el método de cálculo de esta regla; que podrá ser:
+obligatoria el método de cálculo de esta regla; que podrá ser:
 
 - *Turno de trabajo*: una agrupación de horas.
 - *Intervenciones*: un caso o acción específica.
@@ -65,3 +71,13 @@ regla conlleva un consumo fijo de horas).
 Una vez añadida toda la información guardaremos el contrato y el sistema nos 
 generará el resumen de las horas por período. Estos períodos los determinamos 
 en la configuración de las *Ausencias del empleado*.
+
+El contrado de empleado pasará por diferentes estados: 
+
+* **Borrador** Estado inicial en el que se añaden todos los datos del contrado de 
+empleado.
+* **Confirmado & Activo** Una vez confirmamos el contrato, si la fecha de 
+finalización del mismo no está introducida o es posterior al día anterior al de hoy, 
+el contrato estará activo. 
+* **Confirmado & Inactivo** En el caso de que el contrato esté confirmado pero 
+la fecha de finalización haya expirado, el contrato estará inactivo.
