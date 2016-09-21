@@ -35,6 +35,10 @@ Para ello seleccionaremos la opción *Facturar*, lo que nos creará una factura
 de proveedor. En este caso el destinatario (*Tercero*) de la factura será el 
 empleado. 
 
+Una vez facturada la nómina, veremos que en la parte inferior izquierda de la misma
+tenemos un campo llamado *Factura de proveedor* que se rellenará. En este campo 
+encontraremos el número de la factura, la referencia y el tercero al que pertenece.
+
 Contratos de empleado
 =====================
 
