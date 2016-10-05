@@ -19,8 +19,10 @@ Nóminas
 
 Al crear la nómina de un empleado tenemos que seleccionar el empleado y 
 contrato (creado previamente), al cual pertenece la nómina y de que fecha es la 
-nómina (normalmente será una mensualidad). A partir de aquí podremos añadirle 
-*Líneas* con sus turnos de trabajo, derechos generados y pago de ausencias. 
+nómina (normalmente será una mensualidad). La fecha es importante ya que el programa
+calculará las ausencias que hayan habido dentro de este periodo.A partir de aquí 
+podremos añadirle *Líneas* con sus turnos de trabajo, derechos generados y pago 
+de ausencias. 
 
 La línea tendremos que clasificarla por "Tipo" y añadirle las "Horas de 
 trabajo"; que junto con los tres campos indicados inicialmente nos permitarán 
@@ -33,7 +35,9 @@ trabajo, la clasificación de estas horas y el desglose. Para que
 posteriormente, cuando sea necesario, podamos facturar la nómina del empleado. 
 Para ello seleccionaremos la opción *Facturar*, lo que nos creará una factura 
 de proveedor. En este caso el destinatario (*Tercero*) de la factura será el 
-empleado. 
+empleado. Cada línea de nómina equivaldrá a una línea de factura. El importe 
+final de la nómina lo que expresa son aquellos turnos de trabajo que se cobrarán
+y que no entran por nómina. 
 
 Una vez facturada la nómina, veremos que en la parte inferior izquierda de la misma
 tenemos un campo llamado *Factura de proveedor* que se rellenará. En este campo 
