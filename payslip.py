@@ -485,8 +485,6 @@ class PayslipLine(ModelSQL, ModelView):
         return Decimal(0)
 
     def get_amount(self, name):
-        if not self.working_shifts:
-            return Decimal(0)
         amount = sum([s.cost for s in self.working_shifts])
         amount += self.leave_hours * self.hour_unit_price
         amount -= self.generated_entitled_hours * self.hour_unit_price
