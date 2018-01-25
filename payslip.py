@@ -758,6 +758,7 @@ class WorkingShift:
         cls.write(working_shifts, {
                 'employee_contract_rule': None,
                 'cost_cache': None,
+                'cache_timestamp': None,
                 })
         interventions = [i for ws in working_shifts for i in ws.interventions
             if i.employee_contract_rule]
@@ -772,6 +773,9 @@ class WorkingShift:
             default = {}
         default = default.copy()
         default['payslip_line'] = None
+        default['cost_cache'] = None
+        default['employee_contract_rule'] = None
+        default['cache_timestamp'] = None
         return super(WorkingShift, cls).copy(working_shifts, default=default)
 
 
