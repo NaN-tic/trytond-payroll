@@ -196,37 +196,37 @@ Create Contract::
     >>> contract.ruleset = ruleset
     >>> contract.save()
     >>> contract.state
-    u'draft'
+    'draft'
 
 Confirm it:
 
     >>> contract.click('confirm')
     >>> contract.state
-    u'confirmed'
+    'confirmed'
 
 Move to draft it:
 
     >>> contract.click('draft')
     >>> contract.state
-    u'draft'
+    'draft'
 
 Cancel it:
 
     >>> contract.click('cancel')
     >>> contract.state
-    u'cancel'
+    'cancel'
 
 Move to draft it:
 
     >>> contract.click('draft')
     >>> contract.state
-    u'draft'
+    'draft'
 
 Confirm it:
 
     >>> contract.click('confirm')
     >>> contract.state
-    u'confirmed'
+    'confirmed'
 
 Create overlaped Contract::
 
@@ -240,14 +240,14 @@ Create overlaped Contract::
     >>> contract2.ruleset = ruleset
     >>> contract2.save()
     >>> contract2.state
-    u'draft'
+    'draft'
 
 Check it can't be confirmed::
 
     >>> contract2.click('confirm')   # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
         ...
-    UserError: ('UserError', (u'The Payroll Contract "Employee (2015-12-01)" overlaps with existing contract "Employee (2015-01-01)".', ''))
+    UserError: ('UserError', ('The Payroll Contract "Employee (2015-12-01)" overlaps with existing contract "Employee (2015-01-01)".', ''))
 
 Change contract period to be before the confirmed one::
 
@@ -258,13 +258,13 @@ Confirm it::
 
     >>> contract2.click('confirm')
     >>> contract2.state
-    u'confirmed'
+    'confirmed'
 
 Duplicate it::
 
     >>> contract3 = Contract(Contract.copy([contract2.id], config.context)[0])
     >>> contract3.state
-    u'draft'
+    'draft'
 
 Create leave periods::
 

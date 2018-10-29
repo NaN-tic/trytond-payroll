@@ -456,8 +456,7 @@ class ContractHoursSummary(ModelSQL, ModelView):
             leave_period.id.as_('leave_period'))
 
 
-class Employee:
-    __metaclass__ = PoolMeta
+class Employee(metaclass=PoolMeta):
     __name__ = 'company.employee'
     payroll_contracts = fields.One2Many('payroll.contract', 'employee',
         'Contracts')

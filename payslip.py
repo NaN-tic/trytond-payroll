@@ -161,12 +161,12 @@ class Payslip(ModelSQL, ModelView):
         if employee_contract:
             return employee_contract.id
 
-    @fields.depends('contract', methods=['contract'])
+    @fields.depends('contract')
     def on_change_with_contract_start(self, name=None):
         if self.contract:
             return self.contract.start
 
-    @fields.depends('contract', methods=['contract'])
+    @fields.depends('contract')
     def on_change_with_contract_end(self, name=None):
         if self.contract:
             return self.contract.end
@@ -568,8 +568,7 @@ class PayslipLine(ModelSQL, ModelView):
         return super(PayslipLine, cls).copy(lines, default=default)
 
 
-class Entitlement:
-    __metaclass__ = PoolMeta
+class Entitlement(metaclass=PoolMeta):
     __name__ = 'employee.leave.entitlement'
     payslip_line = fields.Many2One('payroll.payslip.line', 'Payslip Line',
         readonly=True)
@@ -594,8 +593,7 @@ class Entitlement:
         return super(Entitlement, cls).copy(entitlements, default=default)
 
 
-class LeavePayment:
-    __metaclass__ = PoolMeta
+class LeavePayment(metaclass=PoolMeta):
     __name__ = 'employee.leave.payment'
     payslip_line = fields.Many2One('payroll.payslip.line', 'Payslip Line',
         readonly=True)
@@ -620,8 +618,7 @@ class LeavePayment:
         return super(LeavePayment, cls).copy(leave_payments, default=default)
 
 
-class WorkingShift:
-    __metaclass__ = PoolMeta
+class WorkingShift(metaclass=PoolMeta):
     __name__ = 'working_shift'
     payslip_line = fields.Many2One('payroll.payslip.line', 'Payslip Line',
         readonly=True)
@@ -743,7 +740,7 @@ class WorkingShift:
                 to_write.extend(([ws], {
                             'interventions': [
                                 ('write', [i], {'employee_contract_rule': r})
-                                for (i, r) in int_rules.iteritems()],
+                                for (i, r) in int_rules.items()],
                             'cost_cache': cost,
                             'cache_timestamp': datetime.now(),
                             }))
@@ -784,15 +781,13 @@ class WorkingShift:
         return super(WorkingShift, cls).copy(working_shifts, default=default)
 
 
-class Intervention:
-    __metaclass__ = PoolMeta
+class Intervention(metaclass=PoolMeta):
     __name__ = 'working_shift.intervention'
     employee_contract_rule = fields.Many2One('payroll.contract.rule',
         'Employee Contract Rule', readonly=True)
 
 
-class InvoiceLine:
-    __metaclass__ = PoolMeta
+class InvoiceLine(metaclass=PoolMeta):
     __name__ = 'account.invoice.line'
 
     @property
