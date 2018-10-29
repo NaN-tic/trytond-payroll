@@ -14,7 +14,6 @@ from trytond.modules.product import price_digits
 
 __all__ = ['ContractRuleSet', 'ContractRule',
     'Contract', 'ContractHoursSummary', 'Employee']
-__metaclass__ = PoolMeta
 
 STATES = {
     'readonly': Eval('state') != 'draft',
@@ -456,6 +455,7 @@ class ContractHoursSummary(ModelSQL, ModelView):
 
 
 class Employee:
+    __metaclass__ = PoolMeta
     __name__ = 'company.employee'
     payroll_contracts = fields.One2Many('payroll.contract', 'employee',
         'Contracts')

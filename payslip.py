@@ -4,7 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from trytond.model import ModelSQL, ModelView, Workflow, fields
-from trytond.pyson import Bool, Date, Eval, If
+from trytond.pyson import Bool, Date, Eval
 from trytond.pool import Pool, PoolMeta
 from trytond.tools import grouped_slice
 from trytond.transaction import Transaction
@@ -12,7 +12,6 @@ from trytond import backend
 
 __all__ = ['PayslipLineType', 'Payslip', 'PayslipLine', 'Entitlement',
     'LeavePayment', 'WorkingShift', 'Intervention', 'InvoiceLine']
-__metaclass__ = PoolMeta
 
 STATES = {
     'readonly': Eval('supplier_invoice_state').in_(
@@ -570,6 +569,7 @@ class PayslipLine(ModelSQL, ModelView):
 
 
 class Entitlement:
+    __metaclass__ = PoolMeta
     __name__ = 'employee.leave.entitlement'
     payslip_line = fields.Many2One('payroll.payslip.line', 'Payslip Line',
         readonly=True)
@@ -595,6 +595,7 @@ class Entitlement:
 
 
 class LeavePayment:
+    __metaclass__ = PoolMeta
     __name__ = 'employee.leave.payment'
     payslip_line = fields.Many2One('payroll.payslip.line', 'Payslip Line',
         readonly=True)
@@ -620,6 +621,7 @@ class LeavePayment:
 
 
 class WorkingShift:
+    __metaclass__ = PoolMeta
     __name__ = 'working_shift'
     payslip_line = fields.Many2One('payroll.payslip.line', 'Payslip Line',
         readonly=True)
@@ -641,11 +643,9 @@ class WorkingShift:
     @classmethod
     def __register__(cls, module_name):
         TableHandler = backend.get('TableHandler')
-        cursor = Transaction().connection.cursor()
         table = TableHandler(cls, module_name)
         created_cost_cache = not table.column_exist('cost_cache')
         super(WorkingShift, cls).__register__(module_name)
-        cursor = Transaction().connection.cursor()
         table = TableHandler(cls, module_name)
         if created_cost_cache and table.column_exist('cost_cache'):
             cls.set_cache_values(cls.search([]))
@@ -785,12 +785,14 @@ class WorkingShift:
 
 
 class Intervention:
+    __metaclass__ = PoolMeta
     __name__ = 'working_shift.intervention'
     employee_contract_rule = fields.Many2One('payroll.contract.rule',
         'Employee Contract Rule', readonly=True)
 
 
 class InvoiceLine:
+    __metaclass__ = PoolMeta
     __name__ = 'account.invoice.line'
 
     @property
