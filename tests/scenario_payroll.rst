@@ -9,38 +9,25 @@ Imports::
     >>> from decimal import Decimal
     >>> from operator import attrgetter
     >>> from proteus import config, Model, Wizard
+    >>> from trytond.tests.tools import activate_modules
     >>> from trytond.modules.company.tests.tools import create_company, \
     ...     get_company
     >>> from trytond.modules.account.tests.tools import create_fiscalyear, \
-    ...     create_chart, get_accounts, create_tax, set_tax_code
+    ...     create_chart, get_accounts, create_tax
     >>> from trytond.modules.account_invoice.tests.tools import \
     ...     set_fiscalyear_invoice_sequences, create_payment_term
     >>> today = datetime.date(2015, 7, 17)  # Make it previsible
     >>> now = datetime.datetime(2015, 7, 17, 10, 0, 0)
 
-Create database::
+Activate payroll::
 
-    >>> config = config.set_trytond()
-    >>> config.pool.test = True
-
-Install working_shift_contract::
-
-    >>> Module = Model.get('ir.module')
-    >>> module, = Module.find([('name', '=', 'payroll')])
-    >>> module.click('install')
-    >>> Wizard('ir.module.install_upgrade').execute('upgrade')
+    >>> config = activate_modules('payroll')
 
 Create company::
 
     >>> _ = create_company()
     >>> company = get_company()
     >>> party = company.party
-
-Reload the context::
-
-    >>> User = Model.get('res.user')
-    >>> Group = Model.get('res.group')
-    >>> config._context = User.get_preferences(True, config.context)
 
 Create fiscal year::
 
@@ -253,7 +240,7 @@ Create overlaped Contract::
 
 Check it can't be confirmed::
 
-    >>> contract2.click('confirm')
+    >>> contract2.click('confirm')   # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
         ...
     UserError: ('UserError', (u'The Payroll Contract "Employee (2015-12-01)" overlaps with existing contract "Employee (2015-01-01)".', ''))

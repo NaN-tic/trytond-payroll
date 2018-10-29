@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<form string="Payslip">
+<form>
     <group id="start_end_amount" colspan="4" col="6">
         <label name="start"/>
         <field name="start"/>
@@ -43,6 +43,6 @@
         <label name="supplier_invoice"/>
         <field name="supplier_invoice"/>
         <label id="spacing" string="" xexpand="1"/>
-        <button string="Invoice" name="create_supplier_invoices"/>
+        <button name="create_supplier_invoices"/>
     </group>
 </form>

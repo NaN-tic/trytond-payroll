@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- The COPYRIGHT file at the top level of this repository contains the full
      copyright notices and license terms. -->
-<tree string="Payslip">
+<tree>
     <field name="employee"/>
     <field name="contract"/>
     <field name="start"/>
@@ -11,6 +11,5 @@
     <field name="amount"/>
     <field name="supplier_invoice"/>
     <field name="supplier_invoice_state" tree_invisible="1"/>
-    <button string="Invoice" name="create_supplier_invoices"
-        tree_invisible="1"/>
+    <button name="create_supplier_invoices" tree_invisible="1"/>
 </tree>

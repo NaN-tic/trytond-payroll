@@ -317,7 +317,6 @@ class Contract(Workflow, ModelSQL, ModelView):
 class ContractHoursSummary(ModelSQL, ModelView):
     'Payroll Contract Hours Summary'
     __name__ = 'payroll.contract.hours_summary'
-    _rec_name = 'leave_period'
     contract = fields.Many2One('payroll.contract', 'Payroll', readonly=True)
     leave_period = fields.Many2One('employee.leave.period', 'Period',
         readonly=True)
@@ -345,6 +344,9 @@ class ContractHoursSummary(ModelSQL, ModelView):
     leave_payment_hours = fields.Function(fields.Numeric('Leave Payment Hours',
             digits=(16, 2)),
         'get_leave_payment_hours')
+
+    def get_rec_name(self, name):
+        return self.leave_period.name
 
     def get_working_hours(self, name):
         pool = Pool()

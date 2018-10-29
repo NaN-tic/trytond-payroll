@@ -132,6 +132,17 @@
             <field name="sequence" eval="9999"/>
         </record>
 
+
+        <record model="ir.model.button" id="payslip_create_supplier_invoices_button">
+            <field name="name">create_supplier_invoices</field>
+            <field name="string">Invoice</field>
+            <field name="model" search="[('model', '=', 'payroll.payslip')]"/>
+        </record>
+        <record model="ir.model.button-res.group" id="payslip_create_supplier_invocies_button_group_payroll">
+            <field name="button" ref="payslip_create_supplier_invoices_button"/>
+            <field name="group" ref="group_payroll"/>
+        </record>
+
         <record model="ir.model.access" id="access_payslip">
             <field name="model" search="[('model', '=', 'payroll.payslip')]"/>
             <field name="perm_read" eval="False"/>
