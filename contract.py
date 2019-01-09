@@ -9,7 +9,8 @@ from trytond.model import MatchMixin, ModelSQL, ModelView, Workflow, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval, If
 from trytond.transaction import Transaction
-
+from trytond.i18n import gettext
+from trytond.exceptions import UserError
 from trytond.modules.product import price_digits
 
 __all__ = ['ContractRuleSet', 'ContractRule',
@@ -166,16 +167,6 @@ class Contract(Workflow, ModelSQL, ModelView):
                     'invisible': Eval('state') == 'cancel',
                     },
                 })
-        cls._error_messages.update({
-                'overlaping_contract': (
-                    'The Payroll Contract "%(current_contract)s" overlaps '
-                    'with existing contract "%(overlaped_contract)s".'),
-                'contract_with_invoiced_payslips': (
-                    'You cannot change the state of contract "%s" because it '
-                    'has invoiced payslips.'),
-                'delete_confirmed_contract': ('You cannot delete the contract '
-                    '"%s" because it is confirmed.'),
-                })
 
     @classmethod
     def __register__(cls, module_name):
@@ -234,10 +225,9 @@ class Contract(Workflow, ModelSQL, ModelView):
             domain.append(('start', '<=', self.end))
         overlaping_contracts = self.search(domain)
         if overlaping_contracts:
-            self.raise_user_error('overlaping_contract', {
-                    'current_contract': self.rec_name,
-                    'overlaped_contract': overlaping_contracts[0].rec_name,
-                    })
+            raise UserError(gettext('payroll.overlaping_contract',
+                    current_contract=self.rec_name,
+                    overlaped_contract=overlaping_contracts[0].rec_name ))
 
     def compute_working_shift_matching_rule(self, working_shift, pattern=None):
         if pattern is None:
@@ -293,8 +283,8 @@ class Contract(Workflow, ModelSQL, ModelView):
                 ('supplier_invoice', '!=', None),
                 ('supplier_invoice.state', '!=', 'cancel'),
                 ]):
-            self.raise_user_error('contract_with_invoiced_payslips',
-                (self.rec_name,))
+            raise UserError(gettext('payroll.contract_with_invoiced_payslips',
+                contract=self.rec_name))
 
     @classmethod
     def copy(cls, contracts, default=None):
@@ -309,8 +299,8 @@ class Contract(Workflow, ModelSQL, ModelView):
     def delete(cls, contracts):
         for contract in contracts:
             if contract.state == 'confirmed':
-                cls.raise_user_error('delete_confirmed_contract',
-                    (contract.rec_name,))
+                raise UserError(gettext('payroll.delete_confirmed_contract',
+                    contract=contract.rec_name))
         super(Contract, cls).delete(contracts)
 
 

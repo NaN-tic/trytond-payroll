@@ -9,6 +9,8 @@ from trytond.pool import Pool, PoolMeta
 from trytond.tools import grouped_slice
 from trytond.transaction import Transaction
 from trytond import backend
+from trytond.i18n import gettext
+from trytond.exceptions import UserError
 
 __all__ = ['PayslipLineType', 'Payslip', 'PayslipLine', 'Entitlement',
     'LeavePayment', 'WorkingShift', 'Intervention', 'InvoiceLine']
@@ -123,19 +125,6 @@ class Payslip(ModelSQL, ModelView):
                     'icon': 'tryton-ok',
                     },
                 })
-        cls._error_messages.update({
-                'payslip_invoice_with_lines': (
-                    'You cannot invoice the payslip "%(payslip)s" because it '
-                    'will be invoiced in invoice "%(invoice)s" that already '
-                    'has lines.\n'
-                    'Please, confirm invoice to create a new one or delete '
-                    'its lines.'),
-                'delete_invoiced_payslip': (
-                    'You cannot delete the payslip "%s" because it is already '
-                    'invoiced.\n'
-                    'Please, delete or cancel the invoice before delete the '
-                    'payslip.'),
-                })
 
     def get_rec_name(self, name):
         pool = Pool()
@@ -240,10 +229,9 @@ class Payslip(ModelSQL, ModelView):
 
             invoice = payslip.get_supplier_invoice()
             if getattr(invoice, 'lines', []):
-                cls.raise_user_error('payslip_invoice_with_lines', {
-                        'payslip': payslip.rec_name,
-                        'invoice': invoice.rec_name,
-                        })
+                raise UserError(gettext('payroll.payslip_invoice_with_lines',
+                        payslip=payslip.rec_name,
+                        invoice=invoice.rec_name))
 
             invoice_lines = []
             for line in payslip.lines:
@@ -315,8 +303,8 @@ class Payslip(ModelSQL, ModelView):
         for payslip in payslips:
             if (payslip.supplier_invoice
                     and payslip.supplier_invoice.state != 'cancel'):
-                cls.raise_user_error('delete_invoiced_payslip',
-                    (payslip.rec_name,))
+                raise UserError(gettext('payroll.delete_invoiced_payslip',
+                    payslip=payslip.rec_name))
         super(Payslip, cls).delete(payslips)
 
 
@@ -396,17 +384,6 @@ class PayslipLine(ModelSQL, ModelView):
     supplier_invoice_lines = fields.One2Many('account.invoice.line', 'origin',
         'Invoice Lines', readonly=True)
 
-    @classmethod
-    def __setup__(cls):
-        super(PayslipLine, cls).__setup__()
-        cls._error_messages.update({
-                'not_unique_with_hours': (
-                    'You can\'t set Working Hours to Payslip Line '
-                    '"%(current_line)s" because already exists line '
-                    '"%(existing_line)s" with hours in the same Payslip.'),
-                'missing_account_expense': ('The product "%s" used to invoice '
-                    'payslips doesn\'t have Expense Account.'),
-                })
 
     @staticmethod
     def default_currency_digits():
@@ -504,8 +481,8 @@ class PayslipLine(ModelSQL, ModelView):
             return
 
         if not self.type.product.account_expense_used:
-            self.raise_user_error('missing_account_expense',
-                self.type.product.rec_name)
+            raise UserError(gettext('payroll.missing_account_expense',
+                payslip=self.type.product.rec_name))
 
         invoice_line = InvoiceLine()
         invoice_line.invoice_type = 'in'
@@ -551,10 +528,9 @@ class PayslipLine(ModelSQL, ModelView):
                 ('working_hours', '!=', Decimal(0)),
                 ])
         if other_lines:
-            self.raise_user_error('not_unique_with_hours', {
-                    'current_line': self.rec_name,
-                    'existing_line': other_lines[0].rec_name,
-                    })
+            raise UserError(gettext('payroll.not_unique_with_hours',
+                    current_line=self.rec_name,
+                    existing_line=other_lines[0].rec_name))
 
     @classmethod
     def copy(cls, lines, default=None):
