@@ -10,11 +10,6 @@
             <field name="user" ref="res.user_admin"/>
             <field name="group" ref="group_payroll"/>
         </record>
-        <record model="res.user-res.group" id="user_trigger_group_payroll">
-            <field name="user" ref="res.user_trigger"/>
-            <field name="group" ref="group_payroll"/>
-        </record>
-
         <record model="res.group" id="group_payroll_contract">
             <field name="name">Payroll Contracts</field>
         </record>
@@ -22,11 +17,6 @@
             <field name="user" ref="res.user_admin"/>
             <field name="group" ref="group_payroll_contract"/>
         </record>
-        <record model="res.user-res.group" id="user_trigger_group_payroll_contract">
-            <field name="user" ref="res.user_trigger"/>
-            <field name="group" ref="group_payroll_contract"/>
-        </record>
-
         <!-- payroll.payslip.line.type -->
         <record model="ir.ui.view" id="payslip_line_type_view_form">
             <field name="model">payroll.payslip.line.type</field>
