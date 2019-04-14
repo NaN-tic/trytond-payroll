@@ -134,8 +134,8 @@ class Contract(Workflow, ModelSQL, ModelView):
         'contract', 'Hours Summary', readonly=True)
     ruleset = fields.Many2One('payroll.contract.ruleset', 'Ruleset',
         required=True, states=STATES, depends=DEPENDS)
-    rules = fields.Function(fields.One2Many('payroll.contract.rule', None,
-            'Payslip Rules'),
+    rules = fields.Function(fields.Many2Many('payroll.contract.rule', None,
+            None, 'Payslip Rules'),
         'on_change_with_rules')
     state = fields.Selection([
             ('draft', 'Draft'),
