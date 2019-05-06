@@ -1,3 +1,4 @@
+Version 5.3.0 - 2019-05-06
 Version 3.4.2 - 2016-07-29
 * Add state and workflow to contract
 * Don't allow to invoice payslip in an invoice with lines
