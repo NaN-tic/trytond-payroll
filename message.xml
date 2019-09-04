@@ -2,7 +2,7 @@
 <!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
 this repository contains the full copyright notices and license terms. -->
 <tryton>
-    <data group="1">
+    <data grouped="1">
       <record model="ir.message" id="payslip_invoice_with_lines">
           <field name="text">You cannot invoice the payslip "%(payslip)s" because it will be invoiced in invoice "%(invoice)s" that already has lines.\nPlease, confirm invoice to create a new one or delete its lines.</field>
       </record>
