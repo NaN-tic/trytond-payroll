@@ -158,7 +158,7 @@ class Contract(Workflow, ModelSQL, ModelView):
                 'draft': {
                     'invisible': Eval('state') == 'draft',
                     'icon': If(Eval('state') == 'cancel', 'tryton-clear',
-                        'tryton-go-previous'),
+                        'tryton-back'),
                     },
                 'confirm': {
                     'invisible': Eval('state') != 'draft',

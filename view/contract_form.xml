@@ -35,7 +35,7 @@
                 icon="tryton-cancel"/>
             <button name="draft" string="Draft"/>
             <button name="confirm" string="Confirm"
-                icon="tryton-go-next"/>
+                icon="tryton-forward"/>
         </group>
     </group>
 </form>
