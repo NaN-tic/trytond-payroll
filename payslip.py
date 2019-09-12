@@ -47,7 +47,7 @@ class Payslip(ModelSQL, ModelView):
             ],
         states={
             'readonly': Bool(Eval('lines')),
-            }, depends=['lines', 'employee'])
+            }, depends=['lines', 'employee', 'start', 'end'])
     contract_start = fields.Function(fields.Date('Contract Start'),
         'on_change_with_contract_start')
     contract_end = fields.Function(fields.Date('Contract Start'),
