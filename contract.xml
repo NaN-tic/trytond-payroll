@@ -159,6 +159,7 @@
 
         <record model="ir.model.button" id="contract_draft_button">
             <field name="name">draft</field>
+            <field name="string">Draft</field>
             <field name="model" search="[('model', '=', 'payroll.contract')]"/>
         </record>
         <record model="ir.model.button-res.group" id="contract_draft_button_group_contract">
@@ -168,6 +169,7 @@
 
         <record model="ir.model.button" id="contract_confirm_button">
             <field name="name">confirm</field>
+            <field name="string">Confirm</field>
             <field name="model" search="[('model', '=', 'payroll.contract')]"/>
         </record>
         <record model="ir.model.button-res.group" id="contract_confirm_button_group_contract">
@@ -177,6 +179,7 @@
 
         <record model="ir.model.button" id="contract_cancel_button">
             <field name="name">cancel</field>
+            <field name="string">Cancel</field>
             <field name="model" search="[('model', '=', 'payroll.contract')]"/>
         </record>
         <record model="ir.model.button-res.group" id="contract_cancel_button_group_contract">

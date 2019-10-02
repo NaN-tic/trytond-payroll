@@ -162,9 +162,11 @@ class Contract(Workflow, ModelSQL, ModelView):
                     },
                 'confirm': {
                     'invisible': Eval('state') != 'draft',
+                    'icon': 'tryton-forward'
                     },
                 'cancel': {
                     'invisible': Eval('state') == 'cancel',
+                    'icon': 'tryton-cancel',
                     },
                 })
 

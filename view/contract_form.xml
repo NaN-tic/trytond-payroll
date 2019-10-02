@@ -31,11 +31,9 @@
         <label name="state"/>
         <field name="state"/>
         <group id="buttons">
-            <button name="cancel" string="Cancel"
-                icon="tryton-cancel"/>
-            <button name="draft" string="Draft"/>
-            <button name="confirm" string="Confirm"
-                icon="tryton-forward"/>
+            <button name="cancel"/>
+            <button name="draft"/>
+            <button name="confirm"/>
         </group>
     </group>
 </form>
