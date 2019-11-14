@@ -182,14 +182,14 @@
         <record model="ir.ui.view" id="intervention_view_form">
             <field name="model">working_shift.intervention</field>
             <field name="type" eval="None"/>
-            <field name="inherit" ref="working_shift.intervention_view_form"/>
+            <field name="inherit" ref="working_shift_interventions.intervention_view_form"/>
             <field name="name">intervention_form</field>
         </record>
 
         <record model="ir.ui.view" id="intervention_view_list">
             <field name="model">working_shift.intervention</field>
             <field name="type" eval="None"/>
-            <field name="inherit" ref="working_shift.intervention_view_list"/>
+            <field name="inherit" ref="working_shift_interventions.intervention_view_list"/>
             <field name="name">intervention_list</field>
         </record>
 
