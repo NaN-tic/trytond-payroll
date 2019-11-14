@@ -16,8 +16,7 @@ Imports::
     ...     create_chart, get_accounts, create_tax
     >>> from trytond.modules.account_invoice.tests.tools import \
     ...     set_fiscalyear_invoice_sequences, create_payment_term
-    >>> today = datetime.date(2015, 7, 17)  # Make it previsible
-    >>> now = datetime.datetime(2015, 7, 17, 10, 0, 0)
+    >>> today = datetime.date.today()
 
 Activate payroll::
 
@@ -82,10 +81,7 @@ Create products::
     >>> template.name = 'Large Working Shift'
     >>> template.default_uom = unit
     >>> template.type = 'service'
-    >>> template.salable = True
-    >>> template.purchasable = True
     >>> template.list_price = Decimal('800')
-    >>> template.cost_price = Decimal('200')
     >>> template.cost_price_method = 'fixed'
     >>> template.account_category = account_category
     >>> template.save()
@@ -95,10 +91,7 @@ Create products::
     >>> template.name = 'Short Working Shift'
     >>> template.default_uom = unit
     >>> template.type = 'service'
-    >>> template.salable = True
-    >>> template.purchasable = True
     >>> template.list_price = Decimal('300')
-    >>> template.cost_price = Decimal('70')
     >>> template.cost_price_method = 'fixed'
     >>> template.account_category = account_category
     >>> template.save()
@@ -108,10 +101,7 @@ Create products::
     >>> template.name = 'guard'
     >>> template.default_uom = hour
     >>> template.type = 'service'
-    >>> template.salable = True
-    >>> template.purchasable = True
     >>> template.list_price = Decimal('70')
-    >>> template.cost_price = Decimal('30')
     >>> template.cost_price_method = 'fixed'
     >>> template.account_category = account_category
     >>> template.save()
@@ -121,10 +111,7 @@ Create products::
     >>> template.name = 'Professional Services'
     >>> template.default_uom = hour
     >>> template.type = 'service'
-    >>> template.salable = True
-    >>> template.purchasable = True
     >>> template.list_price = Decimal('0')
-    >>> template.cost_price = Decimal('0')
     >>> template.cost_price_method = 'fixed'
     >>> template.account_category = account_category
     >>> template.save()
@@ -134,10 +121,7 @@ Create products::
     >>> template.name = 'Extra Professional Services'
     >>> template.default_uom = hour
     >>> template.type = 'service'
-    >>> template.salable = True
-    >>> template.purchasable = True
     >>> template.list_price = Decimal('0')
-    >>> template.cost_price = Decimal('0')
     >>> template.cost_price_method = 'fixed'
     >>> template.account_category = account_category
     >>> template.save()
@@ -438,8 +422,8 @@ Create empty December Payslip::
 
     >>> payslip = Payslip()
     >>> payslip.employee = employee
-    >>> payslip.start = datetime.date(2015, 12, 1)
-    >>> payslip.end = datetime.date(2015, 12, 31)
+    >>> payslip.start = datetime.date(today.year, 12, 1)
+    >>> payslip.end = datetime.date(today.year, 12, 31)
     >>> payslip.contract == contract
     True
     >>> line = payslip.lines.new()
