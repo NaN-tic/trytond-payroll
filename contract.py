@@ -240,24 +240,32 @@ class Contract(Workflow, ModelSQL, ModelView):
                     'overlaped_contract': overlaping_contracts[0].rec_name,
                     })
 
-    def compute_working_shift_matching_rule(self, working_shift, pattern=None):
+    def _get_working_shift_pattern(self, working_shift, pattern=None):
         if pattern is None:
             pattern = {}
         else:
             pattern = pattern.copy()
         pattern['hours'] = working_shift.hours
+        return pattern
+
+    def compute_working_shift_matching_rule(self, working_shift, pattern=None):
+        pattern = self._get_working_shift_pattern(working_shift, pattern)
         for rule in self.ruleset.rules:
             if rule.compute_method != 'working_shift':
                 continue
             if rule.match(pattern):
                 return rule
 
-    def compute_intervention_matching_rule(self, intervention, pattern=None):
+    def _get_intervention_pattern(self, intervention, pattern=None):
         if pattern is None:
             pattern = {}
         else:
             pattern = pattern.copy()
         pattern['hours'] = intervention.hours
+        return pattern
+
+    def compute_intervention_matching_rule(self, intervention, pattern=None):
+        pattern = self._get_intervention_pattern(intervention, pattern)
         for rule in self.ruleset.rules:
             if rule.compute_method != 'intervention':
                 continue
