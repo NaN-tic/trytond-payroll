@@ -615,11 +615,10 @@ class WorkingShift(metaclass=PoolMeta):
 
     @classmethod
     def __register__(cls, module_name):
-        TableHandler = backend.get('TableHandler')
-        table = TableHandler(cls, module_name)
+        table = backend.TableHandler(cls, module_name)
         created_cost_cache = not table.column_exist('cost_cache')
         super(WorkingShift, cls).__register__(module_name)
-        table = TableHandler(cls, module_name)
+        table = backend.TableHandler(cls, module_name)
         if created_cost_cache and table.column_exist('cost_cache'):
             cls.set_cache_values(cls.search([]))
 
