@@ -198,7 +198,7 @@ Cancel it:
 
     >>> contract.click('cancel')
     >>> contract.state
-    'cancel'
+    'cancelled'
 
 Move to draft it:
 

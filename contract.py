@@ -140,7 +140,7 @@ class Contract(Workflow, ModelSQL, ModelView):
     state = fields.Selection([
             ('draft', 'Draft'),
             ('confirmed', 'Confirmed'),
-            ('cancel', 'Canceled'),
+            ('cancelled', "Cancelled"),
             ], 'State', required=True, readonly=True)
 
     @classmethod
@@ -149,15 +149,15 @@ class Contract(Workflow, ModelSQL, ModelView):
         cls._order.insert(0, ('start', 'ASC'))
         cls._transitions |= set((
                 ('draft', 'confirmed'),
-                ('confirmed', 'cancel'),
+                ('confirmed', 'cancelled'),
                 ('confirmed', 'draft'),
-                ('draft', 'cancel'),
-                ('cancel', 'draft'),
+                ('draft', 'cancelled'),
+                ('cancelled', 'draft'),
                 ))
         cls._buttons.update({
                 'draft': {
                     'invisible': Eval('state') == 'draft',
-                    'icon': If(Eval('state') == 'cancel', 'tryton-clear',
+                    'icon': If(Eval('state') == 'cancelled', 'tryton-clear',
                         'tryton-back'),
                     },
                 'confirm': {
@@ -165,7 +165,7 @@ class Contract(Workflow, ModelSQL, ModelView):
                     'icon': 'tryton-forward'
                     },
                 'cancel': {
-                    'invisible': Eval('state') == 'cancel',
+                    'invisible': Eval('state') == 'cancelled',
                     'icon': 'tryton-cancel',
                     },
                 })
@@ -174,6 +174,7 @@ class Contract(Workflow, ModelSQL, ModelView):
     def __register__(cls, module_name):
         cursor = Transaction().connection.cursor()
         table = cls.__table__()
+        sql_table = cls.__table__()
 
         # Migration from 3.4.1: Add state
         handler = backend.TableHandler(cls, module_name)
@@ -187,6 +188,11 @@ class Contract(Workflow, ModelSQL, ModelView):
             cursor.execute(*table.update(
                     columns=[table.state],
                     values=[Literal('confirmed')]))
+
+        # Migration from 5.6: rename state cancel to cancelled
+        cursor.execute(*sql_table.update(
+                [sql_table.state], ['cancelled'],
+                where=sql_table.state == 'cancel'))
 
     def get_rec_name(self, name):
         return '%s (%s)' % (self.employee.rec_name, self.start)
@@ -277,7 +283,7 @@ class Contract(Workflow, ModelSQL, ModelView):
 
     @classmethod
     @ModelView.button
-    @Workflow.transition('cancel')
+    @Workflow.transition('cancelled')
     def cancel(cls, contracts):
         for contract in contracts:
             contract.check_contracts_invoiced_payslips()
@@ -290,7 +296,7 @@ class Contract(Workflow, ModelSQL, ModelView):
         if Payslip.search([
                 ('contract', '=', self),
                 ('supplier_invoice', '!=', None),
-                ('supplier_invoice.state', '!=', 'cancel'),
+                ('supplier_invoice.state', '!=', 'cancelled'),
                 ]):
             raise UserError(gettext('payroll.contract_with_invoiced_payslips',
                 contract=self.rec_name))

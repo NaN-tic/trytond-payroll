@@ -111,7 +111,7 @@ class Payslip(ModelSQL, ModelView):
                 ('validated', 'Validated'),
                 ('posted', 'Posted'),
                 ('paid', 'Paid'),
-                ('cancel', 'Canceled'),
+                ('cancelled', "Cancelled"),
                 ], 'Supplier Invoice State'),
         'get_supplier_invoice_state', searcher='search_supplier_invoice_state')
 
@@ -302,7 +302,7 @@ class Payslip(ModelSQL, ModelView):
     def delete(cls, payslips):
         for payslip in payslips:
             if (payslip.supplier_invoice
-                    and payslip.supplier_invoice.state != 'cancel'):
+                    and payslip.supplier_invoice.state != 'cancelled'):
                 raise UserError(gettext('payroll.delete_invoiced_payslip',
                     payslip=payslip.rec_name))
         super(Payslip, cls).delete(payslips)
@@ -696,7 +696,7 @@ class WorkingShift(metaclass=PoolMeta):
 
     @classmethod
     @ModelView.button
-    @Workflow.transition('canceled')
+    @Workflow.transition('cancelled')
     def cancel(cls, working_shifts):
         super(WorkingShift, cls).cancel(working_shifts)
         cls.clear_cache_values(working_shifts)
