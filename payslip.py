@@ -495,21 +495,22 @@ class PayslipLine(ModelSQL, ModelView):
         invoice_line.unit = self.type.product.default_uom
         invoice_line.account = self.type.product.account_expense_used
 
-        invoice_line.taxes = []
+        taxes = []
         pattern = invoice_line._get_tax_rule_pattern()
         for tax in self.type.product.supplier_taxes_used:
             if invoice_line.party.supplier_tax_rule:
                 tax_ids = invoice_line.party.supplier_tax_rule.apply(tax,
                     pattern)
                 if tax_ids:
-                    invoice_line.taxes.extend(Tax.browse(tax_ids))
+                    taxes.extend(Tax.browse(tax_ids))
                 continue
             invoice_line.taxes.append(tax)
         if invoice_line.party.supplier_tax_rule:
             tax_ids = invoice_line.party.supplier_tax_rule.apply(None, pattern)
             if tax_ids:
-                invoice_line.taxes.extend(Tax.browse(tax_ids))
+                taxes.extend(Tax.browse(tax_ids))
 
+        invoice_line.taxes = taxes
         invoice_line.origin = self
         return invoice_line
 
