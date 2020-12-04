@@ -359,7 +359,7 @@ class ContractHoursSummary(ModelSQL, ModelView):
                 ('payslip.end', '<=', self.leave_period.end),
                 ])
         if not payslip_lines:
-            return Decimal(0)
+            return Decimal('0.00')
         digits = self.__class__.working_hours.digits
         return sum(l.working_hours for l in payslip_lines).quantize(
             Decimal(str(10 ** -digits[1])))
@@ -373,7 +373,7 @@ class ContractHoursSummary(ModelSQL, ModelView):
 
     def get_hours_to_do(self, name):
         if not self.working_hours:
-            return Decimal(0)
+            return Decimal('0.00')
         digits = self.__class__.hours_to_do.digits
         return (self.working_hours - self.leave_hours).quantize(
             Decimal(str(10 ** -digits[1])))
@@ -390,7 +390,7 @@ class ContractHoursSummary(ModelSQL, ModelView):
                 ('payslip_line.payslip.contract', '=', self.contract.id),
                 ])
         if not working_shifts:
-            return Decimal(0)
+            return Decimal('0.00')
         digits = self.__class__.worked_hours.digits
         return (len(working_shifts) * self.contract.working_shift_hours
             ).quantize(Decimal(str(10 ** -digits[1])))
@@ -404,7 +404,7 @@ class ContractHoursSummary(ModelSQL, ModelView):
                 ('payslip_line.payslip.contract', '=', self.contract.id),
                 ])
         if not entitlements:
-            return Decimal(0)
+            return Decimal('0.00')
         digits = self.__class__.entitled_hours.digits
         return sum([e.hours for e in entitlements]).quantize(
             Decimal(str(10 ** -digits[1])))
@@ -418,7 +418,7 @@ class ContractHoursSummary(ModelSQL, ModelView):
         elif name == 'extra_hours' and difference > 0:
             digits = self.__class__.extra_hours.digits
             return difference.quantize(Decimal(str(10 ** -digits[1])))
-        return Decimal(0)
+        return Decimal('0.00')
 
     def get_leave_payment_hours(self, name):
         pool = Pool()
@@ -429,7 +429,7 @@ class ContractHoursSummary(ModelSQL, ModelView):
                 ('payslip_line.payslip.contract', '=', self.contract.id),
                 ])
         if not leave_payments:
-            return Decimal(0)
+            return Decimal('0.00')
         digits = self.__class__.leave_payment_hours.digits
         return sum([p.hours for p in leave_payments]).quantize(
             Decimal(str(10 ** -digits[1])))
