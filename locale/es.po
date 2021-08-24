@@ -1,4 +1,4 @@
-# 
+#
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
@@ -306,9 +306,9 @@ msgctxt "field:payroll.payslip,create_uid:"
 msgid "Create User"
 msgstr "Usuario creación"
 
-msgctxt "field:payroll.payslip,currency_digits:"
-msgid "Currency Digits"
-msgstr "Decimales de la moneda"
+msgctxt "field:payroll.payslip,currency:"
+msgid "Currency"
+msgstr "Moneda"
 
 msgctxt "field:payroll.payslip,employee:"
 msgid "Employee"
@@ -406,9 +406,9 @@ msgctxt "field:payroll.payslip.line,create_uid:"
 msgid "Create User"
 msgstr "Usuario creación"
 
-msgctxt "field:payroll.payslip.line,currency_digits:"
-msgid "Currency Digits"
-msgstr "Decimales de la moneda"
+msgctxt "field:payroll.payslip.line,currency:"
+msgid "Currency"
+msgstr "Moneda"
 
 msgctxt "field:payroll.payslip.line,extra_hours:"
 msgid "Extra Hours"
@@ -526,9 +526,9 @@ msgctxt "field:working_shift,cost_cache:"
 msgid "Amount Cache"
 msgstr "Cache importe"
 
-msgctxt "field:working_shift,currency_digits:"
-msgid "Currency Digits"
-msgstr "Decimales de la moneda"
+msgctxt "field:working_shift,currency:"
+msgid "Currency"
+msgstr "Moneda"
 
 msgctxt "field:working_shift,employee_contract_rule:"
 msgid "Employee Contract Rule"

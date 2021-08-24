@@ -2,7 +2,6 @@
 # copyright notices and license terms.
 from datetime import datetime
 from decimal import Decimal
-
 from trytond.model import ModelSQL, ModelView, Workflow, fields
 from trytond.pyson import Bool, Date, Eval
 from trytond.pool import Pool, PoolMeta
@@ -11,6 +10,7 @@ from trytond.transaction import Transaction
 from trytond import backend
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
+from trytond.modules.currency.fields import Monetary
 
 __all__ = ['PayslipLineType', 'Payslip', 'PayslipLine', 'Entitlement',
     'LeavePayment', 'WorkingShift', 'Intervention', 'InvoiceLine']
@@ -96,12 +96,10 @@ class Payslip(ModelSQL, ModelView):
     leave_payment_hours = fields.Function(fields.Numeric('Leave Payment Hours',
             digits=(16, 2)),
         'get_lines_hours')
-    currency_digits = fields.Function(fields.Integer('Currency Digits'),
-        'get_currency_digits')
-    amount = fields.Function(fields.Numeric('Amount',
-            digits=(16, Eval('currency_digits', 2)),
-            depends=['currency_digits']),
-        'get_amount')
+    currency = fields.Function(fields.Many2One('currency.currency', 'Currency'),
+        'on_change_with_currency')
+    amount = fields.Function(Monetary('Amount',
+        digits='currency', currency='currency'), 'get_amount')
     supplier_invoice = fields.Many2One('account.invoice', 'Supplier Invoice',
         domain=[
             ('type', '=', 'in'),
@@ -193,12 +191,10 @@ class Payslip(ModelSQL, ModelView):
                                 Decimal(str(10 ** -digits[1])))
         return result
 
-    @staticmethod
-    def default_currency_digits():
-        return 2
-
-    def get_currency_digits(self, name):
-        return self.employee.company.currency.digits
+    @fields.depends('employee', '_parent_employee.company')
+    def on_change_with_currency(self, name=None):
+        if self.employee:
+            return self.employee.company.currency.id
 
     def get_amount(self, name):
         if not self.lines:
@@ -375,19 +371,17 @@ class PayslipLine(ModelSQL, ModelView):
                 'invisible': ~Bool(Eval('working_hours', 0)),
                 }, depends=['working_hours']),
         'get_leave_payment_hours')
-    currency_digits = fields.Function(fields.Integer('Currency Digits'),
-        'get_currency_digits')
-    amount = fields.Function(fields.Numeric('Amount',
-            digits=(16, Eval('currency_digits', 2)),
-            depends=['currency_digits']),
-        'get_amount')
+    currency = fields.Function(fields.Many2One('currency.currency', 'Currency'),
+        'on_change_with_currency')
+    amount = fields.Function(Monetary('Amount',
+        digits='currency', currency='currency'), 'get_amount')
     supplier_invoice_lines = fields.One2Many('account.invoice.line', 'origin',
         'Invoice Lines', readonly=True)
 
-
-    @staticmethod
-    def default_currency_digits():
-        return 2
+    @fields.depends('payslip', '_parent_payslip.employee')
+    def on_change_with_currency(self, name=None):
+        if self.payslip and self.payslip.employee:
+            return self.payslip.employee.company.currency.id
 
     # Only payslip lines with working_hours set will take into account
     # leave_hours as most of the time they will be holidays and it doesn't
@@ -453,9 +447,6 @@ class PayslipLine(ModelSQL, ModelView):
         return sum([p.hours for p in self.leave_payments]).quantize(
                 Decimal(str(10 ** -digits[1])))
 
-    def get_currency_digits(self, name):
-        return self.payslip.employee.company.currency.digits
-
     @property
     def hour_unit_price(self):
         if (self.payslip.contract.working_shift_price
@@ -470,7 +461,7 @@ class PayslipLine(ModelSQL, ModelView):
         amount = sum([s.cost for s in self.working_shifts])
         amount += self.leave_hours * self.hour_unit_price
         amount -= self.generated_entitled_hours * self.hour_unit_price
-        return amount.quantize(Decimal(str(10 ** -self.currency_digits)))
+        return amount.quantize(Decimal(str(10 ** -self.currency.digits)))
 
     def get_supplier_invoice_line(self):
         pool = Pool()
@@ -601,18 +592,15 @@ class WorkingShift(metaclass=PoolMeta):
         readonly=True)
     payslip = fields.Function(fields.Many2One('payroll.payslip', 'Payslip'),
         'get_payslip', searcher='search_payslip')
-    currency_digits = fields.Function(fields.Integer('Currency Digits'),
-        'get_currency_digits')
+    currency = fields.Function(fields.Many2One('currency.currency', 'Currency'),
+        'on_change_with_currency')
     employee_contract_rule = fields.Many2One('payroll.contract.rule',
         'Employee Contract Rule', readonly=True)
-    cost_cache = fields.Numeric('Amount Cache',
-        digits=(16, Eval('currency_digits', 2)),
-        depends=['currency_digits'])
+    cost_cache = Monetary('Amount Cache',
+        digits='currency', currency='currency')
+    cost = fields.Function(Monetary('Amount',
+        digits='currency', currency='currency'), 'get_cost')
     cache_timestamp = fields.DateTime('Cache Timestamp', readonly=True)
-    cost = fields.Function(fields.Numeric('Amount',
-            digits=(16, Eval('currency_digits', 2)),
-            depends=['currency_digits']),
-        'get_cost')
 
     @classmethod
     def __register__(cls, module_name):
@@ -636,8 +624,10 @@ class WorkingShift(metaclass=PoolMeta):
             ('payslip_line.payslip',) + tuple(clause[1:]),
             ]
 
-    def get_currency_digits(self, name):
-        return self.employee.company.currency.digits
+    @fields.depends('employee', '_parent_employee.company')
+    def on_change_with_currency(self, name=None):
+        if self.employee:
+            return self.employee.company.currency.id
 
     @property
     def compute_interventions(self):
