@@ -40,10 +40,10 @@ class Payslip(ModelSQL, ModelView):
         select=True, domain=[
             ('employee', '=', Eval('employee', -1)),
             ('state', '=', 'confirmed'),
-            ('start', '<=', Eval('start')),
+            ('start', '<=', Eval('start', None)),
             ['OR',
                 ('end', '=', None),
-                ('end', '>=', Eval('end'))
+                ('end', '>=', Eval('end', None))
                 ],
             ],
         states={
