@@ -324,13 +324,13 @@ class PayslipLine(ModelSQL, ModelView):
             ],
         add_remove=[
             ('payslip_line', '=', None),
-            ])
+            ], depends=['payslip'])
     generated_entitlements = fields.One2Many('employee.leave.entitlement',
         'payslip_line', 'Generated Entitlements', domain=[
             ('employee', '=', Eval('_parent_payslip', {}).get('employee')),
             ('date', '>=', Eval('_parent_payslip', {}).get('start', Date())),
             ('date', '<=', Eval('_parent_payslip', {}).get('end', Date())),
-            ])
+            ], depends=['payslip'])
     leave_payments = fields.One2Many('employee.leave.payment', 'payslip_line',
         'Leave Payments', domain=[
             ('employee', '=', Eval('_parent_payslip', {}).get('employee')),
@@ -339,7 +339,7 @@ class PayslipLine(ModelSQL, ModelView):
             ],
         add_remove=[
             ('payslip_line', '=', None),
-            ])
+            ], depends=['payslip'])
     leave_hours = fields.Function(fields.Numeric('Leave Hours', digits=(16, 2),
             states={
                 'invisible': ~Bool(Eval('working_hours', 0)),
