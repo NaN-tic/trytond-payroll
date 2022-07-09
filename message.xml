@@ -4,10 +4,12 @@ this repository contains the full copyright notices and license terms. -->
 <tryton>
     <data grouped="1">
       <record model="ir.message" id="payslip_invoice_with_lines">
-          <field name="text">You cannot invoice the payslip "%(payslip)s" because it will be invoiced in invoice "%(invoice)s" that already has lines.\nPlease, confirm invoice to create a new one or delete its lines.</field>
+          <field name="text">You cannot invoice the payslip "%(payslip)s" because it will be invoiced in invoice "%(invoice)s" that already has lines.
+Please, confirm invoice to create a new one or delete its lines.</field>
       </record>
       <record model="ir.message" id="delete_invoiced_payslip">
-          <field name="text">You cannot delete the payslip "%(payslip)s" because it is already invoiced.\nPlease, delete or cancel the invoice before delete the payslip.</field>
+          <field name="text">You cannot delete the payslip "%(payslip)s" because it is already invoiced.
+Please, delete or cancel the invoice before delete the payslip.</field>
       </record>
       <record model="ir.message" id="not_unique_with_hours">
           <field name="text">You can\'t set Working Hours to Payslip Line "%(current_line)s" because already exists line "%(existing_line)s" with hours in the same Payslip.</field>
