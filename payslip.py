@@ -33,11 +33,11 @@ class Payslip(ModelSQL, ModelView):
     'Payslip'
     __name__ = 'payroll.payslip'
     employee = fields.Many2One('company.employee', 'Employee', required=True,
-        select=True, states={
+        states={
             'readonly': Bool(Eval('lines')),
             }, depends=['lines'])
     contract = fields.Many2One('payroll.contract', 'Contract', required=True,
-        select=True, domain=[
+        domain=[
             ('employee', '=', Eval('employee', -1)),
             ('state', '=', 'confirmed'),
             ('start', '<=', Eval('start', None)),
@@ -103,7 +103,7 @@ class Payslip(ModelSQL, ModelView):
     supplier_invoice = fields.Many2One('account.invoice', 'Supplier Invoice',
         domain=[
             ('type', '=', 'in'),
-            ], readonly=True, select=True)
+            ], readonly=True)
     supplier_invoice_state = fields.Function(fields.Selection([
                 ('draft', 'Draft'),
                 ('validated', 'Validated'),
@@ -308,9 +308,8 @@ class PayslipLine(ModelSQL, ModelView):
     'Payslip Line'
     __name__ = 'payroll.payslip.line'
     payslip = fields.Many2One('payroll.payslip', 'Payslip', required=True,
-        select=True, ondelete='CASCADE')
-    type = fields.Many2One('payroll.payslip.line.type', 'Type', required=True,
-        select=True)
+        ondelete='CASCADE')
+    type = fields.Many2One('payroll.payslip.line.type', 'Type', required=True)
     working_hours = fields.Numeric('Working Hours', digits=(16, 2), domain=[
             ['OR',
                 ('working_hours', '=', None),

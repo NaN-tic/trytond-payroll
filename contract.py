@@ -39,7 +39,7 @@ class ContractRule(ModelSQL, ModelView, MatchMixin):
     'Payroll Contract Rule'
     __name__ = 'payroll.contract.rule'
     ruleset = fields.Many2One('payroll.contract.ruleset', 'Ruleset',
-        required=True, select=True, ondelete='CASCADE')
+        required=True, ondelete='CASCADE')
     sequence = fields.Integer('Sequence')
     # Matching
     compute_method = fields.Selection([
@@ -98,7 +98,7 @@ class Contract(Workflow, ModelSQL, ModelView):
     'Payroll Contract'
     __name__ = 'payroll.contract'
     employee = fields.Many2One('company.employee', 'Employee', required=True,
-        select=True, states=STATES, depends=DEPENDS)
+        states=STATES, depends=DEPENDS)
     start = fields.Date('Start', required=True, states=STATES, depends=DEPENDS)
     end = fields.Date('End', domain=[
             ['OR',
