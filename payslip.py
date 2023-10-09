@@ -249,10 +249,6 @@ class Payslip(ModelSQL, ModelView):
 
     def get_supplier_invoice(self):
         pool = Pool()
-        try:
-            BankAccount = pool.get('bank.account')
-        except KeyError:
-            BankAccount = None
         Invoice = pool.get('account.invoice')
         Journal = pool.get('account.journal')
 
@@ -289,9 +285,7 @@ class Payslip(ModelSQL, ModelView):
         if hasattr(Invoice, 'payment_type'):
             invoice.payment_type = self.employee.party.supplier_payment_type
             if hasattr(Invoice, 'bank_account') and invoice.payment_type:
-                bank_account_id = invoice.on_change_with_bank_account()
-                if bank_account_id:
-                    invoice.bank_account = BankAccount(bank_account_id)
+                invoice.on_change_payment_type()
         return invoice
 
     @classmethod
