@@ -35,7 +35,7 @@ class Payslip(ModelSQL, ModelView):
     employee = fields.Many2One('company.employee', 'Employee', required=True,
         states={
             'readonly': Bool(Eval('lines')),
-            }, depends=['lines'])
+            })
     contract = fields.Many2One('payroll.contract', 'Contract', required=True,
         domain=[
             ('employee', '=', Eval('employee', -1)),
@@ -48,7 +48,7 @@ class Payslip(ModelSQL, ModelView):
             ],
         states={
             'readonly': Bool(Eval('lines')),
-            }, depends=['lines', 'employee', 'start', 'end'])
+            })
     contract_start = fields.Function(fields.Date('Contract Start'),
         'on_change_with_contract_start')
     contract_end = fields.Function(fields.Date('Contract Start'),
@@ -317,13 +317,13 @@ class PayslipLine(ModelSQL, ModelView):
             ],
         add_remove=[
             ('payslip_line', '=', None),
-            ], depends=['payslip'])
+            ])
     generated_entitlements = fields.One2Many('employee.leave.entitlement',
         'payslip_line', 'Generated Entitlements', domain=[
             ('employee', '=', Eval('_parent_payslip', {}).get('employee')),
             ('date', '>=', Eval('_parent_payslip', {}).get('start', Date())),
             ('date', '<=', Eval('_parent_payslip', {}).get('end', Date())),
-            ], depends=['payslip'])
+            ])
     leave_payments = fields.One2Many('employee.leave.payment', 'payslip_line',
         'Leave Payments', domain=[
             ('employee', '=', Eval('_parent_payslip', {}).get('employee')),
@@ -332,16 +332,16 @@ class PayslipLine(ModelSQL, ModelView):
             ],
         add_remove=[
             ('payslip_line', '=', None),
-            ], depends=['payslip'])
+            ])
     leave_hours = fields.Function(fields.Numeric('Leave Hours', digits=(16, 2),
             states={
                 'invisible': ~Bool(Eval('working_hours', 0)),
-                }, depends=['working_hours']),
+                }),
         'get_leave_hours')
     hours_to_do = fields.Function(fields.Numeric('Hours To Do', digits=(16, 2),
             states={
                 'invisible': ~Bool(Eval('working_hours', 0)),
-                }, depends=['working_hours']),
+                }),
         'get_hours_to_do')
     worked_hours = fields.Function(fields.Numeric('Worked Hours',
             digits=(16, 2)),
@@ -349,12 +349,12 @@ class PayslipLine(ModelSQL, ModelView):
     generated_entitled_hours = fields.Function(
         fields.Numeric('Generated Entitled Hours', digits=(16, 2), states={
                 'invisible': ~Bool(Eval('working_hours', 0)),
-                }, depends=['working_hours']),
+                }),
         'get_generated_entitled_hours')
     remaining_hours = fields.Function(fields.Numeric('Remaining Hours',
             digits=(16, 2), states={
                 'invisible': ~Eval('working_hours', 0),
-                }, depends=['working_hours']),
+                }),
         'get_remaining_extra_hours')
     extra_hours = fields.Function(fields.Numeric('Extra Hours',
             digits=(16, 2)),
@@ -362,7 +362,7 @@ class PayslipLine(ModelSQL, ModelView):
     leave_payment_hours = fields.Function(fields.Numeric('Leave Payment Hours',
             digits=(16, 2), states={
                 'invisible': ~Bool(Eval('working_hours', 0)),
-                }, depends=['working_hours']),
+                }),
         'get_leave_payment_hours')
     currency = fields.Function(fields.Many2One('currency.currency', 'Currency'),
         'on_change_with_currency')
