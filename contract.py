@@ -19,7 +19,6 @@ __all__ = ['ContractRuleSet', 'ContractRule',
 STATES = {
     'readonly': Eval('state') != 'draft',
     }
-DEPENDS = ['state']
 
 
 class ContractRuleSet(ModelSQL, ModelView):
@@ -98,8 +97,8 @@ class Contract(Workflow, ModelSQL, ModelView):
     'Payroll Contract'
     __name__ = 'payroll.contract'
     employee = fields.Many2One('company.employee', 'Employee', required=True,
-        states=STATES, depends=DEPENDS)
-    start = fields.Date('Start', required=True, states=STATES, depends=DEPENDS)
+        states=STATES)
+    start = fields.Date('Start', required=True, states=STATES)
     end = fields.Date('End', domain=[
             ['OR',
                 ('end', '=', None),
@@ -107,20 +106,19 @@ class Contract(Workflow, ModelSQL, ModelView):
             ],
         states={
             'readonly': ~Eval('state').in_(['draft', 'confirmed']),
-            },
-        depends=['start', 'state'])
+            })
     yearly_hours = fields.Numeric('Yearly Hours', domain=[
             ['OR',
                 ('yearly_hours', '=', None),
                 ('yearly_hours', '>=', Decimal(0)),
                 ],
-            ], required=True, states=STATES, depends=DEPENDS)
+            ], required=True, states=STATES)
     working_shift_hours = fields.Numeric('Working Shift Hours', domain=[
             ['OR',
                 ('working_shift_hours', '=', None),
                 ('working_shift_hours', '>=', Decimal(0)),
                 ],
-            ], required=True, states=STATES, depends=DEPENDS)
+            ], required=True, states=STATES)
     working_shift_price = fields.Numeric('Working Shift Price', required=True,
         digits=price_digits, domain=[
             ['OR',
@@ -128,12 +126,12 @@ class Contract(Workflow, ModelSQL, ModelView):
                 ('working_shift_price', '>=', Decimal(0)),
                 ],
             ],
-        states=STATES, depends=DEPENDS,
+        states=STATES,
         help="Price used to compute the amount corresponding to leaves.")
     hours_summary = fields.One2Many('payroll.contract.hours_summary',
         'contract', 'Hours Summary', readonly=True)
     ruleset = fields.Many2One('payroll.contract.ruleset', 'Ruleset',
-        required=True, states=STATES, depends=DEPENDS)
+        required=True, states=STATES)
     rules = fields.Function(fields.Many2Many('payroll.contract.rule', None,
             None, 'Payslip Rules'),
         'on_change_with_rules')

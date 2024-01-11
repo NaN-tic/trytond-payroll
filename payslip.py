@@ -19,7 +19,6 @@ STATES = {
     'readonly': Eval('supplier_invoice_state').in_(
         ['validated', 'posted', 'paid']),
     }
-DEPENDS = ['supplier_invoice_state']
 
 
 class PayslipLineType(ModelSQL, ModelView):
@@ -53,16 +52,16 @@ class Payslip(ModelSQL, ModelView):
         'on_change_with_contract_start')
     contract_end = fields.Function(fields.Date('Contract Start'),
         'on_change_with_contract_end')
-    start = fields.Date('Start', required=True, states=STATES, depends=DEPENDS)
+    start = fields.Date('Start', required=True, states=STATES)
     end = fields.Date('End', required=True, domain=[
             ['OR',
                 ('end', '=', None),
                 ('end', '>=', Eval('start'))],
             ],
-        states=STATES, depends=DEPENDS + ['start'])
+        states=STATES)
 
     lines = fields.One2Many('payroll.payslip.line', 'payslip', 'Lines',
-        states=STATES, depends=DEPENDS)
+        states=STATES)
     working_shifts = fields.Function(fields.One2Many('working_shift',
             'payslip', 'Working Shifts'),
         'get_lines_relations')
