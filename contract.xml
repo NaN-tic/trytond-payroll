@@ -34,16 +34,14 @@
         </record>
 
         <record model="ir.model.access" id="access_contract_ruleset_payroll_default">
-            <field name="model"
-                search="[('model', '=', 'payroll.contract.ruleset')]"/>
+            <field name="model">payroll.contract.ruleset</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
             <field name="perm_delete" eval="False"/>
         </record>
         <record model="ir.model.access" id="access_contract_ruleset_payroll">
-            <field name="model"
-                search="[('model', '=', 'payroll.contract.ruleset')]"/>
+            <field name="model">payroll.contract.ruleset</field>
             <field name="group" ref="group_payroll"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
@@ -52,8 +50,7 @@
         </record>
 
         <record model="ir.model.access" id="access_contract_ruleset_contract">
-            <field name="model"
-                search="[('model', '=', 'payroll.contract.ruleset')]"/>
+            <field name="model">payroll.contract.ruleset</field>
             <field name="group" ref="group_payroll_contract"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -133,14 +130,14 @@
         </record>
 
         <record model="ir.model.access" id="access_contract_payroll_default">
-            <field name="model" search="[('model', '=', 'payroll.contract')]"/>
+            <field name="model">payroll.contract</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
             <field name="perm_delete" eval="False"/>
         </record>
         <record model="ir.model.access" id="access_contract_payroll">
-            <field name="model" search="[('model', '=', 'payroll.contract')]"/>
+            <field name="model">payroll.contract</field>
             <field name="group" ref="group_payroll"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
@@ -149,7 +146,7 @@
         </record>
 
         <record model="ir.model.access" id="access_contract_contract">
-            <field name="model" search="[('model', '=', 'payroll.contract')]"/>
+            <field name="model">payroll.contract</field>
             <field name="group" ref="group_payroll_contract"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
@@ -160,7 +157,7 @@
         <record model="ir.model.button" id="contract_draft_button">
             <field name="name">draft</field>
             <field name="string">Draft</field>
-            <field name="model" search="[('model', '=', 'payroll.contract')]"/>
+            <field name="model">payroll.contract</field>
         </record>
         <record model="ir.model.button-res.group" id="contract_draft_button_group_contract">
             <field name="button" ref="contract_draft_button"/>
@@ -170,7 +167,7 @@
         <record model="ir.model.button" id="contract_confirm_button">
             <field name="name">confirm</field>
             <field name="string">Confirm</field>
-            <field name="model" search="[('model', '=', 'payroll.contract')]"/>
+            <field name="model">payroll.contract</field>
         </record>
         <record model="ir.model.button-res.group" id="contract_confirm_button_group_contract">
             <field name="button" ref="contract_confirm_button"/>
@@ -180,7 +177,7 @@
         <record model="ir.model.button" id="contract_cancel_button">
             <field name="name">cancel</field>
             <field name="string">Cancel</field>
-            <field name="model" search="[('model', '=', 'payroll.contract')]"/>
+            <field name="model">payroll.contract</field>
         </record>
         <record model="ir.model.button-res.group" id="contract_cancel_button_group_contract">
             <field name="button" ref="contract_cancel_button"/>
