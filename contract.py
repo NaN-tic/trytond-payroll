@@ -4,7 +4,6 @@ from decimal import Decimal
 from sql import Literal
 from sql.aggregate import Max
 
-from trytond import backend
 from trytond.model import MatchMixin, ModelSQL, ModelView, Workflow, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval, If
@@ -171,21 +170,9 @@ class Contract(Workflow, ModelSQL, ModelView):
     @classmethod
     def __register__(cls, module_name):
         cursor = Transaction().connection.cursor()
-        table = cls.__table__()
         sql_table = cls.__table__()
 
-        # Migration from 3.4.1: Add state
-        handler = backend.TableHandler(cls, module_name)
-        state_exists = handler.column_exist('state')
-
         super(Contract, cls).__register__(module_name)
-
-        # Migration from 3.4.1: Add state
-        handler = backend.TableHandler(cls, module_name)
-        if not state_exists:
-            cursor.execute(*table.update(
-                    columns=[table.state],
-                    values=[Literal('confirmed')]))
 
         # Migration from 5.6: rename state cancel to cancelled
         cursor.execute(*sql_table.update(
