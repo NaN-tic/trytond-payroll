@@ -201,7 +201,7 @@ class Payslip(ModelSQL, ModelView):
         return sum([x.amount for x in self.lines])
 
     def get_supplier_invoice_state(self, name):
-        return self.supplier_invoice.state if self.supplier_invoice else None
+        return self.supplier_invoice.state if self.supplier_invoice else 'draft'
 
     @classmethod
     def search_supplier_invoice_state(cls, name, clause):
