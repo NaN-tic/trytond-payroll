@@ -62,39 +62,30 @@ class Payslip(ModelSQL, ModelView):
 
     lines = fields.One2Many('payroll.payslip.line', 'payslip', 'Lines',
         states=STATES)
-    working_shifts = fields.Function(fields.One2Many('working_shift',
-            'payslip', 'Working Shifts'),
+    working_shifts = fields.Function(fields.Many2Many('working_shift', None,
+        None, 'Working Shifts'), 'get_lines_relations')
+    leaves = fields.Function(fields.Many2Many('employee.leave', None, None,
+            'Leaves'), 'get_leaves')
+    generated_entitlements = fields.Function(fields.Many2Many(
+            'employee.leave.entitlement', None, None, 'Generated Entitlements'),
         'get_lines_relations')
-    leaves = fields.Function(fields.One2Many('employee.leave', None,
-            'Leaves'),
-        'get_leaves')
-    generated_entitlements = fields.Function(fields.One2Many(
-            'employee.leave.entitlement', 'payslip', 'Generated Entitlements'),
-        'get_lines_relations')
-    leave_payments = fields.Function(fields.One2Many('employee.leave.payment',
-            'payslip', 'Leave Payments'),
-        'get_lines_relations')
+    leave_payments = fields.Function(fields.Many2Many('employee.leave.payment',
+            None, None, 'Leave Payments'), 'get_lines_relations')
     leave_hours = fields.Function(fields.Numeric('Leave Hours',
-            digits=(16, 2)),
-        'get_lines_hours')
+            digits=(16, 2)), 'get_lines_hours')
     hours_to_do = fields.Function(fields.Numeric('Hours To Do',
-            digits=(16, 2)),
-        'get_lines_hours')
+            digits=(16, 2)), 'get_lines_hours')
     worked_hours = fields.Function(fields.Numeric('Worked Hours',
-            digits=(16, 2)),
-        'get_lines_hours')
+            digits=(16, 2)), 'get_lines_hours')
     generated_entitled_hours = fields.Function(
         fields.Numeric('Generated Entitled Hours', digits=(16, 2)),
         'get_lines_hours')
     remaining_hours = fields.Function(fields.Numeric('Remaining Hours',
-            digits=(16, 2)),
-        'get_lines_hours')
+            digits=(16, 2)), 'get_lines_hours')
     extra_hours = fields.Function(fields.Numeric('Extra Hours',
-            digits=(16, 2)),
-        'get_lines_hours')
+            digits=(16, 2)), 'get_lines_hours')
     leave_payment_hours = fields.Function(fields.Numeric('Leave Payment Hours',
-            digits=(16, 2)),
-        'get_lines_hours')
+            digits=(16, 2)), 'get_lines_hours')
     currency = fields.Function(fields.Many2One('currency.currency', 'Currency'),
         'on_change_with_currency')
     amount = fields.Function(Monetary('Amount',
