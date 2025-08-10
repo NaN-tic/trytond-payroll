@@ -62,16 +62,18 @@ class Payslip(ModelSQL, ModelView):
 
     lines = fields.One2Many('payroll.payslip.line', 'payslip', 'Lines',
         states=STATES)
-    working_shifts = fields.Function(fields.Many2Many('working_shift',
+    working_shifts = fields.Function(fields.One2Many('working_shift',
             'payslip', 'Working Shifts'),
         'get_lines_relations')
-    leaves = fields.Function(fields.Many2Many('employee.leave', None,
-            'Leaves'), 'get_leaves')
-    generated_entitlements = fields.Function(fields.Many2Many(
+    leaves = fields.Function(fields.One2Many('employee.leave', None,
+            'Leaves'),
+        'get_leaves')
+    generated_entitlements = fields.Function(fields.One2Many(
             'employee.leave.entitlement', 'payslip', 'Generated Entitlements'),
         'get_lines_relations')
-    leave_payments = fields.Function(fields.Many2Many('employee.leave.payment',
-            'payslip', 'Leave Payments'), 'get_lines_relations')
+    leave_payments = fields.Function(fields.One2Many('employee.leave.payment',
+            'payslip', 'Leave Payments'),
+        'get_lines_relations')
     leave_hours = fields.Function(fields.Numeric('Leave Hours',
             digits=(16, 2)),
         'get_lines_hours')
