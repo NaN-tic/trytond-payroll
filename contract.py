@@ -12,9 +12,6 @@ from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.modules.product import price_digits
 
-__all__ = ['ContractRuleSet', 'ContractRule',
-    'Contract', 'ContractHoursSummary', 'Employee']
-
 STATES = {
     'readonly': Eval('state') != 'draft',
     }
@@ -60,10 +57,11 @@ class ContractRule(ModelSQL, ModelView, MatchMixin):
 
     @classmethod
     def __setup__(cls):
-        super(ContractRule, cls).__setup__()
+        super().__setup__()
         cls._order = [
             ('ruleset', 'ASC'),
             ('sequence', 'ASC'),
+            ('id', 'DESC'),
             ]
 
     @staticmethod

@@ -12,9 +12,6 @@ from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.modules.currency.fields import Monetary
 
-__all__ = ['PayslipLineType', 'Payslip', 'PayslipLine', 'Entitlement',
-    'LeavePayment', 'WorkingShift', 'Intervention', 'InvoiceLine']
-
 STATES = {
     'readonly': Eval('supplier_invoice_state').in_(
         ['validated', 'posted', 'paid']),
