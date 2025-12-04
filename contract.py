@@ -10,6 +10,7 @@ from trytond.pyson import Eval, If
 from trytond.transaction import Transaction
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
+from trytond.model.exceptions import ValidationError
 from trytond.modules.product import price_digits
 
 STATES = {
@@ -215,7 +216,7 @@ class Contract(Workflow, ModelSQL, ModelView):
             domain.append(('start', '<=', self.end))
         overlaping_contracts = self.search(domain)
         if overlaping_contracts:
-            raise UserError(gettext('payroll.overlaping_contract',
+            raise ValidationError(gettext('payroll.overlaping_contract',
                     current_contract=self.rec_name,
                     overlaped_contract=overlaping_contracts[0].rec_name ))
 
@@ -281,7 +282,7 @@ class Contract(Workflow, ModelSQL, ModelView):
                 ('supplier_invoice', '!=', None),
                 ('supplier_invoice.state', '!=', 'cancelled'),
                 ]):
-            raise UserError(gettext('payroll.contract_with_invoiced_payslips',
+            raise ValidationError(gettext('payroll.contract_with_invoiced_payslips',
                 contract=self.rec_name))
 
     @classmethod
