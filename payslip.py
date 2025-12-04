@@ -10,6 +10,7 @@ from trytond.transaction import Transaction
 from trytond import backend
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
+from trytond.model.exceptions import ValidationError
 from trytond.modules.currency.fields import Monetary
 
 STATES = {
@@ -500,7 +501,7 @@ class PayslipLine(ModelSQL, ModelView):
                 ('working_hours', '!=', Decimal(0)),
                 ])
         if other_lines:
-            raise UserError(gettext('payroll.not_unique_with_hours',
+            raise ValidationError(gettext('payroll.not_unique_with_hours',
                     current_line=self.rec_name,
                     existing_line=other_lines[0].rec_name))
 
