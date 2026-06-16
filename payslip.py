@@ -7,7 +7,6 @@ from trytond.pyson import Bool, Date, Eval
 from trytond.pool import Pool, PoolMeta
 from trytond.tools import grouped_slice
 from trytond.transaction import Transaction
-from trytond import backend
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.model.exceptions import ValidationError
@@ -585,10 +584,10 @@ class WorkingShift(metaclass=PoolMeta):
 
     @classmethod
     def __register__(cls, module_name):
-        table = backend.TableHandler(cls, module_name)
+        table = cls.__table_handler__(module_name)
         created_cost_cache = not table.column_exist('cost_cache')
         super(WorkingShift, cls).__register__(module_name)
-        table = backend.TableHandler(cls, module_name)
+        table = cls.__table_handler__(module_name)
         if created_cost_cache and table.column_exist('cost_cache'):
             cls.set_cache_values(cls.search([]))
 
