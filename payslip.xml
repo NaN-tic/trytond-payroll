@@ -6,16 +6,8 @@
         <record model="res.group" id="group_payroll">
             <field name="name">Payroll</field>
         </record>
-        <record model="res.user-res.group" id="user_admin_group_payroll">
-            <field name="user" ref="res.user_admin"/>
-            <field name="group" ref="group_payroll"/>
-        </record>
         <record model="res.group" id="group_payroll_contract">
             <field name="name">Payroll Contracts</field>
-        </record>
-        <record model="res.user-res.group" id="user_admin_group_payroll_contract">
-            <field name="user" ref="res.user_admin"/>
-            <field name="group" ref="group_payroll_contract"/>
         </record>
         <!-- payroll.payslip.line.type -->
         <record model="ir.ui.view" id="payslip_line_type_view_form">
