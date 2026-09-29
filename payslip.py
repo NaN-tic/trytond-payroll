@@ -30,7 +30,7 @@ class Payslip(ModelSQL, ModelView):
     __name__ = 'payroll.payslip'
     employee = fields.Many2One('company.employee', 'Employee', required=True,
         states={
-            'readonly': Bool(Eval('lines')),
+            'editable': ~Bool(Eval('lines')),
             })
     contract = fields.Many2One('payroll.contract', 'Contract', required=True,
         domain=[
@@ -43,7 +43,7 @@ class Payslip(ModelSQL, ModelView):
                 ],
             ],
         states={
-            'readonly': Bool(Eval('lines')),
+            'editable': ~Bool(Eval('lines')),
             })
     contract_start = fields.Function(fields.Date('Contract Start'),
         'on_change_with_contract_start')
@@ -518,8 +518,7 @@ class PayslipLine(ModelSQL, ModelView):
 
 class Entitlement(metaclass=PoolMeta):
     __name__ = 'employee.leave.entitlement'
-    payslip_line = fields.Many2One('payroll.payslip.line', 'Payslip Line',
-        readonly=True)
+    payslip_line = fields.Many2One('payroll.payslip.line', 'Payslip Line')
     payslip = fields.Function(fields.Many2One('payroll.payslip', 'Payslip'),
         'get_payslip', searcher='search_payslip')
 
@@ -543,8 +542,7 @@ class Entitlement(metaclass=PoolMeta):
 
 class LeavePayment(metaclass=PoolMeta):
     __name__ = 'employee.leave.payment'
-    payslip_line = fields.Many2One('payroll.payslip.line', 'Payslip Line',
-        readonly=True)
+    payslip_line = fields.Many2One('payroll.payslip.line', 'Payslip Line')
     payslip = fields.Function(fields.Many2One('payroll.payslip', 'Payslip'),
         'get_payslip', searcher='search_payslip')
 
@@ -568,19 +566,19 @@ class LeavePayment(metaclass=PoolMeta):
 
 class WorkingShift(metaclass=PoolMeta):
     __name__ = 'working_shift'
-    payslip_line = fields.Many2One('payroll.payslip.line', 'Payslip Line',
-        readonly=True)
+    payslip_line = fields.Many2One('payroll.payslip.line', 'Payslip Line')
     payslip = fields.Function(fields.Many2One('payroll.payslip', 'Payslip'),
         'get_payslip', searcher='search_payslip')
     currency = fields.Function(fields.Many2One('currency.currency', 'Currency'),
         'on_change_with_currency')
     employee_contract_rule = fields.Many2One('payroll.contract.rule',
-        'Employee Contract Rule', readonly=True)
+        'Employee Contract Rule', states={'editable': False})
     cost_cache = Monetary('Amount Cache',
         digits='currency', currency='currency')
     cost = fields.Function(Monetary('Amount',
         digits='currency', currency='currency'), 'get_cost')
-    cache_timestamp = fields.DateTime('Cache Timestamp', readonly=True)
+    cache_timestamp = fields.DateTime(
+        'Cache Timestamp', states={'editable': False})
 
     @classmethod
     def __register__(cls, module_name):
@@ -730,7 +728,7 @@ class WorkingShift(metaclass=PoolMeta):
 class Intervention(metaclass=PoolMeta):
     __name__ = 'working_shift.intervention'
     employee_contract_rule = fields.Many2One('payroll.contract.rule',
-        'Employee Contract Rule', readonly=True)
+        'Employee Contract Rule', states={'editable': False})
 
 
 class InvoiceLine(metaclass=PoolMeta):
